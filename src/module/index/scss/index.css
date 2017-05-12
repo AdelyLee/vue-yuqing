@@ -1,0 +1,81 @@
+body {
+  background-color: #eef1f6; }
+
+.el-row {
+  margin-bottom: 10px; }
+  .el-row:last-child {
+    margin-bottom: 0; }
+
+.el-card {
+  border: 2px solid #1D90E6;
+  border-radius: 0;
+  background-color: #eef1f6; }
+  .el-card .el-card__header {
+    min-height: 30px;
+    border-bottom: 1px solid #1D90E6;
+    background-color: #1D90E6;
+    color: #000; }
+
+.el-card .panel-height {
+  height: 40px;
+  color: #fff; }
+.el-card .card-body {
+  height: 1288px; }
+.el-card .el-card__header {
+  color: #fff; }
+
+.lists {
+  height: 100%; }
+  .lists .list-box .table-top {
+    height: 58px; }
+    .lists .list-box .table-top .news-title {
+      float: left;
+      height: 30px;
+      line-height: 30px;
+      font-size: 24px;
+      background: url("../../../../static/img/lanmu_bj.png") no-repeat;
+      display: inline-block;
+      width: 120px;
+      padding: 13px;
+      text-align: center; }
+  .lists .list-box .table-bottom {
+    height: 45px; }
+    .lists .list-box .table-bottom .news-more {
+      color: #fff;
+      display: inline-block;
+      width: 120px;
+      padding: 13px;
+      text-align: center;
+      float: right;
+      height: 20px;
+      line-height: 20px;
+      font-size: 18px;
+      background: url("../../../../static/img/more_button.png") no-repeat;
+      cursor: pointer; }
+  .lists .list-box .article-list {
+    list-style: none;
+    margin: 0;
+    padding-left: 0; }
+    .lists .list-box .article-list li {
+      height: 25px;
+      line-height: 25px;
+      margin-top: 10px;
+      font-size: 16px; }
+      .lists .list-box .article-list li span {
+        cursor: pointer; }
+        .lists .list-box .article-list li span:first-child {
+          float: left;
+          margin-left: 10px; }
+        .lists .list-box .article-list li span:last-child {
+          float: right;
+          margin-right: 10px; }
+
+#emotion-chart, #type-category-trend-chart {
+  width: 100%;
+  height: 380px; }
+
+#type-category-chart {
+  width: 100%;
+  height: 250px; }
+
+/*# sourceMappingURL=index.css.map */

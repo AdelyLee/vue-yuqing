@@ -1,0 +1,25 @@
+@import "variable";
+body {
+    background-color: $background-color;
+}
+
+.el-row {
+    margin-bottom: $el-row-margin-bottom;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+//设置默认的card style
+.el-card {
+    border: $card-border;
+    border-radius: $card-border-radius;
+    background-color: $background-color;
+    .el-card__header {
+        min-height: $card-header-height;
+        border-bottom: $card-header-bottom;
+        background-color: $card-header-background-color;
+        color: $card-header-color;
+    }
+}
+
