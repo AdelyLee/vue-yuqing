@@ -32,4 +32,3 @@ new Vue({
         "decision-report": Decision
     }
 })
-

@@ -1,6 +1,6 @@
 <template>
     <div class="map-chart">
-        <div :id="chartConfig.chartId">
+        <div :id="mapConfig.chartId" v-if="mapConfig">
         </div>
     </div>
 </template>
@@ -12,11 +12,26 @@
         props: ['chartConfig'],
         data () {
             return {
+                mapConfig: {}
             }
         },
         mounted () {
-            console.log(this.chartConfig.chartId)
+            this.mapConfig = this.chartConfig;
             Chart.drawMapChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+        },
+        watch: {
+            chartConfig: function () {
+                this.mapConfig = this.chartConfig
+            },
+            mapConfig: {
+                handler(val, oldVal) {
+                    debugger;
+                    console.log('new: %s, old: %s', val, oldVal)
+                    Chart.drawMapChart(this.mapConfig.chartId, this.mapConfig.option, this.mapConfig.events);
+
+                },
+                deep :true
+            }
         }
     }
 </script>

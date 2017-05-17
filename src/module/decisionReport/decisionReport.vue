@@ -44,9 +44,12 @@
     import LineBarChart from '@/components/commons/charts/line-bar';
     import PieChart from '@/components/commons/charts/pie';
     import MapChart from '@/components/commons/charts/map';
+
+    import Chart from '../../../lib/draw-echarts'
     export default{
         name: 'decisionReport',
         data () {
+            var self = this;
             return {
                 cardTitle: '與情月报',
                 title1_1: {
@@ -145,9 +148,7 @@
                         mapType: "china"
                     },
                     events: {
-                        'click': function (param) {
-                            console.log(param.name);
-                        }
+                        'click': clickMapChart
                     }
                 }
             }
@@ -159,6 +160,27 @@
             'bar-chart': LineBarChart,
             'pie-chart': PieChart,
             'map-chart': MapChart
+        },
+        watch: {
+            mapChartConfig: {
+                handler(val, oldVal) {
+                    debugger;
+                    console.log('new: %s, old: %s', val, oldVal)
+                    Chart.drawMapChart(this.mapConfig.chartId, this.mapConfig.option, this.mapConfig.events);
+
+                },
+                deep :true
+            }
         }
+    }
+
+    // 点击地图事件
+    var self = this;
+    var itme = self.default.data();
+    function clickMapChart(param) {
+        debugger;
+        itme.mapChartConfig.option.mapType = param.name;
+        delete itme.mapChartConfig.events;
+//        Chart.drawMapChart(itme.mapChartConfig.chartId, itme.mapChartConfig.option, itme.mapChartConfig.events);
     }
 </script>
