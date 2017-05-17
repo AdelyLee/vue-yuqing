@@ -22,12 +22,12 @@
         data () {
             return {
                 url: '../../static/api/',
+//              url: 'http://localhost:10000/news/?page=1&limit=10&sortBy=pubTime&direction=1',
                 title: '',
                 items: []
             }
         },
         mounted () {
-            console.log(this.checkedItems)
             this.url = this.url + this.type + '.json'
             this.$http.get(this.url).then((response) => {
                 this.title = response.data.title
@@ -46,6 +46,7 @@
         },
         watch: {
             checkedItems: function (val, oldVal) {
+                console.log(this.checkedItems)
                 console.log('new: %s, old: %s', val, oldVal)
             }
         }

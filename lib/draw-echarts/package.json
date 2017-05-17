@@ -1,0 +1,9 @@
+{
+  "name": "draw-echarts",
+  "version": "0.0.1",
+  "main": "./lib/charts.js",
+  "private": true,
+  "dependencies": {
+    "echarts": "^3.5.3"
+  }
+}

@@ -23,3 +23,18 @@ body {
     }
 }
 
+.el-card {
+    .panel-height {
+        height: 40px;
+        color: $font-color;
+    }
+
+    .el-card__header {
+        padding: 5px 10px;
+        color: $font-color;
+        .clearfix {
+            text-align: center;
+        }
+    }
+}
+

@@ -4,9 +4,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'   // 默认主题
 import Index from './index.vue'
 import VueResource from 'vue-resource'
+
+import 'element-ui/lib/theme-default/index.css'   // 默认主题
 import './scss/index.scss'
 
 

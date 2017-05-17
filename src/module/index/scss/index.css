@@ -19,10 +19,14 @@ body {
 .el-card .panel-height {
   height: 40px;
   color: #fff; }
+.el-card .el-card__header {
+  padding: 5px 10px;
+  color: #fff; }
+  .el-card .el-card__header .clearfix {
+    text-align: center; }
+
 .el-card .card-body {
   height: 1288px; }
-.el-card .el-card__header {
-  color: #fff; }
 
 .lists {
   height: 100%; }

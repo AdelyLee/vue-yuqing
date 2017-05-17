@@ -15,7 +15,7 @@
     export default {
         data () {
             return {
-                url: '../../static/api/',
+                url: '../../static/api/'
             }
         },
         mounted () {
@@ -42,12 +42,3 @@
         }
     }
 </script>
-<style>
-    .el-card__header {
-        padding: 5px 10px;
-    }
-
-    .clearfix {
-        text-align: center;
-    }
-</style>
