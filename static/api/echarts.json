@@ -1,0 +1,12 @@
+{
+    "data": [
+        {
+            "method": "getAccidentAreaChart",
+            "name": "accident-area-chart"
+        },
+        {
+            "method": "getArticleTypeChart",
+            "name": "article-type-chart"
+        }
+    ]
+}

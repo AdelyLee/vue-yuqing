@@ -27,5 +27,46 @@ body {
 
 .report-content {
   padding: 10px 80px; }
+  .report-content .describe-text {
+    text-indent: 2em;
+    color: #000000;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 36px; }
+    .report-content .describe-text .describe-redText {
+      color: #eb7e23;
+      font-size: 24px; }
+  .report-content #article-type-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #news-emotion-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #accident-area-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #media-bar-chart {
+    margin: auto;
+    width: 800px;
+    height: 500px; }
+  .report-content #article-trend-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #map-chart-test {
+    margin: auto;
+    width: 800px;
+    height: 500px; }
+  .report-content #comment-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 500px; }
+  .report-content #keywords-chart-test {
+    margin: auto;
+    width: 400px;
+    height: 300px; }
 
 /*# sourceMappingURL=decisionReport.css.map */

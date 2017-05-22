@@ -3,4 +3,63 @@
 
 .report-content {
     padding: 10px 80px;
+
+    .describe-text {
+        text-indent: 2em;
+        color: #000000;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 36px;
+        .describe-redText {
+            color: #eb7e23;
+            font-size: 24px;
+        }
+    }
+    // report chart size
+    #article-type-pie-chart {
+        margin: auto;
+        width: 800px;
+        height: 400px;
+    }
+    #news-emotion-pie-chart {
+        margin: auto;
+        width: 800px;
+        height: 400px;
+    }
+    #accident-area-chart {
+        margin: auto;
+        width: 800px;
+        height: 400px;
+    }
+    #media-bar-chart{
+        margin: auto;
+        width: 800px;
+        height: 500px;
+    }
+
+    #article-trend-chart {
+        margin: auto;
+        width: 800px;
+        height: 400px;
+    }
+
+    #map-chart-test {
+        margin: auto;
+        width: 800px;
+        height: 500px;
+    }
+    #comment-pie-chart{
+        margin: auto;
+        width: 800px;
+        height: 500px;
+    }
+
+    #keywords-chart-test{
+        margin: auto;
+        width: 400px;
+        height: 300px;
+    }
 }
+
+
+

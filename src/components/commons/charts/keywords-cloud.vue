@@ -1,5 +1,5 @@
 <template>
-    <div class="pie-chart">
+    <div class="keyword-chart">
         <div :id="chartConfig.chartId">
         </div>
     </div>
@@ -15,12 +15,12 @@
             }
         },
         mounted () {
-            Chart.drawPieChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+            Chart.drawWordCloud(this.chartConfig.chartId, this.chartConfig.option);
         },
         watch: {
             chartConfig: {
                 handler: function (val, oldVal) {
-                    Chart.drawPieChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+                    Chart.drawWordCloud(this.chartConfig.chartId, this.chartConfig.option);
                 },
                 deep: true
             }
