@@ -8,15 +8,115 @@
         "level": "1",
         "title": "一、與情综述",
         "children": [{
-            "title": "",
+            "level": "2",
+            "title": "载体分布情况",
             "imageUrl": "",
             "option": {},
-            "children": []
+            "children": [],
+            "chartId": "article-type-pie-chart",
+            "method": "getArticleTypeChart"
+        },{
+            "level": "2",
+            "title": "事故相关区域分析",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "chartId": "accident-area-chart",
+            "method": "getAccidentAreaChart"
+        },{
+            "level": "2",
+            "title": "(一) 5月安全生产與情趋势",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "(二) 5月安全生产新闻传播舆论热度",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "(三) 5月安全生产热点新闻解析",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "新闻情感正负面分析",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "主流媒体报道统计",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "热点词词云分析",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
         }]
     }, {
         "level": "1",
         "title": "二、安全生产事故聚焦",
-        "children": []
+        "children": [{
+            "level": "2",
+            "title": "1. 本月事故情况",
+            "imageUrl": "",
+            "option": {},
+            "children": [],
+            "method": ""
+        },{
+            "level": "2",
+            "title": "2. 事故分析",
+            "imageUrl": "",
+            "option": {},
+            "children": [{
+                "level": "3",
+                "title": "事故类型分布图",
+                "imageUrl": "",
+                "option": {},
+                "children": [],
+                "method": ""
+            },{
+                "level": "3",
+                "title": "事故地域分布图",
+                "imageUrl": "",
+                "option": {},
+                "children": [],
+                "method": ""
+            }]
+        },{
+            "level": "2",
+            "title": "3. 相关言论分析",
+            "imageUrl": "",
+            "option": {},
+            "children": [{
+                "level": "3",
+                "title": "事故相关言论占比分析",
+                "imageUrl": "",
+                "option": {},
+                "children": [],
+                "method": ""
+            },{
+                "level": "3",
+                "title": "事故相关言论关键词词云",
+                "imageUrl": "",
+                "option": {},
+                "children": [],
+                "method": ""
+            }]
+        }]
     }],
     "summary": ""
 }
