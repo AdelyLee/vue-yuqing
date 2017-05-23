@@ -1,14 +1,14 @@
 {
   "presets": [
-    ["env", { "modules": false }],
-    "stage-2"
+      ["env", { "modules": false }],
+      "stage-2"
   ],
-  "plugins": ["transform-runtime"],
+  "plugins": [],
   "comments": false,
   "env": {
-    "test": {
-      "presets": ["env", "stage-2"],
-      "plugins": [ "istanbul" ]
-    }
+      "test": {
+          "presets": ["env", "stage-2"],
+          "plugins": [ "istanbul" ]
+      }
   }
 }

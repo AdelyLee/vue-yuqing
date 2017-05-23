@@ -16,14 +16,14 @@
         },
         mounted () {
             Chart.drawLineBarChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+        },
+        watch: {
+            chartConfig: {
+                handler: function (val, oldVal) {
+                    Chart.drawLineBarChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+                },
+                deep: true
+            }
         }
     }
 </script>
-
-<style lang="scss" scoped>
-    #bar-chart-test {
-        margin: auto;
-        width: 300px;
-        height: 300px;
-    }
-</style>
