@@ -12,7 +12,7 @@
         "e2e": "node test/e2e/runner.js",
         "test": "npm run unit && npm run e2e",
         "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
-        "echarts": "node lib/node-service/lib/charts/report/article-type-chart.js"
+        "echarts": "node lib/node-service/lib/charts/report/node-echarts.js"
     },
     "dependencies": {
         "d3": "^3.5.5",

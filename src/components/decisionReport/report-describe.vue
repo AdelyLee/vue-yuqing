@@ -1,5 +1,5 @@
 <template>
-    <div class="report-describe">
+    <div :id="describe.Id" class="report-describe" >
     </div>
 </template>
 
@@ -8,6 +8,17 @@
         props: ['describe'],
         data: function () {
             return {
+            }
+        },
+        mounted () {
+           this.describe.Id;
+        },
+        watch: {
+            describe: {
+                handler: function (val, oldVal) {
+                   this.describe.Id;
+                },
+                deep: true
             }
         }
     }

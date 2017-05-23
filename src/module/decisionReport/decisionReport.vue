@@ -21,8 +21,8 @@
                             <report-title :title="title2_1_3"></report-title>
                             <bar-chart :chartConfig="articleTrendChartConfig"></bar-chart>
                             <map-chart :chartConfig="mapChartConfig"></map-chart>
+                            <report-describe :describe="describe_3"></report-describe>
                             <keywords-chart :chartConfig="keywordsChartConfig"></keywords-chart>
-                            <report-describe v-html="describe_3"></report-describe>
                             <report-title :title="title2_1_4"></report-title>
                             <report-describe v-html="describe_4"></report-describe>
                             <report-title :title="title2_1_5"></report-title>
@@ -91,7 +91,7 @@
                     text: '(一) 5月安全生产與情趋势',
                     levelClass: 'level-two'
                 },
-                describe_3: '<div class="describe-text">根据最新舆情分析2月份中<span class="describe-redText">13</span>日热度最高，<span class="describe-redText">1</span>日最低，1月份热度<span class="describe-redText">21</span>最高，<span class="describe-redText">1</span>日最低</div>',
+                //describe_3: '<div class="describe-text">根据最新舆情分析2月份中<span class="describe-redText" id="heat_1"></span>日热度最高，<span class="describe-redText">1</span>日最低，1月份热度<span class="describe-redText">21</span>最高，<span class="describe-redText">1</span>日最低</div>',
                 title2_1_4: {
                     text: '(二) 5月安全生产新闻传播舆论热度',
                     levelClass: 'level-two'
@@ -172,7 +172,7 @@
                         }
                     }
                 },
-                commentPieChartConfig:{
+                commentPieChartConfig: {
                     chartId: 'comment-pie-chart',
                     option: {},
                     events: {
@@ -191,7 +191,7 @@
                         }
                     }
                 },
-                mediaBarChartConfig:{
+                mediaBarChartConfig: {
                     chartId: 'media-bar-chart',
                     option: {},
                     events: {
@@ -210,7 +210,9 @@
                         }
                     }
                 },
-
+                describe_3: {
+                    Id: 'describe_3'
+                },
                 mapChartConfig: {
                     chartId: 'map-chart-test',
                     option: {
@@ -235,38 +237,39 @@
             'pie-chart': PieChart,
             'map-chart': MapChart,
             'keywords-chart': KeywordsChart,
-            'report-text':ReportText
+            'report-text': ReportText
         },
         mounted () {
             this.getArticleTypeChart();
             this.getAccidentAreaChart();
+            this.getArticleTrendChart();
             this.getNewsEmotionPieChart();
             this.getMediaBarChart();
             this.getCommentPieChart();
         },
         methods: {
-            getArticleTypeChart: function() {
+            getArticleTypeChart: function () {
                 var self = this;
                 service.actions.getArticleTypeChart().then(function (option) {
-                    self.articleTypePieChartConfig.option =  option;
+                    self.articleTypePieChartConfig.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
 //            情感分析
-            getNewsEmotionPieChart:function(){
+            getNewsEmotionPieChart: function () {
                 var self = this;
                 service.actions.getNewsEmotionPieChart().then(function (option) {
-                    self.newsEmotionPieChartConfig.option =  option;
+                    self.newsEmotionPieChartConfig.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
 //            相关评论
-            getCommentPieChart:function(){
+            getCommentPieChart: function () {
                 var self = this;
                 service.actions.getCommentPieChart().then(function (option) {
-                    self.commentPieChartConfig.option =  option;
+                    self.commentPieChartConfig.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -275,7 +278,7 @@
             getAccidentAreaChart: function () {
                 var self = this;
                 service.actions.getAccidentAreaChart().then(function (option) {
-                    self.accidentAreaChartConfig.option =  option;
+                    self.accidentAreaChartConfig.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -283,16 +286,16 @@
 //            主流媒体
             getMediaBarChart: function () {
                 var self = this;
-             service.actions.getMediaBarChart().then(function (option) {
-             self.mediaBarChartConfig.option =  option;
-        }, function (error) {
-            console.error('出错了', error);
-        })
-    },
+                service.actions.getMediaBarChart().then(function (option) {
+                    self.mediaBarChartConfig.option = option;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
             getArticleTrendChart: function () {
                 var self = this;
                 service.actions.getArticleTrendChart().then(function (option) {
-                    self.articleTrendChartConfig.option =  option;
+                    self.articleTrendChartConfig.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })

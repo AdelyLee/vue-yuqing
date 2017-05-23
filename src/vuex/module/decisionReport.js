@@ -3,6 +3,7 @@
  */
 import $ from 'jquery'
 import common from './common'
+//import store from './store'
 
 const actions = {
     getArticleTypeChart: function () {
@@ -212,6 +213,100 @@ const actions = {
                         ]
                     };
 
+                    resolve(option);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+
+    //趋势图
+    getArticleTrendChart: function () {
+        var self = this;
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.esUrl + '/es/filterAndGroupByTime.json',
+                async: true,
+                data: {
+                    s_date: '2017-02',
+                    e_date: '2017-04',
+                    dateType: 'day'
+                },
+                type: 'get',
+                success: function (data) {
+                    var seriesData_a = [];
+                    var seriesData_b = [];
+                    var xAxisData = [];
+                    var heatMax_a = [], heatMax_b = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        var nodes = {};
+                        var month_name = item.key.substr(0, 7);
+                        if (month_name == "2017-02") {
+                            node.name = item.key.substr(8);
+                            node.value = item.value;
+                            heatMax_a = item.value;
+                            seriesData_a.push(node);
+                        } else if (month_name == "2017-03") {
+                            xAxisData.push(item.key.substr(8));
+                            nodes.name = item.key.substr(8);
+                            nodes.value = item.value;
+                            heatMax_b = item.value;
+                            seriesData_b.push(nodes);
+                        }
+                    });
+                    //var vm=new Vue({
+                    //    el:"#describe_3",
+                    //    data:{
+                    //        msg:heatMax_a[0]
+                    //    }
+                    //});
+                    var option = {
+                        legend: {
+                            x: 'right',
+                            y: 'middle',
+                            orient: 'vertical',
+                            data: ['2017年2月', '2017年3月']
+                        },
+                        grid: {
+                            left: '4%',
+                            right: '150px',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        color: ['#e7ba09', '#30a8dd'],
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: xAxisData,
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 35,
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '2017年2月',
+                                type: 'line',
+                                data: seriesData_a
+                            },
+                            {
+                                name: '2017年3月',
+                                type: 'line',
+                                data: seriesData_b
+
+                            }
+                        ]
+                    };
                     resolve(option);
                 },
                 error: function (error) {
@@ -486,48 +581,6 @@ const actions = {
 
                         ]
                     };
-
-                    // var option = {
-                    //     tooltip: {
-                    //         trigger: 'item',
-                    //         formatter: "{a} <br/>{b}: {c} ({d}%)"
-                    //     },
-                    //     legend: {
-                    //         orient: 'vertical',
-                    //         x: 'right',
-                    //         data:lengeds
-                    //     },
-                    //     series: [
-                    //         {
-                    //             name:'情感类型',
-                    //             type:'pie',
-                    //             radius: ['40%', '60%'],
-                    //             label: {
-                    //                 normal: {
-                    //                     show: false,
-                    //                     // position: 'center',
-                    //                     textStyle: {
-                    //                         fontSize: 20
-                    //                     }
-                    //                 },
-                    //                 emphasis: {
-                    //                     show: true,
-                    //                     textStyle: {
-                    //                         fontSize: '30',
-                    //                         fontWeight: 'bold'
-                    //                     }
-                    //                 }
-                    //             },
-                    //             labelLine: {
-                    //                 normal: {
-                    //                     show: false
-                    //                 }
-                    //             },
-                    //             data: seriesData
-                    //         }
-                    //     ]
-                    // };
-
                     resolve(option);
                 },
                 error: function (error) {
@@ -536,7 +589,6 @@ const actions = {
             });
         });
     },
-
     getArticleHotPointChart: function () {
 
     },
@@ -550,7 +602,6 @@ const actions = {
 
     }
 }
-
 const utils = {
     resetArticleTypeName: function (source) {
         var target = '';
@@ -588,7 +639,6 @@ const emotion = {
             case 'neu':
                 type = '中性';
                 break;
-
         }
 
         return type;
@@ -612,7 +662,7 @@ const numberLength = {
     }
 
 }
-
 export default {
     actions
 }
+
