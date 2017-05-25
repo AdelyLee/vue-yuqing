@@ -21,7 +21,8 @@
     import Header from '@/components/commons/header';
     import ReportHeader from '@/components/decisionReport/report-header';
     import ReportContent from '@/components/decisionReport/report-content';
-    import service from '../../vuex/module/decisionReport.js'
+    import ReportSummary from '@/components/decisionReport/report-summary';
+    import service from '../../vuex/module/decisionReport.js';
     export default{
         name: 'decisionReport',
         data () {
@@ -34,6 +35,7 @@
             'common-header': Header,
             'report-header': ReportHeader,
             'report-content': ReportContent,
+            'report-summary': ReportSummary
         },
         mounted () {
             // get briefing json data from mongodb
