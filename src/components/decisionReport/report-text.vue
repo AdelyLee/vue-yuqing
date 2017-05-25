@@ -1,6 +1,6 @@
 <template>
     <div class="report-text">
-        <div class="title">{{briefingJson.outline}}</div>
+        <div class="title" v-if="briefingJson.outline">{{briefingJson.outline}}</div>
     </div>
 </template>
 <script>
