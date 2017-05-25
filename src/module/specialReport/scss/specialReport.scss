@@ -1,0 +1,63 @@
+@charset "utf-8";
+@import "../../../assets/scss/common";
+
+.report-content {
+    padding: 10px 80px;
+
+    .describe-text {
+        text-indent: 2em;
+        color: #000000;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 36px;
+        .describe-redText {
+            color: #eb7e23;
+            font-size: 24px;
+        }
+    }
+    // report chart size
+    #media-report-analysis-pie {
+        margin:auto;
+        width:800px;
+        height:400px;
+    }
+    #news-count-bar {
+        margin:auto;
+        width:800px;
+        height:500px;
+    }
+    #media-report-trend-bar {
+        margin:auto;
+        width:800px;
+        height:400px;
+    }
+    #accident-report-bar{
+        margin:auto;
+        width:1200px;
+        height:400px;
+    }
+    #netizen-consensus-bar {
+        margin:auto;
+        width:800px;
+        height:600px;
+    }
+    #netizen-option-pie {
+        margin:auto;
+        width:800px;
+        height:400px;
+    }
+    #netizen-map {
+        margin:auto;
+        width:800px;
+        height:400px;
+    }
+    #keywords-chart {
+        margin:auto;
+        width:800px;
+        height:400px;
+    }
+
+}
+
+
+

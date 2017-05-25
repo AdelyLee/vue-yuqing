@@ -9,17 +9,6 @@
         data: function () {
             return {
             }
-        },
-        mounted () {
-           this.describe.Id;
-        },
-        watch: {
-            describe: {
-                handler: function (val, oldVal) {
-                   this.describe.Id;
-                },
-                deep: true
-            }
         }
     }
 </script>

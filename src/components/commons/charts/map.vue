@@ -16,6 +16,14 @@
         },
         mounted () {
             Chart.drawMapChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+        },
+        watch: {
+            chartConfig: {
+                handler: function (val, oldVal) {
+                    Chart.drawMapChart(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+                },
+                deep: true
+            }
         }
     }
 </script>

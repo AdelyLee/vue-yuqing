@@ -1,0 +1,45 @@
+body {
+  background-color: #ffffff; }
+
+.el-row {
+  margin-bottom: 10px; }
+  .el-row:last-child {
+    margin-bottom: 0; }
+
+.el-card {
+  border: 2px solid #1D90E6;
+  border-radius: 0;
+  background-color: #ffffff; }
+  .el-card .el-card__header {
+    min-height: 30px;
+    border-bottom: 1px solid #1D90E6;
+    background-color: #1D90E6;
+    color: #000; }
+
+.el-card .panel-height {
+  height: 40px;
+  color: #fff; }
+.el-card .el-card__header {
+  padding: 5px 10px;
+  color: #fff; }
+  .el-card .el-card__header .clearfix {
+    text-align: center; }
+
+.box-tablist {
+  padding: 0px 20px;
+  background: -webkit-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+  background: -moz-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+  background: -o-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+  background: linear-gradient(to bottom, #00b7ed 0, #00b8ec 100%);
+  -webkit-filter: blur(10px);
+  /* Chrome, Opera */
+  -moz-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: blur(10px);
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
+  color: #000000; }
+
+.row-bg {
+  padding: 10px 0; }
+
+/*# sourceMappingURL=presentationList.css.map */

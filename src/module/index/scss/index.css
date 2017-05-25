@@ -1,5 +1,5 @@
 body {
-  background-color: #eef1f6; }
+  background-color: #ffffff; }
 
 .el-row {
   margin-bottom: 10px; }
@@ -9,7 +9,7 @@ body {
 .el-card {
   border: 2px solid #1D90E6;
   border-radius: 0;
-  background-color: #eef1f6; }
+  background-color: #ffffff; }
   .el-card .el-card__header {
     min-height: 30px;
     border-bottom: 1px solid #1D90E6;

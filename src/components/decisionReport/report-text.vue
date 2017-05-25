@@ -1,19 +1,13 @@
 <template>
     <div class="report-text">
-        <div class="title">{{mouth}}</div>,安全生产相关舆情约<div class="listNum">{{listNum}}</div>篇，比1月份减少了<div class="percent">{{percent}}</div>。
-          其中<div class="listNum">{{type}}</div>是本月的舆情主阵地，<div class="listNum">{{chat}}</div>占比较上月有所下降
-
+        <div class="title">{{briefingJson.outline}}</div>
     </div>
 </template>
 <script>
     export default {
+        props: ['briefingJson'],
         data: function () {
             return {
-                mouth:'2月份',
-                listNum: 115700,
-                percent: '16.7%',
-                type: '网络媒体',
-                chat:"微信",
             }
         }
     }
@@ -33,10 +27,6 @@
         margin-bottom: 20px;
         line-height:50px;
         font-weight: 600;
-
-
-
-
     div{
         display: inline-block;
     }

@@ -3,9 +3,8 @@
  */
 
 const url = {
-    mongodbUrl: 'http://192.168.0.29:9090/',
-    esUrl: 'http://192.168.0.29:10000/',
-}
+    webserviceUrl: 'http://192.168.0.29:8888/yuqing'
+};
 
 export default {
     url

@@ -1,11 +1,27 @@
 /**
  * Created by lyc on 17-5-18.
  */
+
 import $ from 'jquery'
 import common from './common'
 //import store from './store'
 
 const actions = {
+    getBriefingJson: function () {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: 'http://localhost:8081/briefingJson.json',
+                type: 'get',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+
     getArticleTypeChart: function () {
         var param = {
             method: 'get',
@@ -17,7 +33,7 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.esUrl + '/es/findByMustShouldDateInType.json',
+                url: common.url.webserviceUrl + '/es/findByMustShouldDateInType.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
@@ -65,27 +81,32 @@ const actions = {
     getNewsEmotionPieChart: function () {
         var param = {
             groupName: 'nlp.sentiment.label',
-
-
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.esUrl + '/news/filterAndGroupBy.json',
+                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
-                    console.log(data);
                     // 拼装 chart option
                     var seriesData = [];
                     var lengeds = [];
-                    $.each(data, function (i, item) {
-                        var node = {};
-                        node.name = emotion.resetEmotionTypeName(item.key);
-                        node.value = item.value;
+                    var temps=["正面","负面","中性"];
+                    for(var j=0;j<temps.length;j++){
+                        var node = {value:0};
+                        for(var i=0;i<data.length;i++) {
+                            node.name = emotion.resetEmotionTypeName(data[i].key);
+                            if(node.name==temps[j]){
+                                node.value += data[i].value;
+                            }
+
+
+                        };
+                        node.name=temps[j]
                         seriesData.push(node);
                         lengeds.push(node.name)
-                    });
+                    }
+
 
                     var option = {
                         tooltip: {
@@ -157,7 +178,7 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.mongodbUrl + '/accident/aggByTypes',
+                url: common.url.webserviceUrl + '/accident/aggByTypes',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',
@@ -227,7 +248,7 @@ const actions = {
         var self = this;
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.esUrl + '/es/filterAndGroupByTime.json',
+                url: common.url.webserviceUrl + '/es/filterAndGroupByTime.json',
                 async: true,
                 data: {
                     s_date: '2017-02',
@@ -319,12 +340,14 @@ const actions = {
     getMediaBarChart: function () {
         var param = {
             groupName: 'source.raw',
+            s_date: '2017-02',
+            e_date: '2017-04',
 
         };
 
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.esUrl + '/news/filterAndGroupBy.json',
+                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
@@ -403,12 +426,10 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.esUrl + '/es/findByMustShouldDateInType.json',
+                url: common.url.webserviceUrl + '/es/findByMustShouldDateInType.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
-                    console.log(data);
                     // 拼装 chart option
                     data = data.sort(function (a, b) {
                         return b.value - a.value;
@@ -590,7 +611,331 @@ const actions = {
         });
     },
     getArticleHotPointChart: function () {
+        var param = {
 
+                groupName: 'title.raw',
+                s_date: '2017-01',
+                e_date: '2017-02'
+
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
+                // contentType: "application/json; charset=utf-8",
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var new_data = [];
+                    if(data.length>6) {
+                        new_data = data.slice(0,6);
+                    }else {
+                        new_data = data;
+                    }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var yAxisData = [];
+                    // data = data.sort(function (a, b) {
+                    //     return a.value -b.value;
+                    // });
+                    $.each(new_data, function(i, item){
+                        seriesData.push(item.value);
+                        yAxisData.push(item.key);
+                    });
+                    var option = {
+                        legend: {},
+                        yAxis: {
+                            type: 'category',
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '10',
+                            right: '10',
+                            bottom: '10',
+                            top: '10',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name:'舆论热点',
+                                type:'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+
+                    resolve(option);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+    getMonthAccidentChart: function () {
+        var param = {
+            "endDate": "2017-02",
+            "startDate": "2017-01"
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/accidentYuqing/hotAccident',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    data.sort(function (a, b) {
+                        return b.value -a.value;
+                    });
+                    var new_data = [];
+                    if(data.length>6) {
+                        new_data = data.slice(0,6);
+                    }else {
+                        new_data = data;
+                    }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var yAxisData = [];
+                    $.each(new_data, function(i, item){
+                        seriesData.push(item.value);
+                        yAxisData.push(item.key);
+                    });
+                    var option = {
+                        legend: {},
+                        yAxis: {
+                            type: 'category',
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        grid: {
+                            left: '10',
+                            right: '10',
+                            bottom: '10',
+                            top: '10',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name:'舆论热点',
+                                type:'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+
+                    resolve(option);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+    //事故类型饼图
+    getAccidentTypeChart: function () {
+        var param = {
+            "date": {
+                "endDate": "2017-03",
+                "startDate": "2017-02"
+            },
+            "page": {
+                "limit": 10,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "count"
+                }],
+                "page": 1
+            },
+            "types": [
+                "atype"
+            ]
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/accident/aggByTypes',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    // 拼装 chart option
+                    var seriesData = [];
+                    $.each(data, function(i, item){
+                        var node = {};
+                        node.name = item.id;
+                        node.value = item.count;
+                        seriesData.push(node);
+                    });
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {},
+                        series: [
+                            {
+                                name:'事故类型',
+                                type:'pie',
+                                radius: ['0%', '55%'],
+                                // roseType : 'area',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: 20
+                                        }
+                                    }
+                                },
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+
+                    resolve(option);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+    getAccidentMapChart: function () {
+        var param = {
+            "date": {
+                "endDate": "2017-03",
+                "startDate": "2017-02"
+            },
+            "page": {
+                "limit": 40,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "count"
+                }],
+                "page": 1
+            },
+            "types": [
+                "province"
+
+            ]
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/accident/aggByTypes',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    var maxCount = 0;
+                    var seriesData = [];
+                    $.each(data, function(i, item){
+                        var node = {};
+                        node.name = item.id;
+                        node.value = item.count;
+                        seriesData.push(node);
+                    });
+                    seriesData.sort(function(a,b) {return b.value-a.value});
+                    maxCount = seriesData[0].value==undefined?10:seriesData[0].value;
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c}"
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: maxCount,
+                            left: 'left',
+                            top: 'bottom',
+                            text: ['高','低'],           // 文本，默认为数值文本
+                            calculable: true
+                        },
+                        series: [
+                            {
+                                name:'事故起数',
+                                type:'map',
+                                mapType: 'china',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                    }
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    };
+
+                    resolve(option);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
     },
     getNewAnalysisChart: function () {
 
@@ -601,6 +946,7 @@ const actions = {
     getArticleHotKeyWordsChart: function () {
 
     }
+
 }
 const utils = {
     resetArticleTypeName: function (source) {
@@ -633,10 +979,19 @@ const emotion = {
             case 'pos':
                 type = '正面';
                 break;
+            case 'POS':
+                type = '正面';
+                break;
             case 'neg':
                 type = '负面';
                 break;
+            case 'NEG':
+                type = '负面';
+                break;
             case 'neu':
+                type = '中性';
+                break;
+            case 'NEU':
                 type = '中性';
                 break;
         }
