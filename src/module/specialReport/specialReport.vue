@@ -12,20 +12,29 @@
                         <div class="report-content">
                             <report-text></report-text>
                             <report-title :title="title1_1"></report-title>
+                            <report-describe v-html="totalTitleText"></report-describe>
+                            <report-describe v-html="totalTitleTextOne"></report-describe>
                             <report-title :title="title2"></report-title>
                             <pie-chart :chartConfig="mediaReportAnalysisPie"></pie-chart>
+                            <report-describe v-html="mediaReportAnalysisPieText"></report-describe>
                             <report-title :title="title2_1_2"></report-title>
                             <bar-chart :chartConfig="newsCountBar"></bar-chart>
+                            <report-describe v-html="newsCountBarText"></report-describe>
                             <report-title :title="title2_1_3"></report-title>
                             <bar-chart :chartConfig="mediaReportTrendBar"></bar-chart>
+                            <report-describe v-html="mediaReportTrendBarText"></report-describe>
                             <report-title :title="title2_1_4"></report-title>
-                            <bar-chart :chartConfig="accidentReportBar"></bar-chart>
+                            <bar-chart :chartConfig="netizenTitleBar"></bar-chart>
+                            <report-describe v-html="netizenTitleBarText"></report-describe>
                             <report-title :title="title2_1_5"></report-title>
                             <bar-chart :chartConfig="netizenConsensusBar"></bar-chart>
+                            <report-describe v-html="netizenConsensusBarText"></report-describe>
                             <report-title :title="title3_1_5_1"></report-title>
                             <map-chart :chartConfig="netizenMap"></map-chart>
+                            <report-describe v-html="netizenMapText"></report-describe>
                             <report-title :title="title3_1_5_2"></report-title>
                             <keywords-chart :chartConfig="keywordsChart"></keywords-chart>
+                            <report-describe v-html = "keywordsChartText"></report-describe>
                             <report-title :title="title3_1_5_3"></report-title>
                             <pie-chart :chartConfig="netizenOptionPie"></pie-chart>
                         </div>
@@ -89,7 +98,15 @@
                     text: '网民主要观点分布',
                     levelClass: 'level-two'
                 },
-
+                netizenTitleBarText:'',
+                netizenConsensusBarText:'',
+                mediaReportAnalysisPieText:'',
+                newsCountBarText:"",
+                totalTitleText:"",
+                totalTitleTextOne:"",
+                netizenMapText:'',
+                keywordsChartText:'',
+                mediaReportTrendBarText:"",
                 mediaReportAnalysisPie: {
                     chartId: 'media-report-analysis-pie',
                     option: {},
@@ -117,7 +134,7 @@
                         }
                     }
                 },
-                accidentReportBar: {
+                netizenTitleBar: {
                     chartId: 'accident-report-bar',
                     option: {},
                     events: {
@@ -176,7 +193,7 @@
             this.getMediaReportAnalysisPie();//媒体报道分析饼图
             this.getNewsCountBar();//新闻舆情对比柱图
             this.getMediaReportTrendBar();//媒体报道走势柱图
-            this.getAccidentReportBar();//网民舆论热点柱图
+            this.getNetionTitleBar();//网民舆论热点柱图
             this.getNetizenConsensusBar();//网民舆论情况柱图
             this.getNetizenMap();//网民地图分布
             this.getKeywordsChart();//热点词云
@@ -185,8 +202,11 @@
         methods: {
             getMediaReportAnalysisPie: function() {
                 var self = this;
-                service.actions. getMediaReportAnalysisPie().then(function (option) {
-                    self.mediaReportAnalysisPie.option =  option;
+                service.actions.getMediaReportAnalysisPie().then(function (renderData) {
+                    self.mediaReportAnalysisPie.option = renderData.option;
+
+                    self.mediaReportAnalysisPieText=renderData.description;
+                    self.totalTitleText= renderData.descriptiontwo
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -195,49 +215,67 @@
             getNewsCountBar:function(){
 
                 var self = this;
-                service.actions. getNewsCountBar().then(function (option) {
-                    self.newsCountBar.option =  option;
+                service.actions.getNewsCountBar().then(function (renderData) {
+                    self.newsCountBar.option =  renderData.option;
+                    self.newsCountBarText=renderData.description;
+//                    self.totalTitleTextOne=renderData.descriptionthree;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
             getMediaReportTrendBar:function(){
-
-            },
-            getAccidentReportBar: function () {
                 var self = this;
-                service.actions.getAccidentReportBar().then(function (option) {
-                    self.accidentReportBar.option =  option;
+                service.actions. getMediaReportTrendBar().then(function (renderData) {
+                    self.mediaReportTrendBar.option = renderData.option;
+                    self.mediaReportTrendBarText=renderData.description
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getNetionTitleBar: function () {
+                var self = this;
+                service.actions.getNetionTitleBar().then(function (renderData) {
+                    self.netizenTitleBar.option =  renderData.option;
+                    self.netizenTitleBarText = renderData.description;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
             getNetizenConsensusBar: function () {
                 var self = this;
-                service.actions.getNetizenConsensusBar().then(function (option) {
-                    self.netizenConsensusBar.option =  option;
+                service.actions.getNetizenConsensusBar().then(function (renderData) {
+                    self.netizenConsensusBar.option =  renderData.option;
+                    self.netizenConsensusBarText = renderData.description;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
             getNetizenMap: function () {
-//                var self = this;
-//                service.actions.getNetizenMap().then(function (option) {
-//                    self.netizenMap.option =  option;
-//                }, function (error) {
-//                    console.error('出错了', error);
-//                })
+                var self = this;
+                service.actions.getNetizenMap().then(function (renderData) {
+                    self.netizenMap.option =  renderData.option;
+                    self.netizenMapText = renderData.description;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
             },
             getKeywordsChart: function () {
+                var self = this;
+                service.actions.getKeywordsChart().then(function(renderData) {
+                    self.keywordsChart.option = renderData.option;
+                    self.keywordsChartText = renderData.description;
+                },function (error) {
+                    console.error('出错了',error);
+                })
 
             },
             getNetizenOptionPie: function() {
-//                var self = this;
-//                service.actions.getNetizenOptionPie().then(function(option) {
-//                    self.netizenOptionPie.option = option;
-//                },function (error) {
-//                    console.error('出错了',error);
-//                })
+                var self = this;
+                service.actions.getNetizenOptionPie().then(function(option) {
+                    self.netizenOptionPie.option = option;
+                },function (error) {
+                    console.error('出错了',error);
+                })
             }
         }
     }

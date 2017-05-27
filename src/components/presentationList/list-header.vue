@@ -1,14 +1,15 @@
 <template>
     <div class="list-header">
-        <div class="title">{{title}}</div>
+        <div class="title">{{wqName}}</div>
     </div>
 </template>
 
 <script>
     export default {
+        props: ['wqName'],
         data: function () {
             return {
-                title: '往期月报',
+                //title: '往期报告',
             }
         }
     }

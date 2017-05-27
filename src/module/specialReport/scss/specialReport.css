@@ -50,7 +50,7 @@ body {
     height: 400px; }
   .report-content #accident-report-bar {
     margin: auto;
-    width: 1200px;
+    width: 800px;
     height: 400px; }
   .report-content #netizen-consensus-bar {
     margin: auto;
@@ -68,5 +68,14 @@ body {
     margin: auto;
     width: 800px;
     height: 400px; }
+  .report-content .highlight {
+    color: #EB7E23;
+    font-size: 24px;
+    font-weight: 700; }
+  .report-content .descript-text {
+    font-size: 24px;
+    text-indent: 2em;
+    font-weight: 400;
+    line-height: 40px; }
 
 /*# sourceMappingURL=specialReport.css.map */

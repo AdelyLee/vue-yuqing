@@ -6,7 +6,6 @@
 </template>
 
 <script>
-    import echarts from 'echarts'
     import Chart from '../../../../lib/draw-echarts'
     export default {
         props: ['chartConfig'],

@@ -3,7 +3,49 @@
 
 .report-content {
     padding: 10px 80px;
+    .outline {
+        text-align: center;
+        border: 1px solid #7DB5EE;
+        -webkit-box-shadow: 0 0 10px #1D90E6;
+        -moz-box-shadow: 0 0 10px #1D90E6;
+        box-shadow: 0 0 10px #1D90E6;
+        border-radius: 5px;
+        font-size: 20px;
+        min-height: 50px;
+        margin: 50px;
+        margin-bottom: 20px;
+        line-height: 50px;
+        font-weight: 600;
+        div {
+            display: inline-block;
+        }
 
+        .listNum {
+            color: #EB7E23;
+            font-size: 24px;
+        }
+        .percent {
+            color: #7BDF86;
+            font-size: 24px;
+        }
+    }
+    .title {
+        &.level-one {
+            color: #333;
+            font-size: 26px;
+            line-height: 78px;
+        }
+        &.level-two {
+            color: #555;
+            font-size: 18px;
+            line-height: 50px;
+        }
+        &.level-three {
+            color: #777;
+            font-size: 16px;
+            line-height: 40px;
+        }
+    }
     .describe-text {
         text-indent: 2em;
         color: #000000;
@@ -31,16 +73,16 @@
         width: 800px;
         height: 400px;
     }
-    #media-bar-chart{
+    #media-bar-chart {
         margin: auto;
         width: 800px;
-        height: 500px;
+        height: 400px;
     }
 
     #article-trend-chart {
         margin: auto;
-        width: 800px;
-        height: 500px;
+        width: 1200px;
+        height: 400px;
     }
     #news-hot-point {
         margin: auto;
@@ -57,18 +99,23 @@
         width: 800px;
         height: 400px;
     }
-    #map-chart-test {
+    #accident-map-chart {
         margin: auto;
         width: 800px;
         height: 500px;
     }
-    #comment-pie-chart{
+    #comment-pie-chart {
         margin: auto;
-        width: 800px;
-        height: 500px;
+        width: 1200px;
+        height: 600px;
     }
 
-    #keywords-chart-test{
+    #hot-keywords-chart {
+        margin: auto;
+        width: 400px;
+        height: 300px;
+    }
+    #comment-keywords-chart {
         margin: auto;
         width: 400px;
         height: 300px;

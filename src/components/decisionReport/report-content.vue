@@ -1,13 +1,13 @@
 <template>
     <div class="report-content">
-        <div class="title" v-if="briefingJson.outline">{{briefingJson.outline}}</div>
+        <div class="outline" v-if="briefingJson.outline" v-html="briefingJson.outline">{{briefingJson.outline}}</div>
         <div v-for="item of briefingCells">
-            <div class="title" v-if="item.title">{{item.title}}</div>
+            <div class="title" v-bind:class="[item.level]" v-if="item.title" v-html="item.title">{{item.title}}</div>
             <line-bar-chart v-if="item.chartType=='bar' || item.chartType=='line'" :chartConfig="item"></line-bar-chart>
             <pie-chart v-if="item.chartType=='pie'" :chartConfig="item"></pie-chart>
             <map-chart v-if="item.chartType=='map'" :chartConfig="item"></map-chart>
             <keywords-chart v-if="item.chartType=='keywordsCloud'" :chartConfig="item"></keywords-chart>
-            <div class="description" v-if="item.description">{{item.description}}</div>
+            <div class="description" v-if="item.description" v-html="item.description">{{item.description}}</div>
         </div>
     </div>
 </template>

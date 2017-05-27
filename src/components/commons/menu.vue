@@ -15,6 +15,8 @@
             <el-menu-item index="6" class="item_li"><a href="../module/presentationList.html">决策报告列表</a></el-menu-item>
             <el-menu-item index="7" class="item_li"><a href="../module/sentimentSearch.html">舆情搜索</a></el-menu-item>
             <el-menu-item index="8" class="item_li"><a href="../module/specialReport.html" target = "_blank">专报</a></el-menu-item>
+            <el-menu-item index="8" class="item_li"><a href="../module/currentSpecialReport.html" target = "_blank">当前专报</a></el-menu-item>
+
         </el-menu>
     </div>
 </template>
@@ -38,7 +40,7 @@
 <style scoped>
     .item_li{
         font-size: 16px!important;
-        margin-right: 20px!important;
+        margin-right: 10px!important;
         font-weight: 600;
     }
     a{

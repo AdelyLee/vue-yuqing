@@ -45,19 +45,26 @@
             getBriefingJson: function () {
                 var self = this;
                 service.actions.getBriefingJson().then(function (briefingJson) {
-                    self.briefingJson = briefingJson;
+                    briefingJson.type = self.briefingType(briefingJson.type);
 
                     // render briefing json
-                    self.renderBriefingJson(self.briefingJson.briefingBody);
+                    self.renderBriefingJson(briefingJson.briefingBody);
+                    // delete briefing json briefing body
+                    delete briefingJson.briefingBody;
+                    self.briefingJson = briefingJson;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
             renderBriefingJson: function (briefingBody) {
-                var briefingCells = [];
+                var self = this, briefingCells = [];
 
                 function analysisArray(briefingBody) {
                     briefingBody.forEach(function (item) {
+                        // if item.option is {} there is error to parse json string to object.
+                        if (item.option && typeof item.option != "object") {
+                            item.option = JSON.parse(item.option);
+                        }
                         briefingCells.push(item);
                         if (item.children != undefined && item.children.length > 0) {
                             analysisArray(item.children)
@@ -67,7 +74,36 @@
 
                 analysisArray(briefingBody);
 
-                this.briefingCells = briefingCells;
+                self.briefingCells = briefingCells;
+            },
+
+            briefingType: function (type) {
+                var briefingType = "";
+                switch (type) {
+                    case 'DAILY':
+                        briefingType = "日报";
+                        break;
+                    case 'WEEKLY':
+                        briefingType = "周报";
+                        break;
+                    case 'MONTHLY':
+                        briefingType = "月报";
+                        break;
+                    case 'QUQRTERLY':
+                        briefingType = "季报";
+                        break;
+                    case 'ASEMIANNUAL':
+                        briefingType = "半年报";
+                        break;
+                    case 'ANNUAL':
+                        briefingType = "年报";
+                        break;
+                    case 'SPICEL':
+                        briefingType = "专报";
+                        break;
+                }
+
+                return briefingType;
             }
 
         }

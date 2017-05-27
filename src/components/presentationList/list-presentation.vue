@@ -2,7 +2,7 @@
     <el-row class="content">
     <div class="list-presentation" v-for="list in items">
         <div class="list-presentation_bor">
-             <div class="times_bt">{{list.time}}</div>
+             <div class="times_bt">{{new Date(list.time).toLocaleString().substr(0,10)}}</div>
              <el-row>
                 <el-col :span="16" class="title">
                   {{list.title}}
@@ -15,31 +15,40 @@
             </el-row>
         </div>
     </div>
+        <list-page :pageList="limits" :page="pages"></list-page>
     </el-row>
 </template>
 <script>
     //import service from '../../vuex/module/presentation.js'
+    import Paging from '@/components/presentationList/paging';
     import $ from 'jquery'
-    import commons from '../../vuex/module/common'
+    import common from '../../vuex/module/common'
     export default {
+        props: ['checkedName'],
         data () {
                return{
                 preview: '预览',
                 download: '下载',
                    items:[],
-//                presentation: {
-//                    Id: 'listpresentation',
-//                    events: {
-//                        'click': function (param) {
-//                            console.log(param.name);
-//                        }
-//                    }
-//                },
+                   limits:0,
+                   pages:1,
                }
         },
+        components: {
+            'list-page': Paging,
+        },
         mounted () {
-            debugger;
                 var self = this;
+//                var typelist="";
+//                if(self.checkedName == 'monthlyReport'){
+//                    typelist = 'MONTHLY';
+//                }
+//                if(self.checkedName == 'weeklyReport'){
+//                    typelist = 'WEEKLY';
+//                }
+//                if(self.checkedName == 'specialReport'){
+//                    typelist = 'SPICEL';
+//                }
                 var param = {
                     "date": {
                         "startDate": "2017-01",
@@ -49,50 +58,35 @@
                         "limit": 10,
                         "page": 1
                     },
-                    "type": "MONTHLY"
+                    "type":'MONTHLY'
                 };
                 $.ajax({
-                    url: commons.url.esUrl + '/briefing/search',
+                    url: common.url.webserviceUrl + '/briefing/search',
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(param),
                     type: 'post',
                     success: function (data) {
+                        self.limits = data.size;
+                        self.pages = data.totalPages;
+                        console.log(self.limits);
+                        console.log(self.pages);
                         var datas = data.content;
                         var seriesData = [];
                         var lengeds = [];
-                        var newDate = new Date();
                         $.each(datas, function (i, item) {
                             var node = {};
                             node.title = item.title;
                             node.time = item.dateCreated;
                             node.id = item.id;
-                            formatDateTime(node.time);
                             seriesData.push(node);
-                            lengeds.push(node.title)
+                            lengeds.push(node.title);
                         });
-                        console.log(seriesData);
                         self.items = seriesData;
                     }.bind(this),
                     error: function (error) {
                         console.error('出错了', error);
                     }
                 });
-               function formatDateTime(time) {
-                var date = new Date(time);
-                var y = date.getFullYear();
-                var m = date.getMonth() + 1;
-                m = m < 10 ? ('0' + m) : m;
-                var d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                var h = date.getHours();
-                h = h < 10 ? ('0' + h) : h;
-                var minute = date.getMinutes();
-                var second = date.getSeconds();
-                minute = minute < 10 ? ('0' + minute) : minute;
-                second = second < 10 ? ('0' + second) : second;
-                return y + '-' + m + '-' + d;
-
-            };
         },
         methods: {
             changer: function (id) {
@@ -101,7 +95,13 @@
             target: function (name) {
                 window.open('https://www.baidu.com#name=' + name);
             }
-        }
+        },
+//        watch: {
+//            checkedName: function (val, oldVal) {
+//                console.log(this.checkedName);
+//                console.log('new: %s, old: %s', val, oldVal);
+//            }
+//        }
     }
 </script>
 

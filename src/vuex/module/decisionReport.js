@@ -10,7 +10,7 @@ const actions = {
     getBriefingJson: function () {
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: 'http://localhost:8081/briefingJson.json',
+                url: common.url.webserviceUrl + '/briefing/detail/5928035494cdbe0088dce147',
                 type: 'get',
                 success: function (data) {
                     resolve(data);
@@ -91,23 +91,13 @@ const actions = {
                     // 拼装 chart option
                     var seriesData = [];
                     var lengeds = [];
-                    var temps=["正面","负面","中性"];
-                    for(var j=0;j<temps.length;j++){
-                        var node = {value:0};
-                        for(var i=0;i<data.length;i++) {
-                            node.name = emotion.resetEmotionTypeName(data[i].key);
-                            if(node.name==temps[j]){
-                                node.value += data[i].value;
-                            }
-
-
-                        };
-                        node.name=temps[j]
+                    $.each(data,function(i,item){
+                        var node = {};
+                        node.name = emotion.resetEmotionTypeName(item.key);
+                        node.value=item.value;
                         seriesData.push(node);
                         lengeds.push(node.name)
-                    }
-
-
+                    })
                     var option = {
                         tooltip: {
                             trigger: 'item',
@@ -351,6 +341,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    console.log(data);
                     var seriesData = [];
                     var xAxisData = [];
                     data = data.sort(function (a, b) {
@@ -414,70 +405,24 @@ const actions = {
             });
         });
     },
-    //相关评论
-    getCommentPieChart: function () {
+    // 相关言论
+    getCommentPieChart:function(){
         var param = {
-            method: 'get',
-            params: {
-                mustWord: '事故@安全生产',
-                startDate: '2017-01',
-                endDate: '2017-02'
-            }
-        };
+            "endDate": "2017-02",
+            "startDate": "2017-01"
+        }
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findByMustShouldDateInType.json',
-                data: param,
-                type: 'get',
+                url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
+                data: JSON.stringify(param),
+                type: 'Post',
+                contentType:"application/json;charset=utf-8",
                 success: function (data) {
-                    // 拼装 chart option
+                    console.log(data)
                     data = data.sort(function (a, b) {
                         return b.value - a.value;
                     });
-                    var news = {};
-                    var weiBo = {}
-                    var pinglun = {};
-                    var tieba = {};
-                    var luntan = {}
-                    var total = 0;
-
-                    var seriesData = [];
-                    var lengeds = [];
-                    $.each(data, function (i, item) {
-                        seriesData.push(utils.resetArticleTypeName(item.key));
-
-                    });
-                    for (var j = 0; j < seriesData.length; j++) {
-                        $.each(data, function (i, item) {
-                            // var node = {};
-                            // var temp="";
-                            var temp = utils.resetArticleTypeName(item.key);
-                            if (seriesData[j] == temp) {
-                                switch (temp) {
-                                    case "新闻":
-                                        news.name = temp, news.value = parseInt(item.value);
-                                        break;
-                                    case "微博":
-                                        weiBo.name = temp, weiBo.value = parseInt(item.value);
-                                        break;
-                                    case "论坛":
-                                        luntan.name = temp, luntan.value = parseInt(item.value);
-                                        break;
-                                    case "贴吧":
-                                        tieba.name = temp, tieba.value = parseInt(item.value);
-                                        break;
-                                    case "评论":
-                                        pinglun.name = temp, pinglun.value = parseInt(item.value);
-                                        break;
-
-                                }
-                                ;
-                                lengeds.push(temp)
-                            }
-
-                        });
-                    }
-
+                    $.each()
                     var dataStyle = {
                         normal: {
                             label: {show: false},
@@ -504,101 +449,107 @@ const actions = {
                         },
                         series: [
                             {
-                                name: '新闻',
+                                name:data[0].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius: [160, 180],
+                                radius:[180,200],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
-                                    value: news.value
+                                    value:data[0].value
                                 },
                                     {
-                                        value: numberLength.resetNumberType(news.value),
+                                        value:4,
+                                        // value: numberLength.resetNumberType(data[0].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
                             },
                             {
-                                name: '微博',
+                                name:data[1].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius: [180, 200],
+                                radius:[160,180],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
-                                    value: weiBo.value
+
+                                    value:data[1].value
                                 },
                                     {
-                                        value: numberLength.resetNumberType(weiBo.value),
+                                        value:14,
+                                        // value: numberLength.resetNumberType(data[1].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
 
                                 ]
                             },
-
                             {
-                                name: '论坛',
+                                name:data[2].key,
                                 type: 'pie',
                                 clockWise: false,
                                 hoverAnimation: false,
                                 center: ['50%', '50%'],
-                                radius: [100, 120],
+                                radius:[140,160],
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value: luntan.value
+                                        value:data[2].value
                                     },
                                     {
-                                        value: numberLength.resetNumberType(luntan.value),
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-                            {
-                                name: '评论',
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                hoverAnimation: false,
-                                radius: [140, 160],
-                                itemStyle: dataStyle,
-                                data: [
-                                    {
-                                        value: pinglun.value
-                                    },
-                                    {
-                                        value: numberLength.resetNumberType(pinglun.value),
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-                            {
-                                name: '贴吧',
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                hoverAnimation: false,
-                                radius: [120, 140],
-                                itemStyle: dataStyle,
-                                data: [
-                                    {
-                                        value: tieba.value
-                                    },
-                                    {
-                                        value: numberLength.resetNumberType(tieba.value),
+                                        // value: numberLength.resetNumberType(data[2].value),
+                                        value:24,
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
                             },
 
+
+                            {
+                                name:data[3].key,
+                                type: 'pie',
+                                clockWise: false,
+                                center: ['50%', '50%'],
+                                radius:[120,140],
+                                hoverAnimation: false,
+                                itemStyle: dataStyle,
+                                data: [
+                                    {
+                                        value:data[3].value
+                                    },
+                                    {
+                                        // value: numberLength.resetNumberType(data[3].value),
+                                        value:34,
+                                        name: 'invisible',
+                                        itemStyle: placeHolderStyle
+                                    }
+                                ]
+                            },
+                            {
+                                name:data[4].key,
+                                type: 'pie',
+                                clockWise: false,
+                                center: ['50%', '50%'],
+                                radius:[100,120],
+                                hoverAnimation: false,
+                                itemStyle: dataStyle,
+                                data: [
+                                    {
+                                        value:data[4].value
+                                    },
+                                    {
+                                        // value: numberLength.resetNumberType(data[4].value),
+                                        name: 'invisible',
+                                        value:44,
+                                        itemStyle: placeHolderStyle
+                                    }
+                                ]
+                            },
 
                         ]
                     };
@@ -607,15 +558,16 @@ const actions = {
                 error: function (error) {
                     reject(error);
                 }
-            });
-        });
+            })
+
+        })
     },
+
     getArticleHotPointChart: function () {
         var param = {
-
-                groupName: 'title.raw',
-                s_date: '2017-01',
-                e_date: '2017-02'
+            groupName: 'title.raw',
+            s_date: '2017-01',
+            e_date: '2017-02'
 
         };
         return new Promise(function (resolve, reject) {
@@ -625,32 +577,37 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    data.sort(function (a, b) {
+                        return a.value -b.value;
+                    });
                     var new_data = [];
                     if(data.length>6) {
                         new_data = data.slice(0,6);
                     }else {
                         new_data = data;
                     }
-                    // 拼装 chart option
-                    var seriesData = [];
-                    var yAxisData = [];
-                    // data = data.sort(function (a, b) {
-                    //     return a.value -b.value;
-                    // });
-                    $.each(new_data, function(i, item){
-                        seriesData.push(item.value);
-                        yAxisData.push(item.key);
-                    });
-                    var option = {
-                        legend: {},
-                        yAxis: {
-                            type: 'category',
-                            data: yAxisData,
-                            axisLabel: {
-                                textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
-                                }
+
+
+                                // 拼装 chart option
+                                var seriesData = [];
+                                var yAxisData = [];
+                                // data = data.sort(function (a, b) {
+                                //     return a.value -b.value;
+                                // });
+                                $.each(new_data, function (i, item) {
+                                    seriesData.push(item.value);
+                                    yAxisData.push(item.key);
+                                });
+                                var option = {
+                                    legend: {},
+                                    yAxis: {
+                                        type: 'category',
+                                        data: yAxisData,
+                                        axisLabel: {
+                                            textStyle: {
+                                                fontWeight: 700,
+                                                fontSize: 20
+                                            }
                             }
                         },
                         grid: {
@@ -685,20 +642,21 @@ const actions = {
                                             ];
                                             return colorList[params.dataIndex % 15]
                                         }
-                                    }
-                                }
-                            }
-                        ]
-                    };
+                                    },
 
-                    resolve(option);
+                                            }
+                                        }
+                                    ]
+                                };
+
+                                resolve(option);
+                            },
+                            error: function (error) {
+                                reject(error);
+                            }
+                        });
+                    });
                 },
-                error: function (error) {
-                    reject(error);
-                }
-            });
-        });
-    },
     getMonthAccidentChart: function () {
         var param = {
             "endDate": "2017-02",
@@ -712,18 +670,18 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.sort(function (a, b) {
-                        return b.value -a.value;
+                        return b.value - a.value;
                     });
                     var new_data = [];
-                    if(data.length>6) {
-                        new_data = data.slice(0,6);
-                    }else {
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
                         new_data = data;
                     }
                     // 拼装 chart option
                     var seriesData = [];
                     var yAxisData = [];
-                    $.each(new_data, function(i, item){
+                    $.each(new_data, function (i, item) {
                         seriesData.push(item.value);
                         yAxisData.push(item.key);
                     });
@@ -736,6 +694,9 @@ const actions = {
                                 textStyle: {
                                     fontWeight: 700,
                                     fontSize: 20
+                                },
+                                formatter:function(value, index) {
+                                    return value.length>20?value.substr(0,20)+"...":value;
                                 }
                             }
                         },
@@ -757,17 +718,17 @@ const actions = {
                         },
                         series: [
                             {
-                                name:'舆论热点',
-                                type:'bar',
+                                name: '舆论热点',
+                                type: 'bar',
                                 data: seriesData,
                                 itemStyle: {
                                     normal: {
-                                        color: function(params) {
+                                        color: function (params) {
                                             // build a color map as your need.
                                             var colorList = [
-                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                             ];
                                             return colorList[params.dataIndex % 15]
                                         }
@@ -813,7 +774,7 @@ const actions = {
                 success: function (data) {
                     // 拼装 chart option
                     var seriesData = [];
-                    $.each(data, function(i, item){
+                    $.each(data, function (i, item) {
                         var node = {};
                         node.name = item.id;
                         node.value = item.count;
@@ -827,8 +788,8 @@ const actions = {
                         legend: {},
                         series: [
                             {
-                                name:'事故类型',
-                                type:'pie',
+                                name: '事故类型',
+                                type: 'pie',
                                 radius: ['0%', '55%'],
                                 // roseType : 'area',
                                 label: {
@@ -842,12 +803,12 @@ const actions = {
                                 data: seriesData,
                                 itemStyle: {
                                     normal: {
-                                        color: function(params) {
+                                        color: function (params) {
                                             // build a color map as your need.
                                             var colorList = [
-                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                             ];
                                             return colorList[params.dataIndex % 15]
                                         }
@@ -893,14 +854,16 @@ const actions = {
                 success: function (data) {
                     var maxCount = 0;
                     var seriesData = [];
-                    $.each(data, function(i, item){
+                    $.each(data, function (i, item) {
                         var node = {};
                         node.name = item.id;
                         node.value = item.count;
                         seriesData.push(node);
                     });
-                    seriesData.sort(function(a,b) {return b.value-a.value});
-                    maxCount = seriesData[0].value==undefined?10:seriesData[0].value;
+                    seriesData.sort(function (a, b) {
+                        return b.value - a.value
+                    });
+                    maxCount = seriesData[0].value == undefined ? 10 : seriesData[0].value;
                     var option = {
                         tooltip: {
                             trigger: 'item',
@@ -911,13 +874,13 @@ const actions = {
                             max: maxCount,
                             left: 'left',
                             top: 'bottom',
-                            text: ['高','低'],           // 文本，默认为数值文本
+                            text: ['高', '低'],           // 文本，默认为数值文本
                             calculable: true
                         },
                         series: [
                             {
-                                name:'事故起数',
-                                type:'map',
+                                name: '事故起数',
+                                type: 'map',
                                 mapType: 'china',
                                 label: {
                                     normal: {
@@ -946,6 +909,7 @@ const actions = {
     getArticleHotKeyWordsChart: function () {
 
     }
+
 
 }
 const utils = {
@@ -976,20 +940,11 @@ const emotion = {
     resetEmotionTypeName: function (source) {
         var type = '';
         switch (source) {
-            case 'pos':
-                type = '正面';
-                break;
             case 'POS':
                 type = '正面';
                 break;
-            case 'neg':
-                type = '负面';
-                break;
             case 'NEG':
                 type = '负面';
-                break;
-            case 'neu':
-                type = '中性';
                 break;
             case 'NEU':
                 type = '中性';

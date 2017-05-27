@@ -1,5 +1,5 @@
 <template>
-    <div :id="describe.Id" class="report-describe" >
+    <div class="report-describe" >
     </div>
 </template>
 
