@@ -3,33 +3,81 @@
  */
 import $ from 'jquery'
 import common from './common'
+import dateUtil from '../dateUtil'
+import queryParam from '../utils'
+import typeParam from '../typeUtil'
 const searchData = {
-    searchParam:function ( ) {
-        var searchId = window.location.search.substr(4);
+    searchParam: function () {
+        var searchId = queryParam.utils.getQueryVariable('id');
         var search = {};
-            $.ajax({
-                url:common.url.webserviceUrl+'/customSubject/'+searchId,
-                type:'get',
-                async:false,
-                success:function(data){
-                    data.startDate = new Date(data.startDate).toJSON().substr(0,new Date(data.startDate).toJSON().indexOf("T"));
-                    data.endDate = new Date(data.endDate).toJSON().substr(0,new Date(data.endDate).toJSON().indexOf("T"));
-                    search = data;
-                },
-                error: function(error) {
+        $.ajax({
+            url: common.url.webserviceUrl + '/customSubject/' + searchId,
+            type: 'get',
+            async: false,
+            success: function (data) {
+                // 如果searchId为空
+                if (data.content && data.content.length > 1) {
+                    data = data.content[0];
                 }
-            })
+
+                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
+                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
+
+                search = data;
+            },
+            error: function (error) {
+            }
+        });
+
         return search;
     }
-}
+};
 const actions = {
-    //媒体报道情况分析
-    getMediaReportAnalysisPie: function () {
-
+    getBriefingJson: function () {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                // url: common.url.webserviceUrl + '/briefing/detail/5928035494cdbe0088dce147',
+                url: 'http://192.168.0.12:8081/briefingJson.json',
+                type: 'get',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+    // 與情综述描述
+    getSpecialSummarize: function () {
+        var renderData = {};
+        var mySearch = searchData.searchParam();
         var param = {
-                groupName:'type',
-                mustWord: '事故@安全生产',
+            mustWord: mySearch.mustWord,
+            mustNotWord: mySearch.mustNotWord,
+            shouldWord: mySearch.shouldWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
+        return new Promise(function (resolve, reject) {
+            var option = {};
+            var description = "调查报告发布至今,共产生相关话题的报道3375篇,其中新闻媒体报道3362篇,成为本次话题最主要的舆论传播阵地";
+            renderData.description = description;
+            renderData.option = option;
 
+            resolve(renderData);
+        });
+    },
+    //媒体报道情况分析
+    getArticleTypeChart: function () {
+        var mySearch = searchData.searchParam();
+        var param = {
+            groupName: 'type',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -38,45 +86,46 @@ const actions = {
                 type: 'get',
                 success: function (data) {
                     // 拼装 chart option
-                    var total=0;
-                    var renderData={};
+                    var total = 0;
+                    var renderData = {};
                     var seriesData = [];
                     $.each(data, function (i, item) {
                         var node = {};
-                        node.name = utils.resetArticleTypeName(item.key);
+                        node.name = typeParam.typeUtil.sentimentType(item.key);
                         node.value = item.value;
-                        seriesData.push(node)
-                        total+=item.value
+                        seriesData.push(node);
+                        total += item.value;
                     });
-                   var option = {
-                        tooltip : {
+                    var option = {
+                        tooltip: {
                             trigger: 'item',
                             formatter: "{a} <br/>{b} : {c} ({d}%)"
                         },
-                        legend: {
-                        },
-                        calculable : true,
-                        series : [
+                        legend: {},
+                        calculable: true,
+                        series: [
                             {
-                                name:'媒体报道分析',
-                                type:'pie',
-                                radius : [30, 110],
-                                center : ['55%', '50%'],
-                                roseType : 'area',
-                                data:seriesData
+                                name: '媒体报道分析',
+                                type: 'pie',
+                                radius: [30, 110],
+                                center: ['55%', '50%'],
+                                roseType: 'area',
+                                data: seriesData
                             }
                         ]
                     };
 
-                    var tempHtml="";
-                      for(var i=0;i<seriesData.length;i++){
-                          tempHtml+='<span class = "highlight">'+seriesData[i].name+'</span>媒体报道<span class = "highlight">'+seriesData[i].value+'</span>篇,信息量占总量的<span class = "highlight">'+((seriesData[i].value/total)*100).toFixed(1)+'%</span>,';
-
-                      }
-
-                    renderData.description = "<div class = 'descript-text'>2017年2月至2017年3月,有关<span class = 'highlight'>国务院批复结案湖南林州 6.26 特大交通事故的</span>相关话题共计产生各类报道<span class = 'highlight'>"+total+"</span>篇。其中"+tempHtml+"</div>";
+                    var itemsStr = "";
+                    seriesData.forEach(function (item, i) {
+                        if (i < 3) {
+                            itemsStr += "<span class='describe-redText'>" + item.name + item.value + "(" + (item.value * 100 / total).toFixed(2) + "%)</span>、";
+                        }
+                    });
+                    itemsStr = itemsStr.substring(0, itemsStr.length - 1) + "。";
+                    var description = "<div class='describe-text'>根据互联网抓取的数据，对数据载体进行分析，共抓取数据<span class='describe-redText'>" + total + "</span>条，其中排名前三的为" + itemsStr + "</div>";
+                    renderData.descriptiontwo = "<div class = 'describe-text'>调查报告发布至今,共产生相关话题的报道<span class = 'describe-redText'>" + total + "</span>篇,其中<span class = 'describe-redText'>" + seriesData[0].name + "</span>媒体报道<span class = 'describe-redText'>" + seriesData[0].value + "</span>篇,成为本次话题最主要的舆论传播阵地。</div>";
                     renderData.option = option;
-                    renderData.descriptiontwo = "<div class = 'descript-text'>调查报告发布至今,共产生相关话题的报道<span class = 'highlight'>"+total+"</span>篇,其中<span class = 'highlight'>"+seriesData[0].name+"</span>媒体报道<span class = 'highlight'>"+seriesData[0].value+"</span>篇,成为本次话题最主要的舆论传播阵地。</div>";
+                    renderData.description = description;
 
                     resolve(renderData);
                 },
@@ -87,156 +136,150 @@ const actions = {
         });
     },
     //新闻客户端舆情量对比
-    getNewsCountBar: function () {
-    var param = {
-        groupName: 'source.raw',
-        mustWord: '事故@安全生产',
-    };
-
-    return new Promise(function (resolve, reject) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
-            data: param,
-            type: 'get',
-            success: function (data) {
-                var renderData={};
-                var seriesData = [];
-                var xAxisData = [];
-                data = data.sort(function (a, b) {
-                    return b.value - a.value;
-                });
-                $.each(data, function (i, item) {
-                    seriesData.push(item.value);
-                    xAxisData.push(item.key.slice(0, 10));
-                });
-                var option = {
-                    legend: {},
-                    grid: {
-                        top:20,
-                        bottom: 180,
-                        left:120
-                    },
-                    yAxis: {
-                        axisLabel: {
-                            textStyle: {
-                                fontWeight: 700,
-                                fontSize: 20
-                            }
-                        }
-
-                    },
-                    xAxis: {
-                        data: xAxisData,
-                        axisLabel: {
-                            interval: 0,
-                            rotate: 30,
-                            textStyle: {
-                                fontWeight: 700,
-                                fontSize: 20
-                            }
-                        }
-                    },
-                    series: [
-                        {
-                            name: '媒体名称',
-                            type: 'bar',
-                            data: seriesData,
-                            itemStyle: {
-                                normal: {
-                                    color: function (params) {
-                                        // build a color map as your need.
-                                        var colorList = [
-                                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                                        ];
-                                        return colorList[params.dataIndex % 15]
-                                    }
-                                }
-                            }
-                        },{
-                            name: '媒体名称',
-                            type: 'line',
-                            data: seriesData,
-                            itemStyle: {
-                                normal: {
-                                    color: '#C1232B'
-                                }
-                            },
-                            lineStyle:{
-                                normal: {
-                                    color: '#C1232B'
-                                }
-                            }
-                        }
-                    ]
-                }
-                var top2=[];
-                var next3=[];
-                for(var i=0;i<2;i++){
-                    top2.push(xAxisData[i])
-                }
-                for(var i=2;i<5;i++){
-                    next3.push(xAxisData[i])
-                }
-                renderData.option = option;
-                renderData.description = "<div class = 'descript-text'><span class = 'highlight'>"+top2.join("、")+"</span>媒体新闻客户端对该话题保持了较高频次的关注和讨论量。<span class = 'highlight'>"+next3.join("、")+"</span>等媒体客户端也保持着较高的关注度。</div>";
-                // renderData.descriptionthree="尤其是<div class = 'highlight'>"+top2.join(",")+"</div>";
-                resolve(renderData);
-
-            },
-            error: function (error) {
-                reject(error);
-            }
-        });
-    });
-
-},
-    //媒体报道走势
-    getMediaReportTrendBar: function () {
-        var self = this;
+    getMediaBarChart: function () {
+        var mySearch = searchData.searchParam();
+        var param = {
+            groupName: 'site',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
-                async: true,
-                data: {
-                    s_date: '2017-02-01',
-                    e_date: '2017-04-01',
-                    dateType: 'day'
-                },
+                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
+                data: param,
                 type: 'get',
                 success: function (data) {
-                    var renderData={};
-                    var seriesData_a = [];
-                    var seriesData_b = [];
+                    var renderData = {};
+                    var seriesData = [];
                     var xAxisData = [];
-                    var heatMax_a = [], heatMax_b = [];
+                    data = data.sort(function (a, b) {
+                        return b.value - a.value;
+                    });
                     $.each(data, function (i, item) {
                         var node = {};
-                        var nodes = {};
-                        var month_name = item.key.substr(0, 7);
-                        if (month_name == "2017-02") {
-                            node.name = item.key.substr(8);
-                            node.value = item.value;
-                            heatMax_a = item.value;
-                            seriesData_a.push(node);
-                        } else if (month_name == "2017-03") {
-                            xAxisData.push(item.key.substr(8));
-                            nodes.name = item.key.substr(8);
-                            nodes.value = item.value;
-                            heatMax_b = item.value;
-                            seriesData_b.push(nodes);
+                        node.name = item.key;
+                        node.value = item.value;
+                        seriesData.push(node);
+                        xAxisData.push(item.key.slice(0, 10));
+                    });
+                    var option = {
+                        legend: {},
+                        grid: {
+                            top: 20,
+                            bottom: 180,
+                            left: 120
+                        },
+                        yAxis: {
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+
+                        },
+                        xAxis: {
+                            data: xAxisData,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 30,
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '媒体名称',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            },
+                        ]
+                    };
+                    var itemStr = "";
+                    seriesData.forEach(function (item, i) {
+                        if (i < 4) {
+                            itemStr += "<span class='describe-redText'>" + item.name + "(" + item.value + ")" + "</span>、";
                         }
                     });
 
-                    var max_a=max.maxNumber(seriesData_a);
-                    var max_b= max.maxNumber(seriesData_b);
+                    itemStr = itemStr.substring(0, itemStr.length - 1);
+
+                    var description = "<div class='describe-text'>根据互联网抓取的数据，主流媒体报道较多的是" + itemStr + "等。</div>";
+                    renderData.option = option;
+                    renderData.description = description;
+                    resolve(renderData);
+
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+
+    },
+    //媒体报道走势
+    getArticleTrendChart: function () {
+        var mySearch = searchData.searchParam();
+        var param = {
+            dateType: 'day',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupByTime.json',
+                async: true,
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var renderData = {};
+                    var total = 0, seriesData = [], xAxisData = [], indexOfMax = 0, maxDate = "", indexOfMin = 0, minDate = "", legendData = [];
+                    legendData.push("與情数目");
+                    for (var item of data) {
+                        var itemDate = dateUtil.dateUtil.parseDate(item.key);
+                        var itemDateStr = dateUtil.dateUtil.formatDate(itemDate, 'yyyy-MM-dd');
+                        xAxisData.push(itemDateStr);
+                        seriesData.push(item.value);
+                    }
+
+                    // 获取数据的最高点和最地点
+                    indexOfMax = seriesData.indexOf(Math.max.apply(Math, seriesData));
+                    maxDate = xAxisData[indexOfMax];
+                    indexOfMin = seriesData.indexOf(Math.min.apply(Math, seriesData));
+                    minDate = xAxisData[indexOfMin];
+
+                    // 获取所有数据总数
+                    seriesData.forEach(function (value) {
+                        total += value;
+                    });
+
                     var option = {
                         legend: {
                             x: 'right',
                             y: 'middle',
                             orient: 'vertical',
-                            data: ['2017年2月', '2017年3月']
+                            data: legendData
                         },
                         grid: {
                             left: '4%',
@@ -249,35 +292,41 @@ const actions = {
                             type: 'category',
                             boundaryGap: false,
                             data: xAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 16
+                                }
+                            }
                         },
                         yAxis: {
                             type: 'value',
                             axisLabel: {
                                 interval: 0,
-                                rotate: 35,
                                 textStyle: {
                                     fontWeight: 600,
-                                    fontSize: 14
+                                    fontSize: 18
                                 }
                             }
                         },
                         series: [
                             {
-                                name: '2017年2月',
+                                name: "與情数目",
                                 type: 'line',
-                                data: seriesData_a
-                            },
-                            {
-                                name: '2017年3月',
-                                type: 'line',
-                                data: seriesData_b
-
+                                data: seriesData
                             }
                         ]
                     };
-                    renderData.option = option;
-                    renderData.description = "<div class = 'descript-text'>从媒体报道走势来看,<span class = 'highlight'>"+option.legend.data[0]+"</span><span class = 'highlight'>"+max_a+"日</span>、<span class = 'highlight'>"+option.legend.data[1]+"</span><span class = 'highlight'>"+max_b+"日</span>是媒体报道高峰,随后话题热度出现直线下降。</div>";
 
+                    // make ArticleTypeChart description
+                    var description = '<div class="describe-text">根据最新舆情分析, 共抓取互联网数据'
+                        + '<span class="describe-redText">' + total + '</span>条，其中<span class="describe-redText">' + maxDate
+                        + '</span>日热度最高，共有数据<span class="describe-redText">' + seriesData[indexOfMax] + '</span>条。'
+                        + '<span class="describe-redText">' + minDate
+                        + '</span>日最低，共有数据<span class="describe-redText">' + seriesData[indexOfMin] + '</span>条。</div>';
+
+                    renderData.option = option;
+                    renderData.description = description;
                     resolve(renderData);
                 },
                 error: function (error) {
@@ -286,175 +335,16 @@ const actions = {
             });
         });
     },
-    //网络主要观点分布
-    getNetizenOptionPie:function(){
+    //　网民舆论热点
+    getArticleHotPointChart: function () {
+        var mySearch = searchData.searchParam();
         var param = {
-            "endDate": "2017-02",
-            "startDate": "2017-01"
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
-                data: JSON.stringify(param),
-                type: 'Post',
-                contentType:"application/json;charset=utf-8",
-                success: function (data) {
-                    data = data.sort(function (a, b) {
-                                        return b.value - a.value;
-                                    });
-                                    var dataStyle = {
-                                        normal: {
-                                            label: {show: false},
-                                            labelLine: {show: false},
-                                            shadowBlur: 40,
-                                            shadowColor: 'rgba(40, 40, 40, 0.5)',
-                                        }
-                                    };
-                                    var placeHolderStyle = {
-                                        normal: {
-                                            color: 'rgba(0,0,0,0)',
-                                            label: {show: false},
-                                            labelLine: {show: false}
-                                        },
-                                        emphasis: {
-                                            color: 'rgba(0,0,0,0)'
-                                        }
-                                    };
-                                    var option = {
-                                        color: ['#85b6b2', '#6d4f8d', '#cd5e7e', '#e38980', '#f7db88'],
-                                        tooltip: {
-                                            show: true,
-                                            formatter: "{a} <br/>{b} : {c} ({d}%)"
-                                        },
-                                        series: [
-                                            {
-                                                name:data[0].key,
-                                                type: 'pie',
-                                                clockWise: false,
-                                                center: ['50%', '50%'],
-                                                radius:[180,200],
-                                                itemStyle: dataStyle,
-                                                hoverAnimation: false,
-                                                data: [{
-                                                    value:data[0].value
-                                                    // value:95
-                                                },
-                                                    {
-                                                        value:4,
-                                                        // value: numberLength.resetNumberType(data[0].value),
-                                                        name: 'invisible',
-                                                        itemStyle: placeHolderStyle
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                name:data[1].key,
-                                                type: 'pie',
-                                                clockWise: false,
-                                                center: ['50%', '50%'],
-                                                radius:[160,180],
-                                                itemStyle: dataStyle,
-                                                hoverAnimation: false,
-                                                data: [{
-                                                    value:data[1].value
-                                                    // value:85
-                                                },
-                                                    {
-                                                        value:14,
-                                                        // value: numberLength.resetNumberType(data[1].value),
-                                                        name: 'invisible',
-                                                        itemStyle: placeHolderStyle
-                                                    }
-
-                                                ]
-                                            },
-                                            {
-                                                name:data[2].key,
-                                                type: 'pie',
-                                                clockWise: false,
-                                                hoverAnimation: false,
-                                                center: ['50%', '50%'],
-                                                radius:[140,160],
-                                                itemStyle: dataStyle,
-                                                data: [
-                                                    {
-                                                        value:data[2].value
-                                                        // value:75
-                                                    },
-                                                    {
-                                                        // value: numberLength.resetNumberType(data[2].value),
-                                                        value:24,
-                                                        name: 'invisible',
-                                                        itemStyle: placeHolderStyle
-                                                    }
-                                                ]
-                                            },
-
-
-                                            {
-                                                name:data[3].key,
-                                                type: 'pie',
-                                                clockWise: false,
-                                                center: ['50%', '50%'],
-                                                radius:[120,140],
-                                                hoverAnimation: false,
-                                                itemStyle: dataStyle,
-                                                data: [
-                                                    {
-                                                        value:data[3].value
-                                                        // value:65
-                                                    },
-                                                    {
-                                                        // value: numberLength.resetNumberType(data[3].value),
-                                                        value:34,
-                                                        name: 'invisible',
-                                                        itemStyle: placeHolderStyle
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                name:data[4].key,
-                                                type: 'pie',
-                                                clockWise: false,
-                                                center: ['50%', '50%'],
-                                                radius:[100,120],
-                                                hoverAnimation: false,
-                                                itemStyle: dataStyle,
-                                                data: [
-                                                    {
-                                                        value:data[4].value
-                                                        // value:55
-                                                    },
-                                                    {
-                                                        // value: numberLength.resetNumberType(data[4].value),
-                                                        name: 'invisible',
-                                                        value:44,
-                                                        itemStyle: placeHolderStyle
-                                                    }
-                                                ]
-                                            },
-
-                                        ]
-                                    };
-                                    resolve(option);
-                },
-                error: function (error) {
-                    reject(error);
-                }
-            })
-
-        })
-    },
-    getNetionTitleBar:function() {
-            var mySearch = {};
-            mySearch= searchData.searchParam();
-            var param = {
-                groupName: 'title.raw',
-                mustWord:mySearch.mustWord,
-                shouldWord:mySearch.shouldWord,
-                mustNotWord:mySearch.mustNotWord,
-                s_date: mySearch.startDate,
-                e_date: mySearch.endDate
+            groupName: 'title.raw',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -468,15 +358,15 @@ const actions = {
                         return a.value - b.value;
                     });
                     var new_data = [];
-                    if(data.length>6) {
-                        new_data = data.slice(0,6);
-                    }else {
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
                         new_data = data;
                     }
                     // 拼装 chart option
                     var seriesData = [];
                     var yAxisData = [];
-                    $.each(new_data, function(i, item){
+                    $.each(new_data, function (i, item) {
                         seriesData.push(item.value);
                         yAxisData.push(item.key);
                     });
@@ -490,8 +380,8 @@ const actions = {
                                     fontWeight: 700,
                                     fontSize: 20
                                 },
-                                formatter:function(value, index) {
-                                    return value.length>10?value.substr(0,10)+"...":value;
+                                formatter: function (value, index) {
+                                    return value.length > 10 ? value.substr(0, 10) + "..." : value;
                                 }
                             }
                         },
@@ -505,93 +395,6 @@ const actions = {
                                 textStyle: {
                                     fontWeight: 700,
                                     fontSize: 20
-                                }
-                            }
-                        },
-                        series: [
-                            {
-                                name:'舆论热点',
-                                type:'bar',
-                                data: seriesData,
-                                itemStyle: {
-                                    normal: {
-                                        color: function(params) {
-                                            // build a color map as your need.
-                                            var colorList = [
-                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                            ];
-                                            return colorList[params.dataIndex % 15]
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    };
-                    renderData.description = "<div class = 'descript-text'>参与话题讨论中，最为激烈的前<span class = 'highlight'>"+yAxisData.length+"</span>名话题分别为<span class = 'highlight'>"+yAxisData.join("，")+"</span>。</div>";
-                    renderData.option = option;
-                    resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
-                }
-            });
-        });
-    },
-    getNetizenConsensusBar: function () {
-        var mySearch = {};
-        mySearch= searchData.searchParam();
-        var param = {
-            groupName: 'author',
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
-        };
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
-                data: param,
-                type: 'get',
-                success: function (data) {
-                    var renderData = {};
-                    var seriesData = [];
-                    var xAxisData = [];
-                    data = data.sort(function (a, b) {
-                        return b.value - a.value;
-                    });
-                    $.each(data, function (i, item) {
-                        seriesData.push(item.value);
-                        xAxisData.push(item.key);
-                    });
-                    var option = {
-                        legend: {},
-                        grid: {
-                            left:80,
-                            bottom: 100
-                        },
-                        yAxis: {
-                            axisLabel: {
-                                textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
-                                }
-                            }
-
-                        },
-                        xAxis: {
-                            data: xAxisData,
-                            axisLabel: {
-                                interval: 0,
-                                rotate: 35,
-                                textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
-                                },
-                                formatter:function(value, index) {
-                                    return value.length>6?value.substr(0,6)+"...":value;
                                 }
                             }
                         },
@@ -616,7 +419,7 @@ const actions = {
                             }
                         ]
                     };
-                    renderData.description = "<div class = 'descript-text'>参与话题讨论的网民中，讨论最为激烈的前<span class = 'highlight'>"+xAxisData.length+"</span>名网民分别为<span class = 'highlight'>"+xAxisData.join("，")+"</span>。</div>";
+                    renderData.description = "<div class = 'describe-text'>参与话题讨论中，最为激烈的前<span class = 'describe-redText'>" + yAxisData.length + "</span>名话题分别为<span class = 'describe-redText'>" + yAxisData.join("，") + "</span>。</div>";
                     renderData.option = option;
                     resolve(renderData);
                 },
@@ -626,14 +429,103 @@ const actions = {
             });
         });
     },
-    getNetizenMap: function () {
-        var mySearch = {};
-        mySearch= searchData.searchParam();
+    //　热议网民
+    getHotAuthorChart: function () {
+        var mySearch = searchData.searchParam();
         var param = {
-            groupName:'area',
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            groupName: 'author',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var renderData = {};
+                    var seriesData = [];
+                    var xAxisData = [];
+                    data = data.sort(function (a, b) {
+                        return b.value - a.value;
+                    });
+                    $.each(data, function (i, item) {
+                        if (item.key != "") {
+                            seriesData.push(item.value);
+                            xAxisData.push(item.key);
+                        }
+                    });
+                    var option = {
+                        legend: {},
+                        grid: {
+                            left: 80,
+                            bottom: 100
+                        },
+                        yAxis: {
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
+                            }
+
+                        },
+                        xAxis: {
+                            data: xAxisData,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 35,
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                },
+                                formatter: function (value, index) {
+                                    return value.length > 6 ? value.substr(0, 6) + "..." : value;
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '舆论热点',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    renderData.description = "<div class = 'describe-text'>参与话题讨论的网民中，讨论最为激烈的前<span class = 'describe-redText'>" + xAxisData.length + "</span>名网民分别为<span class = 'describe-redText'>" + xAxisData.join("，") + "</span>。</div>";
+                    renderData.option = option;
+                    resolve(renderData);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+    // 话题关注人群地域分布图
+    getFocusPeopleMapChart: function () {
+        var mySearch = searchData.searchParam();
+        var param = {
+            groupName: 'area',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -648,14 +540,16 @@ const actions = {
                     var renderData = {};
                     var maxCount = 0;
                     var seriesData = [];
-                    $.each(data, function(i, item){
+                    $.each(data, function (i, item) {
                         var node = {};
                         node.name = item.key;
                         node.value = item.value;
                         seriesData.push(node);
                     });
-                    seriesData.sort(function(a,b) {return b.value-a.value});
-                    maxCount = seriesData[0].value==undefined?10:seriesData[0].value;
+                    seriesData.sort(function (a, b) {
+                        return b.value - a.value
+                    });
+                    maxCount = seriesData[0].value == undefined ? 10 : seriesData[0].value;
                     var option = {
                         tooltip: {
                             trigger: 'item',
@@ -666,17 +560,17 @@ const actions = {
                             max: maxCount,
                             left: 'left',
                             top: 'bottom',
-                            text: ['高','低'],           // 文本，默认为数值文本
+                            text: ['高', '低'],           // 文本，默认为数值文本
                             calculable: true,
                             inRange: {
-                                color: ['#B7EEEB','#FEFDC7','#FCC171','#F27449', '#DB3B29'],
+                                color: ['#B7EEEB', '#FEFDC7', '#FCC171', '#F27449', '#DB3B29'],
                             },
 
                         },
                         series: [
                             {
-                                name:'事故起数',
-                                type:'map',
+                                name: '事故起数',
+                                type: 'map',
                                 mapType: 'china',
                                 label: {
                                     normal: {
@@ -687,7 +581,7 @@ const actions = {
                             }
                         ]
                     };
-                    renderData.description = "<div class = 'descript-text'>从关注人群的地域分布来看，对参与话题讨论的网民言论样本进行分析发现，<span class = 'highlight'>"+seriesData[0].name+"</span>和<span class = 'highlight'>"+seriesData[1].name+"</span>对话题关注度最高，其次是<span class = 'highlight'>"+seriesData[2].name+"</span>。</div>";
+                    renderData.description = "<div class = 'describe-text'>从关注人群的地域分布来看，对参与话题讨论的网民言论样本进行分析发现，<span class = 'describe-redText'>" + seriesData[0].name + "(" + seriesData[0].value + ")</span>和<span class = 'describe-redText'>" + seriesData[1].name + "(" + seriesData[1].value + ")</span>对话题关注度最高，其次是<span class = 'describe-redText'>" + seriesData[2].name + "(" + seriesData[2].value + ")</span>。</div>";
                     renderData.option = option;
                     resolve(renderData);
                 },
@@ -697,16 +591,16 @@ const actions = {
             });
         });
     },
-    getKeywordsChart:function() {
-        var mySearch = {};
-        mySearch= searchData.searchParam();
+    // 网民评论热点词词云分析
+    getCommentHotKeywordsChart: function () {
+        var mySearch = searchData.searchParam();
         var param = {
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
-            limit:50
+            limit: 50
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -714,17 +608,19 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    data.sort(function(a,b) {return b.value-a.value});
+                    data.sort(function (a, b) {
+                        return b.value - a.value
+                    });
                     var renderData = {};
-                    var seriesData = {"data":[]};
+                    var seriesData = [];
                     $.each(data, function (i, item) {
                         var node = {};
                         node.keyword = item.key;
                         node.score = item.value;
-                        seriesData.data.push(node);
+                        seriesData.push(node);
                     });
-                    renderData.description = "<div class = 'descript-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'highlight'>\""+data[0].key+"\"、\""+data[1].key+"\"、\""+data[2].key+"\"、\""+data[3].key+"\"、\""+data[4].key+"\"、\""+data[5].key+"\"</span>等词</div>";
-                    renderData.option = {"data":seriesData};
+                    renderData.description = "<div class = 'describe-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'describe-redText'>\"" + data[0].key + "\"、\"" + data[1].key + "\"、\"" + data[2].key + "\"、\"" + data[3].key + "\"、\"" + data[4].key + "\"、\"" + data[5].key + "\"</span>等词</div>";
+                    renderData.option = {"data": seriesData};
                     resolve(renderData);
                 },
                 error: function (error) {
@@ -733,69 +629,111 @@ const actions = {
             });
         });
     },
+    //网络主要观点分布
+    getCommentPieChart: function () {
+        var mySearch = searchData.searchParam();
+        var param = {
+            "startDate": mySearch.startDate,
+            "endDate": mySearch.endDate
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
+                data: JSON.stringify(param),
+                type: 'Post',
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    var renderData = {};
+                    // 拼装 chart option
+                    var seriesItems = [], legendData = [];
+                    // 条数最多的占圆环的 80% 环的宽度为20
+                    var maxItemValue = parseInt(data[0].value / 0.8);
+                    data.forEach(function (item, i) {
+                        var seriesItem = {
+                            name: '相关品论分析',
+                            type: 'pie',
+                            clockWise: false,
+                            radius: [160 - 20 * i, 180 - 20 * i],
+                            itemStyle: {
+                                normal: {
+                                    label: {show: false},
+                                    labelLine: {show: false},
+                                    shadowBlur: 40,
+                                    shadowColor: 'rgba(40, 40, 40, 0.5)',
+                                }
+                            },
+                            hoverAnimation: false,
+                            data: [
+                                {
+                                    value: item.value,
+                                    name: item.key
+                                },
+                                {
+                                    value: maxItemValue - item.value,
+                                    name: 'invisible',
+                                    itemStyle: {
+                                        normal: {
+                                            color: 'rgba(0,0,0,0)',
+                                            label: {show: false},
+                                            labelLine: {show: false}
+                                        },
+                                        emphasis: {
+                                            color: 'rgba(0,0,0,0)'
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        if (i < 5) {
+                            seriesItems.push(seriesItem);
+                            legendData.push(item.key);
+                        }
+                    });
 
+                    var option = {
+                        color: ['#85b6b2', '#6d4f8d', '#cd5e7e', '#e38980', '#f7db88'],
+                        title: {
+                            text: "相关言论",
+                            left: "center",
+                            top: "center",
+                            textStyle: {
+                                fontSize: 20,
+                                fontWeight: 700
+                            }
+                        },
+                        tooltip: {
+                            show: true,
+                            formatter: "{a} <br/>{b} : {c}"
+                        },
+                        legend: {
+                            show: false,
+                            itemGap: 12,
+                            right: 'right',
+                            data: legendData
+                        },
+                        series: seriesItems
+                    };
 
-}
+                    var itemStr = "";
+                    data.forEach(function (item, i) {
+                        if (i < 3) {
+                            itemStr += "<span class='describe-redText'>" + item.key + "(" + item.value + ")</span>、";
+                        }
+                    });
+                    itemStr = itemStr.substring(0, itemStr.length - 1);
+                    var description = "<div class='describe-text'>对互联网事故相关言论进行分析，网民关注一下几个方面：" + itemStr + "</div>";
+                    renderData.option = option;
+                    renderData.description = description;
+                    resolve(renderData);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            })
 
-const utils = {
-    resetArticleTypeName: function (source) {
-        var target = '';
-        switch (source) {
-            case 'news':
-                target = '新闻';
-                break;
-            case 'weibo':
-                target = '微博';
-                break;
-            case 'bbs':
-                target = '论坛';
-                break;
-            case 'bar':
-                target = '贴吧';
-                break;
-            case 'comment':
-                target = '评论';
-                break;
-        }
-
-        return target;
+        })
     }
-}
-const numberLength = {
-    resetNumberType: function (num) {
-        var numbers = 0;
-        var l = num.toString().length;
-        if (l == 3) {
-            numbers = num / 2 - 100;
-        } else if (l == 4) {
-            numbers = num / 2 - 1000;
-        } else if (l >= 5) {
-            numbers = num / 2 - 10000;
-        } else {
-            numbers = num
-        }
-        return numbers
-    }
-
-}
-const max={
-    maxNumber: function (arr) {
-        var max = arr[0].value;
-
-        for(var i=1;i<arr.length;i++){
-
-            if(max<arr[i].value)max=arr[i].value;}
-        for(var i=1;i<arr.length;i++){
-
-            if(max==arr[i].value)max=arr[i].name;}
-
-         return max
-    }
-
-
-}
-
-
+};
 export default {
     actions
 }

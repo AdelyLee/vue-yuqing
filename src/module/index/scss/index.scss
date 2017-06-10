@@ -2,14 +2,25 @@
 @import "../../../assets/scss/common";
 
 .el-card {
+    border: none;
+    border-radius: 0;
+    -webkit-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    -moz-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    background-color: #f8f9fb;
     .card-body {
-        height: 1288px;
+        height: auto;
     }
 }
-
+.el-card__body{
+    background-color: #ffffff;
+}
 .lists {
     height: 100%;
     .list-box {
+        li{
+            cursor: pointer;
+        }
         .table-top {
             height: 58px;
             .news-title {
@@ -64,6 +75,7 @@
                 }
             }
         }
+
     }
 }
 
@@ -75,4 +87,16 @@
 #type-category-chart {
     width: 100%;
     height: 250px;
+}
+#sentimentAnalysis,#media-bar-chart{
+    width: 100%;
+    height: 400px;
+}
+#carrierAnalysis,#carrierAnalysismonth,#carrierAnalysisnearlydays,#carrierAnalysisyesterday{
+    width: 100%;
+    height: 341px;
+}
+#carrierAnalysisfb,#carrierAnalysisfbmonth,#carrierAnalysisfbnearlydays,#carrierAnalysisfbyesterday{
+    width: 100%;
+    height: 341px;
 }

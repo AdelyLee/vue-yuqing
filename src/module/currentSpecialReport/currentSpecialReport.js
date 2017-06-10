@@ -3,10 +3,9 @@ import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
 import Presentation from './currentSpecialReport.vue'
 import VueResource from 'vue-resource'
-
 import 'element-ui/lib/theme-default/index.css'   // 默认主题
 import './scss/currentSpecialReport.scss'
-import '../index/scss/index.scss'
+// import '../index/scss/index.scss'
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)

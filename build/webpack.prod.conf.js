@@ -28,7 +28,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     },
     plugins: [
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
-        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.OccurrenceOrderPlugin(),
         new ExtractTextPlugin(path.join(config.build.assetsSubDirectory, '[name].[contenthash].css')),
         new webpack.DefinePlugin({
             'process.env': env

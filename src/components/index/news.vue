@@ -1,53 +1,37 @@
-/**
-将向相同的模块改为一个模块,主要是以数据来驱动.
-*/
 <template>
     <div class="list-box">
         <div class="clearfix table-top"><span class="news-title">最新{{title}}</span></div>
-        <ul class="article-list">
-            <li v-for="item in items" :title="item.content" :id="item.id" @click="change(item.id)">
-                <a target="blank">
-                    <span>{{item.content.length > 13 ? item.content.substr(0, 13) + '...' : item.content}}</span>
-                    <span>{{item.time}}</span>
-                </a>
+        <ul class="article-list" v-for="item in newsList.slice(0, 5)">
+            <li :id="item.id" @click="change(item.id)">
+                <el-row :gutter="15">
+                    <el-col :span="17">{{item.title}}</el-col>
+                    <el-col :span="5">{{item.source}}</el-col>
+                    <el-col :span="2">{{item.pubTime}}</el-col>
+                </el-row>
             </li>
         </ul>
-        <div class="clearfix table-bottom"><span class="news-more" @click="target(title)">更多{{title}}</span></div>
+        <div class="clearfix table-bottom"><span class="news-more" @click="target(type)">更多{{title}}</span></div>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['type', 'checkedItems'],
+        props: ['newsList'],
         data () {
             return {
-                url: '../../static/api/',
-//              url: 'http://localhost:10000/news/?page=1&limit=10&sortBy=pubTime&direction=1',
-                title: '',
+                title: '新闻',
+                type:'News',
                 items: []
             }
         },
         mounted () {
-            this.url = this.url + this.type + '.json'
-            this.$http.get(this.url).then((response) => {
-                this.title = response.data.title
-                this.items = response.data[this.type].slice(0, 5)
-            }, (response) => {
-                console.log(response)
-            })
         },
         methods: {
             change: function (id) {
-                window.open('https://www.baidu.com#id=' + id)
+                window.open('../module/detail.html?id=' + id);
             },
-            target: function (name) {
-                window.open('https://www.baidu.com#name=' + name)
-            }
-        },
-        watch: {
-            checkedItems: function (val, oldVal) {
-                console.log(this.checkedItems)
-                console.log('new: %s, old: %s', val, oldVal)
+            target: function (type) {
+                window.open('../module/articleList.html?type=' + type);
             }
         }
     }

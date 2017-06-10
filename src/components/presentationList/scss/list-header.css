@@ -1,0 +1,12 @@
+.list-header {
+  text-align: center; }
+  .list-header .title {
+    color: #ffffff;
+    font-size: 30px;
+    line-height: 78px;
+    width: 371px;
+    height: 78px;
+    margin: auto;
+    background-image: url("../../../static/img/bgbj.png"); }
+
+/*# sourceMappingURL=list-header.css.map */

@@ -1,0 +1,41 @@
+@charset "utf-8";
+@import "../../../assets/scss/common";
+.content{
+    //width: 90%;
+    //margin: 0 auto;
+    height: auto;
+    /* position: absolute; */
+    /* z-index: 999; */
+    .model{
+        padding: 20px;
+        position: absolute;
+        top: 210px;
+        width: 50%;
+        left: 25%;
+        height: 60%;
+        box-shadow: 0 0 10px #666;
+        background-color: #ffffff;
+        .close{
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: #ccc;
+            z-index: 10000;
+        }
+    },
+
+    .m_b50{
+        margin-bottom: 50px!important;
+    }
+    .f_l{
+        float: left;
+    }
+}
+.pTitle{
+    font-size: 20px;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 60px;
+    font-family: "微软雅黑";
+    color: #5C9FE4;
+}

@@ -1,0 +1,172 @@
+@charset "UTF-8";
+body {
+  background-color: #ffffff; }
+
+.el-row {
+  margin-bottom: 10px; }
+  .el-row:last-child {
+    margin-bottom: 0; }
+
+.el-card {
+  border: 2px solid #1D90E6;
+  border-radius: 0;
+  background-color: #ffffff; }
+  .el-card .el-card__header {
+    min-height: 30px;
+    border-bottom: 1px solid #1D90E6;
+    background-color: #1D90E6;
+    color: #000; }
+
+.el-card .panel-height {
+  height: 40px;
+  color: #fff; }
+.el-card .el-card__header {
+  padding: 5px 10px;
+  color: #fff; }
+  .el-card .el-card__header .clearfix {
+    text-align: center; }
+
+.list {
+  width: 99%;
+  margin: 0 auto; }
+  .list .el-tabs__item.is-active {
+    width: 191px;
+    height: 55px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    background: url("../../../../static/img/dzhyqbj.png") no-repeat;
+    color: #ffffff; }
+  .list .el-tabs__item {
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: 600; }
+  .list .ceartspecial {
+    float: right;
+    margin-right: -5%;
+    margin-bottom: 2px;
+    width: 128px;
+    height: 47px;
+    line-height: 48px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: url("../../../../static/img/button.png") no-repeat;
+    outline: 0; }
+    .list .ceartspecial span {
+      cursor: pointer; }
+  .list .row-bg {
+    padding: 10px 0; }
+  .list .list-header {
+    text-align: center; }
+    .list .list-header .title {
+      color: #ffffff;
+      font-size: 30px;
+      line-height: 78px;
+      width: 371px;
+      height: 78px;
+      margin: auto;
+      background-image: url("../../../../static/img/bgbj.png"); }
+
+.add-warning .email .el-input {
+  width: 85%; }
+.add-warning .pager .el-pagination {
+  width: 100%;
+  white-space: nowrap;
+  padding: 2px 5px;
+  color: #48576a;
+  float: left;
+  margin: 0 0 0 -100px;
+  text-align: center; }
+
+.list-subject {
+  width: 90%;
+  margin: 0 auto;
+  height: auto; }
+  .list-subject table {
+    width: 100%; }
+  .list-subject tr {
+    width: 100%; }
+    .list-subject tr .list-specialReport {
+      -webkit-box-shadow: 0 0 10px #666;
+      -moz-box-shadow: 0 0 10px #666;
+      box-shadow: 0 0 10px #666;
+      cursor: pointer; }
+  .list-subject .number {
+    margin-right: 10px;
+    height: 30px;
+    color: #ffffff;
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #2b71c3;
+    font-family: 微软雅黑; }
+  .list-subject .selected {
+    background-color: #ccc; }
+  .list-subject .close {
+    float: right;
+    margin-right: 30px;
+    margin-top: 20px;
+    color: #eee; }
+  .list-subject .name {
+    margin-right: 10px;
+    height: 30px;
+    color: #ffffff;
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #eb6100;
+    font-family: 微软雅黑; }
+  .list-subject .operation {
+    margin-right: 10px;
+    height: 30px;
+    color: #ffffff;
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    background-color: #eb6100;
+    font-family: 微软雅黑; }
+  .list-subject .number-none {
+    margin-right: 10px;
+    height: 30px;
+    color: #000000;
+    font-size: 16px;
+    text-align: center;
+    font-family: 微软雅黑;
+    line-height: 30px; }
+    .list-subject .number-none .complete {
+      border-radius: 15px;
+      background-color: #80c269;
+      text-align: center;
+      padding: 2px 10px;
+      color: #ffffff; }
+  .list-subject .name-none {
+    margin-right: 10px;
+    height: 30px;
+    color: #000000;
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    font-family: 微软雅黑; }
+  .list-subject .operation-none {
+    margin-right: 10px;
+    height: 30px;
+    color: #000000;
+    font-size: 16px;
+    text-align: center;
+    line-height: 30px;
+    font-family: 微软雅黑; }
+    .list-subject .operation-none span {
+      cursor: pointer; }
+  .list-subject .estimate-content {
+    padding-left: 15px;
+    padding-bottom: 10px;
+    color: #0b97c4; }
+    .list-subject .estimate-content .estimate {
+      font-size: 16px;
+      color: #ff4949; }
+
+/*# sourceMappingURL=customize.css.map */

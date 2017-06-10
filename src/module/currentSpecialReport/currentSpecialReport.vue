@@ -1,154 +1,222 @@
 <template>
     <div id="currentSpecial">
         <common-header></common-header>
-        <el-row :gutter="5" class="list">
-            <el-col :span="24">
-                <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
-                        <span style="line-height: 40px;"><i class="el-icon-document"></i> 专题报告</span>
-                    </div>
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
-                        <el-tab-pane label="网民舆论分析" name="first">
-                            <el-row :gutter="15">
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix my-header">
-                                            <span class = "my-title">网民话题</span>
-                                        </div>
-                                        <bar-chart :chartConfig="netizenTitleBar"></bar-chart>
-                                    </el-card>
-                                </el-col>
-                                <el-col :span = "12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">热议网民</span>
-                                        </div>
-                                        <bar-chart :chartConfig="netizenConsensusBar"></bar-chart>
-                                    </el-card>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="15">
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">地域分布</span>
-                                        </div>
-                                        <map-chart :chartConfig="netizenMap"></map-chart>
-                                    </el-card>
-                                </el-col>
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">热点词云</span>
-                                        </div>
-                                        <keywords-chart :chartConfig="keywordsChart"></keywords-chart>
-                                    </el-card>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="15">
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span  class = "my-title">网民观点</span>
-                                        </div>
-                                        <pie-chart :chartConfig="netizenOptions"></pie-chart>
-                                    </el-card>
-                                </el-col>
-                                <el-col :span="12">
-
-                                </el-col>
-                            </el-row>
-                        </el-tab-pane>
-                        <el-tab-pane label="配置管理" name="second">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix"><i class="el-icon-star-off"></i>专题 ：{{subjectName}}</div>
+            <el-row :gutter="15" class="list">
+                <el-col :span="4">
+                    <el-menu default-active="1" class="el-menu-vertical-demo">
+                        <el-menu-item index="1" @click="changeIndex(1)"><i class="el-icon-message"></i>信息列表
+                        </el-menu-item>
+                        <el-menu-item index="2" @click="changeIndex(2)"><i class="el-icon-menu"></i>舆论分析</el-menu-item>
+                        <el-menu-item index="3" @click="changeIndex(3)"><i class="el-icon-setting"></i>网民分析
+                        </el-menu-item>
+                        <el-menu-item index="4" @click="changeIndex(4)"><i class="el-icon-setting"></i>历史预警
+                        </el-menu-item>
+                    </el-menu>
+                </el-col>
+                <el-col :span="20">
+                    <div v-if="myIndex==1">
+                        <el-row :gutter="15">
                             <el-col :span="24" class="lists">
-                                <news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>
+                                <search-param :listSearch="mylistSearch" @data="getListSearchParam"></search-param>
+                                <el-card class="box-card my-card" style="margin-top:15px;">
+                                    <current-list :currentList = "currentListNew"></current-list>
+                                    <list-pagination :myListPagination="myListPagination"
+                                                     @data="getPager"></list-pagination>
+                                </el-card>
                             </el-col>
-                            <el-row :gutter="15">
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">情感分析</span>
-                                        </div>
-                                        <pie-chart :chartConfig="mediaReportAnalysisPie"></pie-chart>
-                                    </el-card>
-                                </el-col>
-                                <el-col :span = "12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">载体</span>
-                                        </div>
-                                        <pie-chart :chartConfig="mediaArticleTypePie"></pie-chart>
-                                    </el-card>
-                                </el-col>
-                            </el-row>
-                            <el-row :gutter="15">
-                                <el-col :span="12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">主流媒体</span>
-                                        </div>
-                                        <bar-chart :chartConfig="mediaBarChart"></bar-chart>
-                                    </el-card>
-                                </el-col>
-                                <el-col :span = "12">
-                                    <el-card class="box-card my-card">
-                                        <div slot="header" class="clearfix">
-                                            <span class = "my-title">话题趋势</span>
-                                        </div>
-                                        <bar-chart :chartConfig="mediaReportTrendBar"></bar-chart>
-                                    </el-card>
-                                </el-col>
-                            </el-row>
+                        </el-row>
+                    </div>
+                    <div v-if="myIndex==2">
+                        <el-row :gutter="15">
+                            <el-col :span="7">
+                                <el-card class="box-card my-card">
+                                    时间 ：{{timeRange}}
+                                </el-card>
+                                <el-card class="box-card my-card" style="margin-top:15px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">情感分析</span>
+                                    </div>
+                                    <pie-chart :chartConfig="mediaReportAnalysisPie"></pie-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="17">
+                                <el-card class="box-card my-card">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">话题趋势</span>
+                                    </div>
+                                    <bar-chart :chartConfig="mediaReportTrendBar"></bar-chart>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="15">
+                            <el-col :span="14">
+                                <el-card class="box-card my-card" style="margin-top:5px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">主流媒体</span>
+                                    </div>
+                                    <bar-chart :chartConfig="mediaBarChart"></bar-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="10">
+                                <el-card class="box-card my-card" style="margin-top:5px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">载体分析</span>
+                                    </div>
+                                    <pie-chart :chartConfig="mediaArticleTypePie"></pie-chart>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="15">
+                            <el-col :span="24">
+                                <el-card class=" my-card" style="margin-top:5px;">
+                                    <span class="my-title">舆论热点</span>
+                                    <el-tabs type="card">
+                                        <el-tab-pane label="新闻观点">
+                                            <el-col :span="24" class="lists">
+                                                <bar-chart :chartConfig="netizenTypeTitleBar"></bar-chart>
+                                                <!--<news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>-->
+                                            </el-col>
+                                        </el-tab-pane>
+                                        <el-tab-pane label="微博观点">
+                                            <el-col :span="24" class="lists">
+                                                <weibo-list :type="weiboUrl" :checkedItems="checkedItems"></weibo-list>
+                                            </el-col>
+                                        </el-tab-pane>
+                                        <el-tab-pane label="论坛观点">
+                                            <el-col :span="24" class="lists">
+                                                <bbs-list :type="bbsUrl" :checkedItems="checkedItems"></bbs-list>
+                                            </el-col>
+                                        </el-tab-pane>
+                                    </el-tabs>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div v-if="myIndex==3">
+                        <el-row :gutter="15">
+                            <el-col :span="12">
+                                <el-card class="box-card my-card">
+                                    <div slot="header" class="clearfix my-header">
+                                        <span class="my-title">网民话题</span>
+                                    </div>
+                                    <bar-chart :chartConfig="netizenTitleBar"></bar-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-card class="box-card my-card">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">热议网民</span>
+                                    </div>
+                                    <bar-chart :chartConfig="netizenConsensusBar"></bar-chart>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="15">
+                            <el-col :span="12">
+                                <el-card class="box-card my-card" style="margin-top:5px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">地域分布</span>
+                                    </div>
+                                    <map-chart :chartConfig="netizenMap"></map-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-card class="box-card my-card" style="margin-top:5px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">热点词云</span>
+                                    </div>
+                                    <keywords-chart :chartConfig="keywordsChart"></keywords-chart>
+                                </el-card>
+                            </el-col>
+                        </el-row>
+                        <el-row :gutter="15">
+                            <el-col :span="12">
+                                <el-card class="box-card my-card" style="margin-top:5px;">
+                                    <div slot="header" class="clearfix">
+                                        <span class="my-title">网民观点</span>
+                                    </div>
+                                    <pie-chart :chartConfig="netizenOptions"></pie-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="12">
 
-                                    <!--<div class="list-box">-->
-                                        <!--<div class="clearfix table-top"><span class="news-title">网民观点</span></div></div>-->
-                            <!---->
-
-                            <el-tabs type="card">
-                                <el-tab-pane label="新闻观点">
-                                    <el-col :span="24" class="lists">
-                                        <news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>
-                                    </el-col>
-
-                                </el-tab-pane>
-                                <el-tab-pane label="微博观点">
-                                    <el-col :span="24" class="lists">
-                                        <weibo-list :type="weiboUrl" :checkedItems="checkedItems"></weibo-list>
-
-                                    </el-col>
-                                </el-tab-pane>
-                                <el-tab-pane label="论坛观点">
-                                    <el-col :span="24" class="lists">
-                                        <bbs-list :type="bbsUrl" :checkedItems="checkedItems"></bbs-list>
-
-                                    </el-col>
-                                </el-tab-pane>
-                            </el-tabs>
-
-
-
-
-
-                        </el-tab-pane>
-                    </el-tabs>
-                </el-card>
-            </el-col>
-        </el-row>
+                            </el-col>
+                        </el-row>
+                    </div>
+                    <div v-if="myIndex == 4">
+                        <yujing-list :yujingList="yujingList"></yujing-list>
+                        <yujing-pager :pager="yujignPager" @data="getyujingPager"></yujing-pager>
+                    </div>
+                </el-col>
+            </el-row>
+        </el-card>
     </div>
 </template>
+<style scoped>
+
+</style>
 <script>
     import Header from '@/components/commons/header';
     import LineBarChart from '@/components/commons/charts/line-bar';
     import PieChart from '@/components/commons/charts/pie';
     import MapChart from '@/components/commons/charts/map';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
-    import News from '@/components/index/news';
-    import service from '../../vuex/module/currentSpecialReport.js'
-//    import service from '../../vuex/module/specialReport.js'
+    import currentListComponent from '@/components/currentSpecialReport/currentList_new';
+    import currentSearchParam from '@/components/currentSpecialReport/currentSearchParam';
+    import currentPagination from '@/components/currentSpecialReport/currentPagination';
+    import yujingListData from '@/components/currentSpecialReport/yujingList';
+    import yujingPagerData from '@/components/commons/paging';
+    import service from '../../vuex/module/currentSpecialReport.js';
+    import dateUtil from '../../vuex/dateUtil'
     export default {
         name: 'presentationList',
         data () {
             return {
+                currentListNew:[],
+                myListPagination: {
+                    pageSize: 5,
+                    currentPage4: 1,
+                    total: 0,
+                },
+                yujignPager: {
+                    pageSize: 10,
+                    currentPage: 1,
+                    totalElements: 10
+                },
+                yujingList: {
+                    loading3: false,
+                    tableData3: [
+                        {
+                            "subjectName": "六一儿童节",
+                            "keyWord": "快乐@happy",
+                            "timeChange": "2017-06至2017-07",
+                            "dateCreated": "2017-06-01",
+                            "set": "查看预警",
+                            "id": "8"
+                        }]
+                },
+                mylistSearch: {
+                    startDate: dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(new Date(),"d",-10),"yyyy-MM-dd"),
+                    endDate: dateUtil.dateUtil.formatDate(new Date(),"yyyy-MM-dd"),
+                    filed: '',
+                    searchWord: '',
+                    orders: [{
+                            "direction": "DESC",
+                            "orderBy": "pubTime"
+                    }],
+                    searchKey: [{
+                        "key": "nlp.sentiment.label",
+                        "value": "POS"
+                    }],
+                    type: ["news","weibo"]
+                },
+                limits: 0,
+                pages: 1,
+                myIndex: 1,
+                subjectName: service.searchData.searchParam().name,
+                timeRange: service.searchData.searchParam().startDate + "至" + service.searchData.searchParam().endDate,
                 newsUrl: 'news',
                 weiboUrl: 'weibo',
                 bbsUrl: 'bbs',
@@ -159,34 +227,38 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
                         }
                     }
                 },
-                mediaArticleTypePie:{
+                mediaArticleTypePie: {
                     chartId: 'media-article-type-pie',
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
                         }
                     }
                 },
-                mediaBarChart:{
+                mediaBarChart: {
                     chartId: 'media-bar-chart',
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
                         }
                     }
                 },
-                mediaReportTrendBar:{
+                mediaReportTrendBar: {
                     chartId: 'media-report-trend-bar',
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                        }
+                    }
+                },
+                netizenTypeTitleBar: {
+                    chartId: 'net-title-bar',
+                    option: {},
+                    events: {
+                        'click': function (param) {
                         }
                     }
                 },
@@ -195,16 +267,14 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
                         }
                     }
                 },
-                netizenConsensusBar:{
+                netizenConsensusBar: {
                     chartId: 'netizen-consensus-bar',
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
                         }
                     }
                 },
@@ -228,69 +298,85 @@
             }
         },
         components: {
-            'news-list': News,
-            'weibo-list': News,
-            'bbs-list': News,
+          'current-list':currentListComponent,
+            'yujing-list': yujingListData,
+            'yujing-pager': yujingPagerData,
+            'search-param': currentSearchParam,
+            'list-pagination': currentPagination,
             'common-header': Header,
             'bar-chart': LineBarChart,
             'pie-chart': PieChart,
             'map-chart': MapChart,
-            'keywords-chart': KeywordsChart,
+            'keywords-chart': KeywordsChart
         },
         mounted () {
-            this.getNewsEmotionPieChart();//情感类型分析饼图
-            this.getArticleTypeChart()   //新闻载体分析饼图
-            this.getMediaBarChart()        //主流媒体
-            this.getMediaReportTrendBar();//媒体报道走势柱图
-            this.getNetionTitleBar();//网民舆论热点柱图
-
-            this.getNetizenConsensusBar();//热议网民柱图
-            this.getNetizenMap();//网民地图分布
-            this.getKeywordsChart();//热点词云
-            this.getNetizenOptions();//网民观点饼图
+            this.getmylist();
+//            this.getPager();
         },
         methods: {
+            changeIndex: function (index) {
+                var self = this;
+                self.myIndex = index;
+                if (index == 1) {
+                    this.getmylist();
+                } else if (index == 2) {
+                    this.getNewsEmotionPieChart();//情感类型分析饼图
+                    this.getArticleTypeChart();   //新闻载体分析饼图
+                    this.getMediaBarChart();        //主流媒体
+                    this.getMediaReportTrendBar();//媒体报道走势柱图
+                    this.getNetionTypeTitleBar();//网民观点
+
+                } else if (index == 3) {
+                    this.getNetionTitleBar();//网民舆论热点柱图
+                    this.getNetizenConsensusBar();//热议网民柱图
+                    this.getNetizenMap();//网民地图分布
+                    this.getKeywordsChart();//热点词云
+                    this.getNetizenOptions();//网民观点饼图
+                } else if (index == 4) {
+                    this.getYujingListData();
+                }
+            },
             handleClick(tab, event) {
             },
-            getNewsEmotionPieChart: function() {
+            getNewsEmotionPieChart: function () {
                 var self = this;
                 service.actions.getNewsEmotionPieChart().then(function (option) {
-                    self.mediaReportAnalysisPie.option =option;
-//                    self.mediaReportAnalysisPieText=renderData.description;
-//                    self.totalTitleText= renderData.descriptiontwo
+                    self.mediaReportAnalysisPie.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
 
             },
-            getArticleTypeChart:function() {
+            getArticleTypeChart: function () {
                 var self = this;
                 service.actions.getArticleTypeChart().then(function (option) {
-                    self.mediaArticleTypePie.option =option;
-
-//                    self.mediaReportAnalysisPieText=renderData.description;
-//                    self.totalTitleText= renderData.descriptiontwo
+                    self.mediaArticleTypePie.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
 
             },
-            getMediaBarChart:function() {
+            getMediaBarChart: function () {
                 var self = this;
                 service.actions.getMediaBarChart().then(function (option) {
-                    self.mediaBarChart.option =option;
-
-//                    self.mediaReportAnalysisPieText=renderData.description;
-//                    self.totalTitleText= renderData.descriptiontwo
+                    self.mediaBarChart.option = option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
 
             },
-            getMediaReportTrendBar:function(){
+            getMediaReportTrendBar: function () {
                 var self = this;
-                service.actions. getMediaReportTrendBar().then(function (renderData) {
-                    self.mediaReportTrendBar.option = renderData.option;
+                service.actions.getMediaReportTrendBar().then(function (renderData) {
+                    self.mediaReportTrendBar.option = renderData;
+                }, function (error) {
+                    console.error('出错了', error);
+                });
+            },
+            getNetionTypeTitleBar: function () {
+                var self = this;
+                service.actions.getNetionTypeTitleBar().then(function (renderData) {
+                    self.netizenTypeTitleBar.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -298,7 +384,7 @@
             getNetionTitleBar: function () {
                 var self = this;
                 service.actions.getNetionTitleBar().then(function (renderData) {
-                    self.netizenTitleBar.option =  renderData.option;
+                    self.netizenTitleBar.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -306,7 +392,7 @@
             getNetizenConsensusBar: function () {
                 var self = this;
                 service.actions.getNetizenConsensusBar().then(function (renderData) {
-                    self.netizenConsensusBar.option =  renderData.option;
+                    self.netizenConsensusBar.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -314,30 +400,73 @@
             getNetizenMap: function () {
                 var self = this;
                 service.actions.getNetizenMap().then(function (renderData) {
-                    self.netizenMap.option =  renderData.option;
+                    self.netizenMap.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
             getKeywordsChart: function () {
                 var self = this;
-                service.actions.getKeywordsChart().then(function(renderData) {
+                service.actions.getKeywordsChart().then(function (renderData) {
                     self.keywordsChart.option = renderData.option;
-                },function (error) {
-                    console.error('出错了',error);
+                }, function (error) {
+                    console.error('出错了', error);
                 })
 
             },
-            getNetizenOptions:function () {
+            getNetizenOptions: function () {
                 var self = this;
-                service.actions.getNetizenOptions().then(function(renderData) {
+                service.actions.getNetizenOptions().then(function (renderData) {
                     self.netizenOptions.option = renderData.option;
-                },function (error) {
-                    console.error('出错了',error);
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getmylist: function () {
+                var self = this;
+                service.actions.getmylist(self.mylistSearch, self.myListPagination.pageSize, self.myListPagination.currentPage4).then(function (renderData) {
+//                    self.mylist.items = renderData.seriesData;
+                    self.currentListNew = renderData.seriesData;
+                    debugger;
+                    self.myListPagination.total = renderData.total;
+//                    if(renderData.seriesData.length == 0) {
+//                      self.mylist.show = true;
+//                    }else {
+//                        self.mylist.show = false;
+//                    }
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getListSearchParam: function (data) {
+                debugger;
+                var self = this;
+                self.mylistSearch = data;
+                self.getmylist();
+            },
+            getPager(pager) {
+                debugger;
+                var self = this;
+                self.myListPagination = pager;
+                self.getmylist();
+            },
+            getyujingPager(pager) {
+                var self = this;
+                self.yujignPager = pager;
+                self.getYujingListData();
+            },
+            getYujingListData: function () {
+                var self = this;
+                service.actions.getYujingListData(self.yujignPager.pageSize, self.yujignPager.currentPage).then(function (renderData) {
+                    self.yujingList.tableData3 = renderData.seriesData;
+                    self.yujignPager.totalElements = renderData.total;
+                }, function (error) {
+                    console.error('出错了', error);
                 })
             }
         }
     }
 
 </script>
+
 

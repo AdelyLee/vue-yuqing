@@ -8,28 +8,26 @@
                         <span style="line-height: 40px;"><i class="el-icon-document"></i> 舆情报告</span>
                     </div>
                     <el-tabs v-model="activeName" @tab-click="handleClick">
-                        <el-tab-pane name="monthlyReport" value="月报">
+                        <el-tab-pane name="往期月报" value="月报">
                             <span slot="label"><i class="el-icon-date"></i> 月报</span>
-                            <list-header :wqName="wqyb"></list-header>
+                            <div class="list-header">
+                                <div class="title">{{reportListHeader}}</div>
+                            </div>
                             <el-row type="flex" class="row-bg" justify="space-around">
-                                <list-presentation :id="listPresentation" :checkedName="ybname"></list-presentation>
+                                <list-presentation :id="monthlyReport" :reportList="reportList"></list-presentation>
                             </el-row>
                         </el-tab-pane>
-                        <el-tab-pane name="weeklyReport" value="周报">
+                        <el-tab-pane name="往期周报" value="周报">
                             <span slot="label"><i class="el-icon-date"></i> 周报</span>
-                            <list-header :wqName="wqzoub"></list-header>
+                            <div class="list-header">
+                                <div class="title">{{reportListHeader}}</div>
+                            </div>
                             <el-row type="flex" class="row-bg" justify="space-around">
-                                <weekly-presentation :id="weeklyPresentation" :checkedName="ybname"></weekly-presentation>
-                            </el-row>
-                        </el-tab-pane>
-                        <el-tab-pane name="specialReport" value="专报">
-                            <span slot="label"><i class="el-icon-date"></i> 专报</span>
-                            <list-header :wqName="wqzb"></list-header>
-                            <el-row type="flex" class="row-bg" justify="space-around">
-                                <special-presentation :id="specialPresentation" :checkedName="ybname"></special-presentation>
+                                <list-presentation :id="weeklyReport" :reportList="reportList"></list-presentation>
                             </el-row>
                         </el-tab-pane>
                     </el-tabs>
+                    <list-page :pager="pager" @data="getPager"></list-page>
                 </el-card>
             </el-col>
         </el-row>
@@ -37,47 +35,60 @@
 </template>
 <script>
     import Header from '@/components/commons/header';
-    import ListHeader from '@/components/presentationList/list-header';
+    import Paging from '@/components/commons/paging';
     import ListPresentation from '@/components/presentationList/list-presentation';
-    import weeklyPresentation from '@/components/presentationList/list-weeklypresentation';
-    import specialPresentation from '@/components/presentationList/list-specialpresentation';
+
+    import service from '../../vuex/module/reportList.js'
     export default {
         name: 'presentationList',
         data () {
             return {
-                activeName: 'monthlyReport',
-                ybname:'monthlyReport',
-                wqyb:'往期月报',
-                wqzoub:'往期周报',
-                wqzb:'往期专报',
+                activeName: '往期月报',
+                reportList: [],
+                pager: {
+                    pageSize: 2,
+                    currentPage: 1,
+                    totalElements: 10
+                },
+                reportListHeader: '往期月报',
+                reportType: "MONTHLY"
             }
         },
         components: {
             'common-header': Header,
-            'list-header': ListHeader,
             'list-presentation': ListPresentation,
-            'weekly-presentation': weeklyPresentation,
-            'special-presentation': specialPresentation,
+            'list-page': Paging
         },
-//        mounted () {
-//           this.handleClick();
-//        },
+        mounted () {
+            this.getReportList();
+        },
         methods: {
+            getReportList: function () {
+                var self = this;
+                service.actions.getReportList(self.reportType, self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                    self.pager.totalElements = data.totalElements;
+                    self.reportList = data.content;
+                });
+            },
+            getPager(pager) {
+                this.pager = pager;
+                this.getReportList();
+            },
             handleClick(tab, event) {
-                debugger;
                 console.log(tab, event);
                 var self = this;
-                self.ybname = tab.name;
-                //self.$set('ybname',tab.name);
+                self.reportListHeader = tab.name;
+                if (self.reportListHeader == "往期月报") {
+                    self.reportType = "MONTHLY";
+                } else if (self.reportListHeader == "往期周报"){
+                    self.reportType = "WEEKLY";
+                }
+                self.pager.pageSize = 2;
+                self.pager.currentPage = 1;
+
+                this.getReportList();
             },
-        },
-        watch: {
-            ybname: function (val, oldVal) {
-                console.log(this.ybname);
-                console.log('new: %s, old: %s', val, oldVal);
-            }
         }
     }
-
 </script>
 

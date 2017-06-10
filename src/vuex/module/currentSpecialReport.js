@@ -6,30 +6,64 @@
  */
 import $ from 'jquery'
 import common from './common'
+import dateUtil from '../dateUtil'
+import queryParam from '../utils'
+import typeParam from '../typeUtil'
 const searchData = {
-    searchParam:function ( ) {
-        var searchId = window.location.search.substr(4);
+    searchParam: function () {
+        var searchId = queryParam.utils.getQueryVariable('id');
         var search = {};
         $.ajax({
-            url:common.url.webserviceUrl+'/customSubject/'+searchId,
-            type:'get',
-            async:false,
-            success:function(data){
-                data.startDate = new Date(data.startDate).toJSON().substr(0,new Date(data.startDate).toJSON().indexOf("T"));
-                data.endDate = new Date(data.endDate).toJSON().substr(0,new Date(data.endDate).toJSON().indexOf("T"));
+            url: common.url.webserviceUrl + '/customSubject/' + searchId,
+            type: 'get',
+            async: false,
+            success: function (data) {
+                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
+                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
                 search = data;
             },
-            error: function(error) {
+            error: function (error) {
             }
         })
         return search;
     }
 }
 const actions = {
+    //新闻列表
+    getNewsCurrentList: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            type: "title",
+            sortBy: "pubTime",
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/news/findPageByMustShouldDateInType.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
     //current里面新闻情感类型
     getNewsEmotionPieChart: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
         var param = {
             groupName: 'nlp.sentiment.label',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -37,14 +71,13 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-
                     // 拼装 chart option
                     var seriesData = [];
                     var lengeds = [];
-                    $.each(data,function(i,item){
+                    $.each(data, function (i, item) {
                         var node = {};
-                        node.name = emotion.resetEmotionTypeName(item.key);
-                        node.value=item.value;
+                        node.name = typeParam.typeUtil.sentimentType(item.key);
+                        node.value = item.value;
                         seriesData.push(node);
                         lengeds.push(node.name)
                     })
@@ -58,30 +91,28 @@ const actions = {
                             x: 'right',
                             data: lengeds
                         },
+                        color: [
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                        ],
                         series: [
                             {
                                 name: '情感类型',
                                 type: 'pie',
-                                radius: ['40%', '60%'],
+                                radius: ['30%', '55%'],
                                 label: {
                                     normal: {
-                                        show: false,
+                                        show: true,
                                         // position: 'center',
                                         textStyle: {
                                             fontSize: 20
-                                        }
-                                    },
-                                    emphasis: {
-                                        show: true,
-                                        textStyle: {
-                                            fontSize: '30',
-                                            fontWeight: 'bold'
                                         }
                                     }
                                 },
                                 labelLine: {
                                     normal: {
-                                        show: false
+                                        show: true
                                     }
                                 },
                                 data: seriesData
@@ -99,39 +130,52 @@ const actions = {
     },
     //current里面新闻载体分析
     getArticleTypeChart: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
         var param = {
-            method: 'get',
-            params: {
-                mustWord: '事故@安全生产',
-                startDate: '2017-01',
-                endDate: '2017-02'
-            }
-        };
+            groupName: 'type',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        }
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findByMustShouldDateInType.json',
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
                     // 拼装 chart option
                     var seriesData = [];
+                    var legendData = [];
                     $.each(data, function (i, item) {
                         var node = {};
-                        node.name = utils.resetArticleTypeName(item.key);
+                        node.name = typeParam.typeUtil.articleType(item.key);
                         node.value = item.value;
                         seriesData.push(node);
+                        legendData.push(node.name);
                     });
                     var option = {
                         tooltip: {
                             trigger: 'item',
                             formatter: "{a} <br/>{b}: {c} ({d}%)"
                         },
-                        legend: {},
+                        legend: {
+                            orient: 'vertical',
+                            x: 'right',
+                            data:legendData
+                        },
+                        color: [
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                        ],
                         series: [
                             {
                                 name: '媒体类型',
                                 type: 'pie',
-                                radius: ['40%', '55%'],
+                                radius: ['20%', '55%'],
                                 label: {
                                     normal: {
                                         show: true,
@@ -155,20 +199,23 @@ const actions = {
     },
     //current主流媒体
     getMediaBarChart: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
         var param = {
-            groupName: 'source.raw',
-            s_date: '2017-02',
-            e_date: '2017-04',
-
+            groupName: 'source',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
         };
-
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
+                    var renderData = {};
                     var seriesData = [];
                     var xAxisData = [];
                     data = data.sort(function (a, b) {
@@ -176,30 +223,33 @@ const actions = {
                     });
                     $.each(data, function (i, item) {
                         seriesData.push(item.value);
-                        xAxisData.push(item.key);
+                        xAxisData.push(item.key.slice(0, 10));
                     });
                     var option = {
                         legend: {},
                         grid: {
-                            bottom: 120
+                            top: 20,
+                            bottom: 100,
+                            left: 100
                         },
                         yAxis: {
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 }
                             }
 
                         },
+                        barMaxWidth:30,
                         xAxis: {
                             data: xAxisData,
                             axisLabel: {
                                 interval: 0,
-                                rotate: 35,
+                                rotate: 30,
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 }
                             }
                         },
@@ -221,77 +271,230 @@ const actions = {
                                         }
                                     }
                                 }
+                            }, {
+                                name: '媒体名称',
+                                type: 'line',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                }
                             }
                         ]
-                    };
+                    }
+
+                    // renderData.option = option;
+                    // renderData.description = "<div class = 'descript-text'><span class = 'highlight'>"+top2.join("、")+"</span>媒体新闻客户端对该话题保持了较高频次的关注和讨论量。<span class = 'highlight'>"+next3.join("、")+"</span>等媒体客户端也保持着较高的关注度。</div>";
+                    // renderData.descriptionthree="尤其是<div class = 'highlight'>"+top2.join(",")+"</div>";
                     resolve(option);
+
                 },
                 error: function (error) {
                     reject(error);
                 }
             });
         });
+
     },
+
     getMediaReportTrendBar: function () {
-        var self = this;
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate,
+            dateType: "day"
+        };
+        var newsSeries = {"data": [], "xAxis": []};
+        var weiboSeries = {"data": [], "xAxis": []};
+        var bbsSeries = {"data": [], "xAxis": []};
+        var barSeries = {"data": [], "xAxis": []};
+        $.ajax({
+            url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
+            async: false,
+            data: param,
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    newsSeries.data.push(item.value);
+                    newsSeries.xAxis.push(item.key);
+                })
+            },
+            error: function (error) {
+            }
+        });
+        $.ajax({
+            url: common.url.webserviceUrl + '/weibo/filterAndGroupByTime.json',
+            async: false,
+            data: param,
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    weiboSeries.data.push(item.value);
+                    weiboSeries.xAxis.push(item.key);
+                })
+            },
+            error: function (error) {
+            }
+        });
+        $.ajax({
+            url: common.url.webserviceUrl + '/bbs/filterAndGroupByTime.json',
+            async: false,
+            data: param,
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    bbsSeries.data.push(item.value);
+                    bbsSeries.xAxis.push(item.key);
+                })
+            },
+            error: function (error) {
+            }
+        });
+        $.ajax({
+            url: common.url.webserviceUrl + '/bar/filterAndGroupByTime.json',
+            async: false,
+            data: param,
+            type: 'get',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    barSeries.data.push(item.value);
+                    barSeries.xAxis.push(item.key);
+                })
+            },
+            error: function (error) {
+            }
+        });
+        var myOption = {
+            title: {
+                text: ''
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                boundaryGap:false,
+                data: newsSeries.xAxis
+            },
+            legend: {
+                data: ["新闻", "微博", "论坛", "贴吧"]
+            },
+            yAxis: {
+                splitLine: {
+                    show: false
+                }
+            },
+            toolbox: {
+                show: false,
+                left: 'center',
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            dataZoom: [{
+                startValue: searchData.searchParam().startDate
+            }, {
+                type: 'inside'
+            }],
+            color: [
+                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+            ],
+            series: [{
+                name: '新闻',
+                type: 'line',
+                data: newsSeries.data
+            }, {
+                name: '微博',
+                type: 'line',
+                data: weiboSeries.data
+            }, {
+                name: '论坛',
+                type: 'line',
+                data: bbsSeries.data
+            }, {
+                name: '贴吧',
+                type: 'line',
+                data: barSeries.data
+            }]
+        };
+        return new Promise(function (resolve, reject) {
+            resolve(myOption);
+        });
+    },
+    //网民观点
+    getNetionTypeTitleBar: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            groupName: 'title.raw',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
+            s_date: mySearch.startDate,
+            e_date: mySearch.endDate
+        };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
-                async: true,
-                data: {
-                    s_date: '2017-02-01',
-                    e_date: '2017-04-01',
-                    dateType: 'day'
-                },
+                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
+                // contentType: "application/json; charset=utf-8",
+                data: param,
                 type: 'get',
                 success: function (data) {
-                    var renderData={};
-                    var seriesData_a = [];
-                    var seriesData_b = [];
-                    var xAxisData = [];
-                    var heatMax_a = [], heatMax_b = [];
-                    $.each(data, function (i, item) {
-                        var node = {};
-                        var nodes = {};
-                        var month_name = item.key.substr(0, 7);
-                        if (month_name == "2017-02") {
-                            node.name = item.key.substr(8);
-                            node.value = item.value;
-                            heatMax_a = item.value;
-                            seriesData_a.push(node);
-                        } else if (month_name == "2017-03") {
-                            xAxisData.push(item.key.substr(8));
-                            nodes.name = item.key.substr(8);
-                            nodes.value = item.value;
-                            heatMax_b = item.value;
-                            seriesData_b.push(nodes);
-                        }
+                    var renderData = {};
+                    data.sort(function (a, b) {
+                        return a.value - b.value;
                     });
-
+                    var new_data = [];
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
+                        new_data = data;
+                    }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var yAxisData = [];
+                    $.each(new_data, function (i, item) {
+                        seriesData.push(item.value);
+                        yAxisData.push(item.key);
+                    });
                     var option = {
-                        legend: {
-                            x: 'right',
-                            y: 'middle',
-                            orient: 'vertical',
-                            data: ['2017年2月', '2017年3月']
+                        legend: {},
+                        yAxis: {
+                            type: 'category',
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
+                                },
+                                formatter: function (value, index) {
+                                    return value.length > 10 ? value.substr(0, 10) + "..." : value;
+                                }
+                            }
                         },
+                        barMaxWidth:30,
                         grid: {
-                            left: '4%',
-                            right: '150px',
-                            bottom: '3%',
+                            bottom: '10',
                             containLabel: true
                         },
-                        color: ['#e7ba09', '#30a8dd'],
                         xAxis: {
-                            type: 'category',
-                            boundaryGap: false,
-                            data: xAxisData,
-                        },
-                        yAxis: {
                             type: 'value',
                             axisLabel: {
-                                interval: 0,
-                                rotate: 35,
                                 textStyle: {
                                     fontWeight: 600,
                                     fontSize: 14
@@ -300,21 +503,26 @@ const actions = {
                         },
                         series: [
                             {
-                                name: '2017年2月',
-                                type: 'line',
-                                data: seriesData_a
-                            },
-                            {
-                                name: '2017年3月',
-                                type: 'line',
-                                data: seriesData_b
-
+                                name: '舆论热点',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
                             }
                         ]
                     };
                     renderData.option = option;
-                    // renderData.description = "<div class = 'descript-text'>从媒体报道走势来看,<span class = 'highlight'>"+option.legend.data[0]+"</span><span class = 'highlight'>"+max_a+"日</span>、<span class = 'highlight'>"+option.legend.data[1]+"</span><span class = 'highlight'>"+max_b+"日</span>是媒体报道高峰,随后话题热度出现直线下降。</div>";
-
                     resolve(renderData);
                 },
                 error: function (error) {
@@ -324,7 +532,7 @@ const actions = {
         });
     },
     //网络主要观点分布
-    getNetizenOptionPie:function(){
+    getNetizenOptionPie: function () {
         var param = {
             "endDate": "2017-02",
             "startDate": "2017-01"
@@ -334,7 +542,7 @@ const actions = {
                 url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
                 data: JSON.stringify(param),
                 type: 'Post',
-                contentType:"application/json;charset=utf-8",
+                contentType: "application/json;charset=utf-8",
                 success: function (data) {
                     data = data.sort(function (a, b) {
                         return b.value - a.value;
@@ -365,18 +573,18 @@ const actions = {
                         },
                         series: [
                             {
-                                name:data[0].key,
+                                name: data[0].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[180,200],
+                                radius: [180, 200],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
-                                    value:data[0].value
+                                    value: data[0].value
                                 },
                                     {
-                                        value:4,
+                                        value: 4,
                                         // value: numberLength.resetNumberType(data[0].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
@@ -384,18 +592,18 @@ const actions = {
                                 ]
                             },
                             {
-                                name:data[1].key,
+                                name: data[1].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[160,180],
+                                radius: [160, 180],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
-                                    value:data[1].value
+                                    value: data[1].value
                                 },
                                     {
-                                        value:14,
+                                        value: 14,
                                         // value: numberLength.resetNumberType(data[1].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
@@ -404,20 +612,20 @@ const actions = {
                                 ]
                             },
                             {
-                                name:data[2].key,
+                                name: data[2].key,
                                 type: 'pie',
                                 clockWise: false,
                                 hoverAnimation: false,
                                 center: ['50%', '50%'],
-                                radius:[140,160],
+                                radius: [140, 160],
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[2].value
+                                        value: data[2].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[2].value),
-                                        value:24,
+                                        value: 24,
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
@@ -426,41 +634,41 @@ const actions = {
 
 
                             {
-                                name:data[3].key,
+                                name: data[3].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[120,140],
+                                radius: [120, 140],
                                 hoverAnimation: false,
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[3].value
+                                        value: data[3].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[3].value),
-                                        value:34,
+                                        value: 34,
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
                             },
                             {
-                                name:data[4].key,
+                                name: data[4].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[100,120],
+                                radius: [100, 120],
                                 hoverAnimation: false,
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[4].value
+                                        value: data[4].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[4].value),
                                         name: 'invisible',
-                                        value:44,
+                                        value: 44,
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
@@ -477,14 +685,14 @@ const actions = {
 
         })
     },
-    getNetionTitleBar:function() {
+    getNetionTitleBar: function () {
         var mySearch = {};
-        mySearch= searchData.searchParam();
+        mySearch = searchData.searchParam();
         var param = {
             groupName: 'title.raw',
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -500,15 +708,15 @@ const actions = {
                         return a.value - b.value;
                     });
                     var new_data = [];
-                    if(data.length>6) {
-                        new_data = data.slice(0,6);
-                    }else {
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
                         new_data = data;
                     }
                     // 拼装 chart option
                     var seriesData = [];
                     var yAxisData = [];
-                    $.each(new_data, function(i, item){
+                    $.each(new_data, function (i, item) {
                         seriesData.push(item.value);
                         yAxisData.push(item.key);
                     });
@@ -519,40 +727,44 @@ const actions = {
                             data: yAxisData,
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 },
-                                formatter:function(value, index) {
-                                    return value.length>10?value.substr(0,10)+"...":value;
+                                formatter: function (value, index) {
+                                    return value.length > 10 ? value.substr(0, 10) + "..." : value;
                                 }
                             }
                         },
                         grid: {
-                            bottom: '10',
+                            top:'10',
+                            left:'10',
+                            right:'10',
+                            bottom: '50',
                             containLabel: true
                         },
                         xAxis: {
                             type: 'value',
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 16
                                 }
                             }
                         },
+                        barMaxWidth:30,
                         series: [
                             {
-                                name:'舆论热点',
-                                type:'bar',
+                                name: '舆论热点',
+                                type: 'bar',
                                 data: seriesData,
                                 itemStyle: {
                                     normal: {
-                                        color: function(params) {
+                                        color: function (params) {
                                             // build a color map as your need.
                                             var colorList = [
-                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                             ];
                                             return colorList[params.dataIndex % 15]
                                         }
@@ -572,12 +784,12 @@ const actions = {
     },
     getNetizenConsensusBar: function () {
         var mySearch = {};
-        mySearch= searchData.searchParam();
+        mySearch = searchData.searchParam();
         var param = {
             groupName: 'author',
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -594,35 +806,40 @@ const actions = {
                         return b.value - a.value;
                     });
                     $.each(data, function (i, item) {
-                        seriesData.push(item.value);
-                        xAxisData.push(item.key);
+                        if (item.key != "") {
+                            seriesData.push(item.value);
+                            xAxisData.push(item.key);
+                        }
                     });
                     var option = {
                         legend: {},
                         grid: {
-                            left:80,
+                            top:10,
+                            left: 80,
+                            right:60,
                             bottom: 100
                         },
                         yAxis: {
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 }
                             }
 
                         },
+                        barMaxWidth:30,
                         xAxis: {
                             data: xAxisData,
                             axisLabel: {
                                 interval: 0,
                                 rotate: 35,
                                 textStyle: {
-                                    fontWeight: 700,
-                                    fontSize: 20
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 },
-                                formatter:function(value, index) {
-                                    return value.length>6?value.substr(0,6)+"...":value;
+                                formatter: function (value, index) {
+                                    return value.length > 6 ? value.substr(0, 6) + "..." : value;
                                 }
                             }
                         },
@@ -658,12 +875,12 @@ const actions = {
     },
     getNetizenMap: function () {
         var mySearch = {};
-        mySearch= searchData.searchParam();
+        mySearch = searchData.searchParam();
         var param = {
-            groupName:'area',
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            groupName: 'area',
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -674,18 +891,19 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    // data = [{key:"河北",value:1212},{key:"山东",value:45},{key:"江苏",value:890}];
                     var renderData = {};
                     var maxCount = 0;
                     var seriesData = [];
-                    $.each(data, function(i, item){
+                    $.each(data, function (i, item) {
                         var node = {};
                         node.name = item.key;
                         node.value = item.value;
                         seriesData.push(node);
                     });
-                    seriesData.sort(function(a,b) {return b.value-a.value});
-                    maxCount = seriesData[0].value==undefined?10:seriesData[0].value;
+                    seriesData.sort(function (a, b) {
+                        return b.value - a.value
+                    });
+                    maxCount = seriesData[0].value == undefined ? 10 : seriesData[0].value;
                     var option = {
                         tooltip: {
                             trigger: 'item',
@@ -696,17 +914,17 @@ const actions = {
                             max: maxCount,
                             left: 'left',
                             top: 'bottom',
-                            text: ['高','低'],           // 文本，默认为数值文本
+                            text: ['高', '低'],           // 文本，默认为数值文本
                             calculable: true,
                             inRange: {
-                                color: ['#B7EEEB','#FEFDC7','#FCC171','#F27449', '#DB3B29'],
+                                color: ['#B7EEEB', '#FEFDC7', '#FCC171', '#F27449', '#DB3B29'],
                             },
 
                         },
                         series: [
                             {
-                                name:'地域分布',
-                                type:'map',
+                                name: '地域分布',
+                                type: 'map',
                                 mapType: 'china',
                                 label: {
                                     normal: {
@@ -726,16 +944,16 @@ const actions = {
             });
         });
     },
-    getKeywordsChart:function() {
+    getKeywordsChart: function () {
         var mySearch = {};
-        mySearch= searchData.searchParam();
+        mySearch = searchData.searchParam();
         var param = {
-            mustWord:mySearch.mustWord,
-            shouldWord:mySearch.shouldWord,
-            mustNotWord:mySearch.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
-            limit:50
+            limit: 50
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -743,17 +961,19 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    data.sort(function(a,b) {return b.value-a.value});
+                    data.sort(function (a, b) {
+                        return b.value - a.value
+                    });
                     var renderData = {};
-                    var seriesData = {"data":[]};
+                    var seriesData = [];
                     $.each(data, function (i, item) {
                         var node = {};
                         node.keyword = item.key;
                         node.score = item.value;
-                        seriesData.data.push(node);
+                        seriesData.push(node);
                     });
-                    renderData.description = "<div class = 'descript-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'highlight'>\""+data[0].key+"\"、\""+data[1].key+"\"、\""+data[2].key+"\"、\""+data[3].key+"\"、\""+data[4].key+"\"、\""+data[5].key+"\"</span>等词</div>";
-                    renderData.option = {"data":seriesData};
+                    renderData.description = "<div class = 'descript-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'highlight'>\"" + data[0].key + "\"、\"" + data[1].key + "\"、\"" + data[2].key + "\"、\"" + data[3].key + "\"、\"" + data[4].key + "\"、\"" + data[5].key + "\"</span>等词</div>";
+                    renderData.option = {"data": seriesData};
                     resolve(renderData);
                 },
                 error: function (error) {
@@ -762,9 +982,9 @@ const actions = {
             });
         });
     },
-    getNetizenOptions:function () {
+    getNetizenOptions: function () {
         var mySearch = {};
-        mySearch= searchData.searchParam();
+        mySearch = searchData.searchParam();
         var param = {
             "date": {
                 "endDate": mySearch.endDate,
@@ -780,10 +1000,9 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/comments/viewport',
                 data: JSON.stringify(param),
-                contentType:'application/json;charset=utf-8',
+                contentType: 'application/json;charset=utf-8',
                 type: 'post',
                 success: function (data) {
-                   debugger;
                     resolve(data);
                 },
                 error: function (error) {
@@ -791,33 +1010,119 @@ const actions = {
                 }
             });
         });
-    }
-}
-
-const utils = {
-    resetArticleTypeName: function (source) {
-        var target = '';
-        switch (source) {
-            case 'news':
-                target = '新闻';
-                break;
-            case 'weibo':
-                target = '微博';
-                break;
-            case 'bbs':
-                target = '论坛';
-                break;
-            case 'bar':
-                target = '贴吧';
-                break;
-            case 'comment':
-                target = '评论';
-                break;
+    },
+    getmylist : function (searchParam,pageSize, currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": searchParam.endDate,
+                "startDate": searchParam.startDate
+            },
+            "filed": searchParam.filed,
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord+"@"+searchParam.searchWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": searchParam.orders,
+                "page": currentPage
+            },
+            "searchKv": searchParam.searchKey,
+            "type": searchParam.type
         }
-
-        return target;
+        debugger;
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>30?item.title.substr(0,30)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.emotion = item.nlp.sentiment.label;
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            })
+        })
+    },
+    getYujingListData: function (pageSize,currentPage) {
+        var subjectId = queryParam.utils.getQueryVariable('id');
+        var param = {
+            "limit": pageSize,
+            "page": currentPage
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/warningLog/subject/'+subjectId,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        node.keyWord = item.mustWord;
+                        node.dateCreated = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), "yyyy-MM-dd hh:mm:ss");
+                        node.id = item.id;
+                        node.set = "查看预警";
+                        node.subjectName = item.subjectName;
+                        node.timeChange = item.startDate+"至"+item.endDate;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            })
+        })
     }
 }
+
 const numberLength = {
     resetNumberType: function (num) {
         var numbers = 0;
@@ -835,24 +1140,6 @@ const numberLength = {
     }
 
 }
-const emotion = {
-    resetEmotionTypeName: function (source) {
-        var type = '';
-        switch (source) {
-            case 'POS':
-                type = '正面';
-                break;
-            case 'NEG':
-                type = '负面';
-                break;
-            case 'NEU':
-                type = '中性';
-                break;
-        }
-
-        return type;
-    }
-}
 export default {
-    actions
+    actions, searchData
 }

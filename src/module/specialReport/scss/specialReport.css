@@ -27,6 +27,38 @@ body {
 
 .report-content {
   padding: 10px 80px; }
+  .report-content .outline {
+    text-align: center;
+    border: 1px solid #7DB5EE;
+    -webkit-box-shadow: 0 0 10px #1D90E6;
+    -moz-box-shadow: 0 0 10px #1D90E6;
+    box-shadow: 0 0 10px #1D90E6;
+    border-radius: 5px;
+    font-size: 20px;
+    min-height: 50px;
+    margin: 50px 20px 50px;
+    line-height: 50px;
+    font-weight: 600; }
+    .report-content .outline div {
+      display: inline-block; }
+    .report-content .outline .listNum {
+      color: #EB7E23;
+      font-size: 24px; }
+    .report-content .outline .percent {
+      color: #7BDF86;
+      font-size: 24px; }
+  .report-content .title.level-one {
+    color: #333;
+    font-size: 26px;
+    line-height: 78px; }
+  .report-content .title.level-two {
+    color: #555;
+    font-size: 18px;
+    line-height: 50px; }
+  .report-content .title.level-three {
+    color: #777;
+    font-size: 16px;
+    line-height: 40px; }
   .report-content .describe-text {
     text-indent: 2em;
     color: #000000;
@@ -36,46 +68,37 @@ body {
     .report-content .describe-text .describe-redText {
       color: #eb7e23;
       font-size: 24px; }
-  .report-content #media-report-analysis-pie {
+  .report-content #article-type-pie-chart {
     margin: auto;
     width: 800px;
     height: 400px; }
-  .report-content #news-count-bar {
+  .report-content #media-bar-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #article-trend-chart {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #news-hot-point {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #hot-author-bar-chart {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #focus-people-map-chart {
     margin: auto;
     width: 800px;
     height: 500px; }
-  .report-content #media-report-trend-bar {
+  .report-content #comment-pie-chart {
     margin: auto;
-    width: 800px;
-    height: 400px; }
-  .report-content #accident-report-bar {
-    margin: auto;
-    width: 800px;
-    height: 400px; }
-  .report-content #netizen-consensus-bar {
-    margin: auto;
-    width: 800px;
+    width: 1200px;
     height: 600px; }
-  .report-content #netizen-option-pie {
+  .report-content #comment-keywords-chart {
     margin: auto;
-    width: 800px;
-    height: 400px; }
-  .report-content #netizen-map {
-    margin: auto;
-    width: 800px;
-    height: 400px; }
-  .report-content #keywords-chart {
-    margin: auto;
-    width: 800px;
-    height: 400px; }
-  .report-content .highlight {
-    color: #EB7E23;
-    font-size: 24px;
-    font-weight: 700; }
-  .report-content .descript-text {
-    font-size: 24px;
-    text-indent: 2em;
-    font-weight: 400;
-    line-height: 40px; }
+    width: 400px;
+    height: 300px; }
 
 /*# sourceMappingURL=specialReport.css.map */

@@ -2,19 +2,33 @@
 @import "../../../assets/scss/common";
 
 .box-tablist {
-        padding: 0px 20px;
-        //background-color: #00b7ed;
-        background: -webkit-linear-gradient(top,#00b7ed 0,#00b8ec 100%);
-        background: -moz-linear-gradient(top,#00b7ed 0,#00b8ec 100%);
-        background: -o-linear-gradient(top,#00b7ed 0,#00b8ec 100%);
-        background: linear-gradient(to bottom,#00b7ed 0,#00b8ec 100%);
-      -webkit-filter: blur(10px); /* Chrome, Opera */
-      -moz-filter: blur(10px);
-      -ms-filter: blur(10px);
-      filter: blur(10px);
-      filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
-      color: #000000;
+    padding: 0px 20px;
+    //background-color: #00b7ed;
+    background: -webkit-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+    background: -moz-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+    background: -o-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
+    background: linear-gradient(to bottom, #00b7ed 0, #00b8ec 100%);
+    -webkit-filter: blur(10px); /* Chrome, Opera */
+    -moz-filter: blur(10px);
+    -ms-filter: blur(10px);
+    filter: blur(10px);
+    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
+    color: #000000;
 }
+
 .row-bg {
     padding: 10px 0;
+}
+
+.list-header {
+    text-align: center;
+    .title {
+        color: #ffffff;
+        font-size: 30px;
+        line-height: 78px;
+        width: 371px;
+        height: 78px;
+        margin: auto;
+        background-image: url("../../../../static/img/bgbj.png");
+    }
 }

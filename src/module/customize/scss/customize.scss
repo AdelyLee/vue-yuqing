@@ -1,0 +1,184 @@
+@charset "utf-8";
+@import "../../../assets/scss/common";
+
+.list {
+    width: 99%;
+    margin: 0 auto;
+    .el-tabs__item.is-active {
+        width: 191px;
+        height: 55px;
+        line-height: 45px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        background: url('../../../../static/img/dzhyqbj.png') no-repeat;
+        color: #ffffff;
+    }
+    .el-tabs__item {
+        width: 200px;
+        height: 50px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    .ceartspecial {
+        float: right;
+        margin-right: -5%;
+        margin-bottom: 2px;
+        width: 128px;
+        height: 47px;
+        line-height: 48px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 600;
+        color: #ffffff;
+        background: url('../../../../static/img/button.png') no-repeat;
+        outline: 0;
+        span {
+            cursor: pointer;
+        }
+    }
+    .row-bg {
+        padding: 10px 0;
+    }
+
+    .list-header {
+        text-align: center;
+        .title {
+            color: #ffffff;
+            font-size: 30px;
+            line-height: 78px;
+            width: 371px;
+            height: 78px;
+            margin: auto;
+            background-image: url("../../../../static/img/bgbj.png");
+        }
+    }
+}
+
+.add-warning {
+    .email {
+        .el-input {
+            width: 85%;
+        }
+    }
+    .pager {
+        .el-pagination {
+            width: 100%;
+            white-space: nowrap;
+            padding: 2px 5px;
+            color: #48576a;
+            float: left;
+            margin: 0 0 0 -100px;
+            text-align: center;
+        }
+    }
+}
+
+$border-radius: 45px 0px 45px 0px;
+$background-color: #0000fe;
+$color: #ffffff;
+$text-align: center;
+$font-size: 16px;
+$font-family: 微软雅黑;
+.list-subject {
+    width: 90%;
+    margin: 0 auto;
+    height: auto;
+    table {
+        width: 100%;
+    }
+    tr {
+        width: 100%;
+        .list-specialReport {
+            -webkit-box-shadow: 0 0 10px #666;
+            -moz-box-shadow: 0 0 10px #666;
+            box-shadow: 0 0 10px #666;
+            cursor: pointer;
+        }
+    }
+    .number {
+        margin-right: 10px;
+        height: 30px;
+        color: $color;
+        font-size: $font-size;
+        text-align: $text-align;
+        line-height: 30px;
+        background-color: #2b71c3;
+        font-family: $font-family;
+    }
+    .selected {
+        background-color: #ccc;
+    }
+    .close {
+        float: right;
+        margin-right: 30px;
+        margin-top: 20px;
+        color: #eee;
+    }
+    .name {
+        margin-right: 10px;
+        height: 30px;
+        color: $color;
+        font-size: $font-size;
+        text-align: $text-align;
+        line-height: 30px;
+        background-color: #eb6100;
+        font-family: $font-family;
+    }
+    .operation {
+        margin-right: 10px;
+        height: 30px;
+        color: $color;
+        font-size: $font-size;
+        text-align: $text-align;
+        line-height: 30px;
+        background-color: #eb6100;
+        font-family: $font-family;
+    }
+    .number-none {
+        margin-right: 10px;
+        height: 30px;
+        color: #000000;
+        font-size: 16px;
+        text-align: $text-align;
+        font-family: $font-family;
+        line-height: 30px;
+        .complete {
+            border-radius: 15px;
+            background-color: #80c269;
+            text-align: center;
+            padding: 2px 10px;
+            color: #ffffff;
+        }
+    }
+    .name-none {
+        margin-right: 10px;
+        height: 30px;
+        color: #000000;
+        font-size: 16px;
+        text-align: $text-align;
+        line-height: 30px;
+        font-family: $font-family;
+    }
+    .operation-none {
+        margin-right: 10px;
+        height: 30px;
+        color: #000000;
+        font-size: 16px;
+        text-align: $text-align;
+        line-height: 30px;
+        font-family: $font-family;
+        span {
+            cursor: pointer;
+        }
+    }
+    .estimate-content {
+        padding-left: 15px;
+        padding-bottom: 10px;
+        color: #0b97c4;
+        .estimate {
+            font-size: 16px;
+            color: #ff4949;
+        }
+    }
+}

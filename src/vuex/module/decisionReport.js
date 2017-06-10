@@ -4,13 +4,14 @@
 
 import $ from 'jquery'
 import common from './common'
-//import store from './store'
+import queryParam from '../utils'
 
 const actions = {
     getBriefingJson: function () {
+        var reportId = queryParam.utils.getQueryVariable('id');
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/briefing/detail/5928035494cdbe0088dce147',
+                url: common.url.webserviceUrl + '/briefing/detail/' + reportId,
                 type: 'get',
                 success: function (data) {
                     resolve(data);
@@ -91,10 +92,10 @@ const actions = {
                     // 拼装 chart option
                     var seriesData = [];
                     var lengeds = [];
-                    $.each(data,function(i,item){
+                    $.each(data, function (i, item) {
                         var node = {};
-                        node.name = emotion.resetEmotionTypeName(item.key);
-                        node.value=item.value;
+                        node.name = utils.resetEmotionTypeName(item.key);
+                        node.value = item.value;
                         seriesData.push(node);
                         lengeds.push(node.name)
                     })
@@ -406,7 +407,7 @@ const actions = {
         });
     },
     // 相关言论
-    getCommentPieChart:function(){
+    getCommentPieChart: function () {
         var param = {
             "endDate": "2017-02",
             "startDate": "2017-01"
@@ -416,7 +417,7 @@ const actions = {
                 url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
                 data: JSON.stringify(param),
                 type: 'Post',
-                contentType:"application/json;charset=utf-8",
+                contentType: "application/json;charset=utf-8",
                 success: function (data) {
                     console.log(data)
                     data = data.sort(function (a, b) {
@@ -449,18 +450,18 @@ const actions = {
                         },
                         series: [
                             {
-                                name:data[0].key,
+                                name: data[0].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[180,200],
+                                radius: [180, 200],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
-                                    value:data[0].value
+                                    value: data[0].value
                                 },
                                     {
-                                        value:4,
+                                        value: 4,
                                         // value: numberLength.resetNumberType(data[0].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
@@ -468,19 +469,19 @@ const actions = {
                                 ]
                             },
                             {
-                                name:data[1].key,
+                                name: data[1].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[160,180],
+                                radius: [160, 180],
                                 itemStyle: dataStyle,
                                 hoverAnimation: false,
                                 data: [{
 
-                                    value:data[1].value
+                                    value: data[1].value
                                 },
                                     {
-                                        value:14,
+                                        value: 14,
                                         // value: numberLength.resetNumberType(data[1].value),
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
@@ -489,20 +490,20 @@ const actions = {
                                 ]
                             },
                             {
-                                name:data[2].key,
+                                name: data[2].key,
                                 type: 'pie',
                                 clockWise: false,
                                 hoverAnimation: false,
                                 center: ['50%', '50%'],
-                                radius:[140,160],
+                                radius: [140, 160],
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[2].value
+                                        value: data[2].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[2].value),
-                                        value:24,
+                                        value: 24,
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
@@ -511,41 +512,41 @@ const actions = {
 
 
                             {
-                                name:data[3].key,
+                                name: data[3].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[120,140],
+                                radius: [120, 140],
                                 hoverAnimation: false,
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[3].value
+                                        value: data[3].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[3].value),
-                                        value:34,
+                                        value: 34,
                                         name: 'invisible',
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
                             },
                             {
-                                name:data[4].key,
+                                name: data[4].key,
                                 type: 'pie',
                                 clockWise: false,
                                 center: ['50%', '50%'],
-                                radius:[100,120],
+                                radius: [100, 120],
                                 hoverAnimation: false,
                                 itemStyle: dataStyle,
                                 data: [
                                     {
-                                        value:data[4].value
+                                        value: data[4].value
                                     },
                                     {
                                         // value: numberLength.resetNumberType(data[4].value),
                                         name: 'invisible',
-                                        value:44,
+                                        value: 44,
                                         itemStyle: placeHolderStyle
                                     }
                                 ]
@@ -578,36 +579,36 @@ const actions = {
                 type: 'get',
                 success: function (data) {
                     data.sort(function (a, b) {
-                        return a.value -b.value;
+                        return a.value - b.value;
                     });
                     var new_data = [];
-                    if(data.length>6) {
-                        new_data = data.slice(0,6);
-                    }else {
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
                         new_data = data;
                     }
 
 
-                                // 拼装 chart option
-                                var seriesData = [];
-                                var yAxisData = [];
-                                // data = data.sort(function (a, b) {
-                                //     return a.value -b.value;
-                                // });
-                                $.each(new_data, function (i, item) {
-                                    seriesData.push(item.value);
-                                    yAxisData.push(item.key);
-                                });
-                                var option = {
-                                    legend: {},
-                                    yAxis: {
-                                        type: 'category',
-                                        data: yAxisData,
-                                        axisLabel: {
-                                            textStyle: {
-                                                fontWeight: 700,
-                                                fontSize: 20
-                                            }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var yAxisData = [];
+                    // data = data.sort(function (a, b) {
+                    //     return a.value -b.value;
+                    // });
+                    $.each(new_data, function (i, item) {
+                        seriesData.push(item.value);
+                        yAxisData.push(item.key);
+                    });
+                    var option = {
+                        legend: {},
+                        yAxis: {
+                            type: 'category',
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 700,
+                                    fontSize: 20
+                                }
                             }
                         },
                         grid: {
@@ -628,35 +629,35 @@ const actions = {
                         },
                         series: [
                             {
-                                name:'舆论热点',
-                                type:'bar',
+                                name: '舆论热点',
+                                type: 'bar',
                                 data: seriesData,
                                 itemStyle: {
                                     normal: {
-                                        color: function(params) {
+                                        color: function (params) {
                                             // build a color map as your need.
                                             var colorList = [
-                                                '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                             ];
                                             return colorList[params.dataIndex % 15]
                                         }
                                     },
 
-                                            }
-                                        }
-                                    ]
-                                };
-
-                                resolve(option);
-                            },
-                            error: function (error) {
-                                reject(error);
+                                }
                             }
-                        });
-                    });
+                        ]
+                    };
+
+                    resolve(option);
                 },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
     getMonthAccidentChart: function () {
         var param = {
             "endDate": "2017-02",
@@ -695,8 +696,8 @@ const actions = {
                                     fontWeight: 700,
                                     fontSize: 20
                                 },
-                                formatter:function(value, index) {
-                                    return value.length>20?value.substr(0,20)+"...":value;
+                                formatter: function (value, index) {
+                                    return value.length > 20 ? value.substr(0, 20) + "..." : value;
                                 }
                             }
                         },
@@ -934,9 +935,7 @@ const utils = {
         }
 
         return target;
-    }
-}
-const emotion = {
+    },
     resetEmotionTypeName: function (source) {
         var type = '';
         switch (source) {
@@ -953,25 +952,7 @@ const emotion = {
 
         return type;
     }
-}
-const numberLength = {
-    resetNumberType: function (num) {
-        var numbers = 0;
-        var l = num.toString().length;
-        console.log(l);
-        if (l == 3) {
-            numbers = num / 2 - 100;
-        } else if (l == 4) {
-            numbers = num / 2 - 1000;
-        } else if (l >= 5) {
-            numbers = num / 2 - 10000;
-        } else {
-            numbers = num
-        }
-        return numbers
-    }
-
-}
+};
 export default {
     actions
 }
