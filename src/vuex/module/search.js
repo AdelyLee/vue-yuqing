@@ -44,6 +44,37 @@ const actions = {
             });
         });
     },
+
+    getSearchArticlesTemp: function (pageSize, currentPage, condition) {
+        var param = {
+            "mustNotWord": condition.mustNotWord,
+            "mustWord": condition.mustWord,
+            "shouldWord": condition.shouldWord,
+            "size": pageSize,
+            "page": currentPage
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType.json',
+                contentType: "application/json; charset=utf-8",
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    debugger;
+                    data.content.forEach(function (item) {
+                        item.title = item.title.replace(new RegExp('<[^>].*?>', 'gi'), '').replace("&nbsp;", "");
+                        item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
+                        item.title = item.title.length > 40 ? item.title.substring(0, 40) + "..." : item.title;
+                        item.content = item.content.length > 100 ? item.content.substring(0, 100) + "..." : item.content;
+                    });
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
 };
 
 

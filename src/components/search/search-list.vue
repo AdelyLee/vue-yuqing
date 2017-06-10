@@ -1,6 +1,6 @@
 <template>
     <div class="search-list">
-        <div class="article" v-for="item in searchList">
+        <div class="article" v-for="item in searchList" @click="showDetail(item)">
             <el-row :gutter="15">
                 <el-col :span="4">
                     <div class="img"><img :src="logoSrc"></div>
@@ -26,6 +26,13 @@
                 logoSrc: '../../../static/img/an_newlogo.png'
             }
         },
-        methods: {}
+        methods: {
+            showDetail: function(article) {
+                var data = {};
+                data.action = "showArticleDetail";
+                data.article = article;
+                this.$emit("data", data);
+            }
+        }
     }
 </script>

@@ -12,7 +12,8 @@
                             <div class="search">
                                 <el-input placeholder="请输入内容" v-model="condition.mustWord">
                                     <template slot="prepend"><i class="el-icon-view"></i></template>
-                                    <el-button slot="append" @click="clickSearch"><span class="search-icon">搜索</span></el-button>
+                                    <el-button slot="append" @click="clickSearch"><span class="search-icon">搜索</span>
+                                    </el-button>
                                 </el-input>
                             </div>
                             <div class="hot-search">
@@ -25,7 +26,7 @@
                     </el-row>
                     <el-row :gutter="15">
                         <el-col :span="15">
-                            <search-list :searchList="searchList"></search-list>
+                            <search-list :searchList="searchList" @data="getArticle"></search-list>
                             <el-row>
                                 <list-page :pager="pager" @data="getPager"></list-page>
                             </el-row>
@@ -60,7 +61,7 @@
                 condition: {
                     mustWord: "",
                     mustNotWord: "",
-                    shouldWord: "",
+                    shouldWord: ""
                 },
                 searchList: [],
                 pager: {
@@ -68,6 +69,7 @@
                     currentPage: 1,
                     totalElements: 1
                 },
+                article: {}
             }
         },
         components: {
@@ -84,14 +86,27 @@
             },
             getSearchArticles: function (condition) {
                 var self = this;
-                service.actions.getSearchArticles(self.pager.pageSize, self.pager.currentPage, condition).then(function (data) {
+                service.actions.getSearchArticlesTemp(self.pager.pageSize, self.pager.currentPage, condition).then(function (data) {
+                    debugger;
                     self.searchList = data.content;
                     self.pager.totalElements = data.totalElements;
                 });
             },
+            showArticleDetail: function (article) {
+                window.open("../module/detail.html?id=" + article.id);
+            },
             getPager(pager) {
                 this.pager = pager;
                 this.getSearchArticles(this.condition);
+            },
+            getArticle(data) {
+                var self = this;
+                self.article = data.article;
+                switch (data.action) {
+                    case 'showArticleDetail':
+                        self.showArticleDetail(self.article);
+                        break;
+                }
             }
         }
     }
