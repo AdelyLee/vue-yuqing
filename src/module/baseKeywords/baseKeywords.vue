@@ -28,7 +28,7 @@
 
 <script>
     import $ from 'jquery';
-    import common from '../../vuex/module/common';
+    import common from '../../vuex/common';
     import Header from '@/components/commons/header';
     export default {
         data() {

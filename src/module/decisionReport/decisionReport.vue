@@ -23,7 +23,7 @@
     import ReportContent from '@/components/report/report-content';
     import ReportSummary from '@/components/report/report-summary';
 
-    import service from '../../vuex/module/decisionReport.js';
+    import service from '../../vuex/module/report.js';
     import typeUtil from '../../vuex/typeUtil.js';
 
     export default{

@@ -2,7 +2,7 @@
  * Created by lyc on 17-6-9.
  */
 import $ from 'jquery'
-import common from './common'
+import common from '../common'
 
 const actions = {
     getSearchArticles: function (pageSize, currentPage, condition) {

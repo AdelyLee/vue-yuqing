@@ -2,7 +2,7 @@
  * Created by lyc on 17-6-6.
  */
 import $ from 'jquery'
-import common from './common'
+import common from '../common'
 import dateUtil from '../dateUtil'
 import typeUtil from '../typeUtil'
 

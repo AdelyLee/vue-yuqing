@@ -1,6 +1,7 @@
 import $ from 'jquery';
-import common from './common';
+import common from '../common';
 import dateUtil from '../dateUtil'
+import utils from '../utils'
 
 const actions = {
     getReportList: function (reportType, pageSize, currentPage) {
@@ -32,6 +33,22 @@ const actions = {
                     data.content.forEach(function(item){
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
+
+    getBriefingJson: function () {
+        var reportId = utils.utils.getQueryVariable('id');
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/briefing/detail/' + reportId,
+                type: 'get',
+                success: function (data) {
                     resolve(data);
                 },
                 error: function (error) {

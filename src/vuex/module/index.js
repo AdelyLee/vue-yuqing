@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import common from './common'
+import common from '../common'
 import dateUtil from '../dateUtil'
 const searchData = {
     searchParam: function () {
