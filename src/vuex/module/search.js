@@ -1,7 +1,9 @@
 /**
  * Created by lyc on 17-6-9.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
+
 import common from './common'
 
 const actions = {
@@ -68,9 +70,6 @@ const actions = {
                         item.content = item.content.length > 100 ? item.content.substring(0, 100) + "..." : item.content;
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });

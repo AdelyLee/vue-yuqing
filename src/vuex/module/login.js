@@ -1,8 +1,10 @@
 /**
  * Created by lyc on 17-6-10.
  */
-import $ from 'jquery'
-import common from './common'
+import jquery from '../api';
+const $ = jquery.jQuery;
+
+import common from './common';
 
 const action = {
     getCaptcha: function () {

@@ -1,7 +1,8 @@
 /**
  * Created by lyc on 17-6-6.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from './common'
 import dateUtil from '../dateUtil'
 import typeUtil from '../typeUtil'
@@ -31,25 +32,6 @@ const actions = {
                     });
                     data.content = subjectLst;
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
-                }
-            });
-        });
-    },
-
-    getCustomSubject: function (subject) {
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/contact/' + subject.id,
-                contentType: "application/json; charset=utf-8",
-                type: 'get',
-                success: function (data) {
-                    resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -70,9 +52,6 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -88,9 +67,6 @@ const actions = {
             type: 'post',
             success: function (data) {
                 console.log("create contact success");
-            },
-            error: function (error) {
-                console.log("create contact error:", error);
             }
         });
     },
@@ -103,9 +79,6 @@ const actions = {
             type: 'delete',
             success: function (data) {
                 console.log("delete contact success");
-            },
-            error: function (error) {
-                console.log("delete contact error:", error);
             }
         });
     },
@@ -122,9 +95,6 @@ const actions = {
             type: 'post',
             success: function (data) {
                 console.log("create custom subject success");
-            },
-            error: function (error) {
-                console.log("create custom subject error:", error);
             }
         });
     },
@@ -137,9 +107,6 @@ const actions = {
             type: 'delete',
             success: function (data) {
                 console.log("delete custom subject success");
-            },
-            error: function (error) {
-                console.log("delete custom subject error:", error);
             }
         });
     },
@@ -155,9 +122,6 @@ const actions = {
             type: 'put',
             success: function (data) {
                 console.log("edit custom subject success");
-            },
-            error: function (error) {
-                console.error("edit custom subject error:", error);
             }
         });
     },
@@ -170,9 +134,6 @@ const actions = {
             type: 'get',
             success: function (data) {
                 console.log("update custom subject report success");
-            },
-            error: function (error) {
-                console.log("update custom subject report error:", error);
             }
         });
     },
@@ -204,10 +165,6 @@ const actions = {
                         estimateCount = data[0].value;
                     }
                     resolve(estimateCount);
-                },
-                error: function (error) {
-                    reject(error);
-                    console.log("get custom subject estimate error:", error);
                 }
             });
         });
@@ -240,9 +197,6 @@ const actions = {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -270,9 +224,6 @@ const actions = {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });

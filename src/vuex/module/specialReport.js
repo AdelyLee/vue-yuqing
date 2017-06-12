@@ -1,7 +1,8 @@
 /**
  * Created by topcom on 2017/5/24.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from './common'
 import dateUtil from '../dateUtil'
 import queryParam from '../utils'
@@ -24,8 +25,6 @@ const searchData = {
                 data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
 
                 search = data;
-            },
-            error: function (error) {
             }
         });
 
@@ -41,9 +40,6 @@ const actions = {
                 type: 'get',
                 success: function (data) {
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -128,9 +124,6 @@ const actions = {
                     renderData.description = description;
 
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -226,10 +219,6 @@ const actions = {
                     renderData.option = option;
                     renderData.description = description;
                     resolve(renderData);
-
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -328,9 +317,6 @@ const actions = {
                     renderData.option = option;
                     renderData.description = description;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -422,9 +408,6 @@ const actions = {
                     renderData.description = "<div class = 'describe-text'>参与话题讨论中，最为激烈的前<span class = 'describe-redText'>" + yAxisData.length + "</span>名话题分别为<span class = 'describe-redText'>" + yAxisData.join("，") + "</span>。</div>";
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -511,9 +494,6 @@ const actions = {
                     renderData.description = "<div class = 'describe-text'>参与话题讨论的网民中，讨论最为激烈的前<span class = 'describe-redText'>" + xAxisData.length + "</span>名网民分别为<span class = 'describe-redText'>" + xAxisData.join("，") + "</span>。</div>";
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -584,9 +564,6 @@ const actions = {
                     renderData.description = "<div class = 'describe-text'>从关注人群的地域分布来看，对参与话题讨论的网民言论样本进行分析发现，<span class = 'describe-redText'>" + seriesData[0].name + "(" + seriesData[0].value + ")</span>和<span class = 'describe-redText'>" + seriesData[1].name + "(" + seriesData[1].value + ")</span>对话题关注度最高，其次是<span class = 'describe-redText'>" + seriesData[2].name + "(" + seriesData[2].value + ")</span>。</div>";
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -622,9 +599,6 @@ const actions = {
                     renderData.description = "<div class = 'describe-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'describe-redText'>\"" + data[0].key + "\"、\"" + data[1].key + "\"、\"" + data[2].key + "\"、\"" + data[3].key + "\"、\"" + data[4].key + "\"、\"" + data[5].key + "\"</span>等词</div>";
                     renderData.option = {"data": seriesData};
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -725,9 +699,6 @@ const actions = {
                     renderData.option = option;
                     renderData.description = description;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             })
 

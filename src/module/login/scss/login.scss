@@ -5,8 +5,6 @@ body {
     padding: 0;
     margin: 0;
     background: url(../../../../static/img/login-bj1.jpg) no-repeat center fixed;
-    //background-position: center;
-    //background-attachment: fixed;
     background-size: 100% 100%
 }
 
@@ -39,7 +37,7 @@ body {
 .panel-heading {
     color: #fff;
     height: 40px;
-    line-height: 0px;
+    line-height: 0;
     margin-left: -1px;
     margin-top: -1px;
     width: 90%;
@@ -62,6 +60,13 @@ body {
 .form-horizontal .form-group {
     margin-right: -15px;
     margin-left: -15px;
+}
+
+.login-message {
+    color: #ff0000;
+    text-align: center;
+    line-height: 25px;
+    height: 25px;
 }
 
 input, button, select, textarea {
@@ -221,9 +226,8 @@ input {
 }
 
 .panel-body {
-    padding-left: 0px;
+    padding-left: 0;
     padding-right: 38px;
-    padding-top: 25px;
 }
 
 .text-center {

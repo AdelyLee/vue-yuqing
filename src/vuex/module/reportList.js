@@ -1,11 +1,12 @@
-import $ from 'jquery';
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from './common';
 import dateUtil from '../dateUtil'
 
 const actions = {
     getReportList: function (reportType, pageSize, currentPage) {
         reportType = reportType == undefined ? "MONTHLY" :  reportType;
-        pageSize = pageSize == undefined ? 2 :  pageSize;
+        pageSize = pageSize == undefined ? 10 :  pageSize;
         currentPage = currentPage == undefined ? 1 :  currentPage;
         var param = {
             // "date": {
@@ -33,9 +34,6 @@ const actions = {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });

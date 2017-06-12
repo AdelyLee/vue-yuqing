@@ -46,9 +46,9 @@
                 activeName: '往期月报',
                 reportList: [],
                 pager: {
-                    pageSize: 2,
+                    pageSize: 10,
                     currentPage: 1,
-                    totalElements: 10
+                    totalElements: 1
                 },
                 reportListHeader: '往期月报',
                 reportType: "MONTHLY"
@@ -83,7 +83,7 @@
                 } else if (self.reportListHeader == "往期周报"){
                     self.reportType = "WEEKLY";
                 }
-                self.pager.pageSize = 2;
+                self.pager.pageSize = 10;
                 self.pager.currentPage = 1;
 
                 this.getReportList();

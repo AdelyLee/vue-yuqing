@@ -91,9 +91,12 @@
                         self.buttonText = '登录中...';
                         service.action.login(user.username, user.password, user.captcha).then(function (data) {
                             self.buttonText = '登录';
+                            window.location.href  = "../module/index.html";
+                            debugger;
                         }).catch(error => {
                             self.buttonText = '登录';
-                            self.loginMessage = error.responseText.message;
+                            debugger;
+                            self.loginMessage = error.responseJSON.message;
                         });
                     }
                 });
