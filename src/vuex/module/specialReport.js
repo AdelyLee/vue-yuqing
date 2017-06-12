@@ -3,7 +3,7 @@
  */
 import jquery from '../api';
 const $ = jquery.jQuery;
-import common from './common'
+import common from '../common'
 import dateUtil from '../dateUtil'
 import queryParam from '../utils'
 import typeParam from '../typeUtil'

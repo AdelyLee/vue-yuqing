@@ -4,7 +4,7 @@
 
 import jquery from '../api';
 const $ = jquery.jQuery;
-import common from './common'
+import common from '../common'
 import queryParam from '../utils'
 
 const actions = {

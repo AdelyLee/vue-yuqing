@@ -38,7 +38,7 @@
     import Paging from '@/components/commons/paging';
     import ListPresentation from '@/components/presentationList/list-presentation';
 
-    import service from '../../vuex/module/reportList.js'
+    import service from '../../vuex/module/report.js'
     export default {
         name: 'presentationList',
         data () {

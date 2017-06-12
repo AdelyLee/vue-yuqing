@@ -8,7 +8,7 @@
  * Created by topcom on 2017/5/24.
  */
 import $ from 'jquery'
-import common from './common'
+import common from '../common'
 import queryParam from '../utils'
 
 const searchData = {

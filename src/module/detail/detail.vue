@@ -45,7 +45,6 @@
                                     </el-col>
                                     <div class="emotionTitle">情感分析</div>
                                     <gauge-chart :chartConfig="mediaEmotionGauge"></gauge-chart>
-
                                 </el-col>
                                 <el-col :span="12">
                                     <el-col :span="1">

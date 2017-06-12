@@ -22,7 +22,7 @@
 </template>
 <script>
     import $ from 'jquery'
-    import common from '../../vuex/module/common'
+    import common from '../../vuex/common'
     export default {
         props: ['reportList'],
         data () {

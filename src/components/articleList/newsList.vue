@@ -37,7 +37,7 @@
     import Vue from 'vue'
 //    import Paging from '@/components/presentationList/paging';
     import $ from 'jquery'
-    import common from '../../vuex/module/common'
+    import common from '../../vuex/common'
     import service from '../../vuex/module/currentSpecialReport.js'
     export default {
         data () {

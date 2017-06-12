@@ -74,7 +74,7 @@
 </template>
 <script>
     import $ from 'jquery'
-    import common from '../../vuex/module/common'
+    import common from '../../vuex/common'
     import dateUtil from '../../vuex/dateUtil'
     const cityOptions = ['新闻', '微博', '贴吧', '论坛'];
     export default {
