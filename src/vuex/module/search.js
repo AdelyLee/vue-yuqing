@@ -25,7 +25,7 @@ const actions = {
                 "page": currentPage
             }
         };
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
                 contentType: "application/json; charset=utf-8",

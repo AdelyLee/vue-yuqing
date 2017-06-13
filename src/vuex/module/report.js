@@ -10,10 +10,6 @@ const actions = {
         pageSize = pageSize == undefined ? 10 :  pageSize;
         currentPage = currentPage == undefined ? 1 :  currentPage;
         var param = {
-            // "date": {
-            //     "startDate": "2017-01",
-            //     "endDate": "2018"
-            // },
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
@@ -24,7 +20,7 @@ const actions = {
             },
             "type": reportType
         };
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/briefing/search',
                 contentType: "application/json; charset=utf-8",

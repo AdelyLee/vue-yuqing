@@ -26,15 +26,13 @@ const actions = {
                 type: 'get',
                 success: function (data) {
                     // 拼装 chart option
-                    var seriesData = [];
-                    var lengeds = [];
-                    $.each(data, function (i, item) {
+                    var seriesData = [], legend = [];
+                    data.forEach(function (item) {
                         var node = {};
-                        var type = item.key;
-                        node.name = typeUtil.typeUtil.sentimentType(type);
+                        node.name = typeUtil.typeUtil.sentimentType(item.key);
                         node.value = item.value;
                         seriesData.push(node);
-                        lengeds.push(node.name)
+                        legend.push(node.name)
                     });
                     var option = {
                         tooltip: {
@@ -44,7 +42,7 @@ const actions = {
                         legend: {
                             x: 'center',
                             y: 'top',
-                            data: lengeds
+                            data: legend
                         },
                         color: [
                             '#d2b356', '#db726c', '#56b6ff', '#E87C25', '#27727B',
@@ -52,37 +50,34 @@ const actions = {
                             '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                         ],
                         calculable: true,
-                        series: [
-                            {
-                                name: '情感类型',
-                                type: 'pie',
-                                radius: [30, 110],
-                                center: ['50%', '50%'],
-                                roseType: 'area',
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        // position: 'center',
-                                        textStyle: {
-                                            fontSize: 20
-                                        }
-                                    },
-                                    emphasis: {
-                                        show: true,
-                                        textStyle: {
-                                            fontSize: '30',
-                                            fontWeight: 'bold'
-                                        }
+                        series: [{
+                            name: '情感类型',
+                            type: 'pie',
+                            radius: [30, 110],
+                            center: ['50%', '50%'],
+                            roseType: 'area',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: 20
                                     }
                                 },
-                                labelLine: {
-                                    normal: {
-                                        show: true
+                                emphasis: {
+                                    show: true,
+                                    textStyle: {
+                                        fontSize: '30',
+                                        fontWeight: 'bold'
                                     }
-                                },
-                                data: seriesData
-                            }
-                        ]
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: true
+                                }
+                            },
+                            data: seriesData
+                        }]
                     };
 
                     resolve(option);
@@ -90,9 +85,9 @@ const actions = {
             });
         });
     },
+
+    // TODO: 该方法接口需要重新对接
     getCarrierAnalysisChart: function (timesType) {
-        var width = $('#tab-content').width();
-        $('#carrierAnalysis,#carrierAnalysisMonth,#carrierAnalysisNearlyDays,#carrierAnalysisYesterday').width(width - 50);
         var data = new Date();
         switch (timesType) {
             case "day":
@@ -345,9 +340,9 @@ const actions = {
             resolve(myOption);
         });
     },
+
+    // TODO: 该方法接口需要重新对接
     getCarrierAnalysisBarChart: function (timesType) {
-        var width = $('#tab-contents').width();
-        $('#carrierAnalysisType,#carrierAnalysisTypeMonth,#carrierAnalysisTypeNearlyDays,#carrierAnalysisTypeYesterday').width(width - 50);
         var data = new Date();
         switch (timesType) {
             case "day":
@@ -563,6 +558,7 @@ const actions = {
             resolve(myOption);
         });
     },
+
     //主流媒体
     getMediaBarChart: function () {
         var param = {
@@ -668,8 +664,9 @@ const actions = {
         });
 
     },
+
     //新闻列表
-    getArticleList: function (type) {
+    getArticleTabList: function (type) {
         var param = {
             type: "source",
             page: 1,
@@ -692,8 +689,10 @@ const actions = {
             });
         });
     },
-    getNewsCurrentList: function (reportType, pageSize, currentPage) {
-        reportType = reportType == undefined ? "MONTHLY" : reportType;
+
+    // 点击显示article列表
+    // TODO: 需要更改
+    getNewsCurrentList: function (pageSize, currentPage, condition) {
         pageSize = pageSize == undefined ? 2 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
         var param = {
@@ -711,7 +710,6 @@ const actions = {
                 }],
                 "searchKv": ''
             },
-            "type": [reportType]
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -724,14 +722,11 @@ const actions = {
                         item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
     },
-}
+};
 export default {
     actions
 }

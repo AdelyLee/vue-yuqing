@@ -69,7 +69,7 @@
                                     <div slot="header" class="clearfix">
                                         <span style="line-height: 20px;">载体分布统计</span>
                                     </div>
-                                    <el-tabs v-model="activeBarName" @tab-click="handleClickPieTab" id="tab-contents">
+                                    <el-tabs v-model="activeBarName" @tab-click="handleClickBarTab" id="tab-contents">
                                         <el-tab-pane name="今天">
                                             <span slot="label"><i class="el-icon-date"></i> 今天</span>
                                             <el-row type="flex" class="row-bg" justify="space-around">
@@ -104,20 +104,21 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="24" class="lists">
-                                <el-tabs v-model="activeNews" @tab-click="handleClickListTab">
-                                    <el-tab-pane label="最新新闻" name="first">
+                                <el-tabs v-model="activeArticleTabName" @tab-click="handleClickListTab">
+                                    <el-tab-pane label="最新新闻" name="news">
                                         <news-list :newsList="newsList" @data="getData"></news-list>
                                     </el-tab-pane>
-                                    <el-tab-pane label="最新微博" name="second">
+                                    <el-tab-pane label="最新微博" name="weibo">
                                         <news-list :newsList="weiboList" @data="getData"></news-list>
                                     </el-tab-pane>
-                                    <el-tab-pane label="最新论坛" name="third">
+                                    <el-tab-pane label="最新论坛" name="bbs">
                                         <news-list :newsList="bbsList" @data="getData"></news-list>
                                     </el-tab-pane>
                                 </el-tabs>
                             </el-col>
                         </el-row>
-                        <article-list v-if="articles.length > 0" :id="articleListId" :type="type" :articles="articles" :pager="pager"
+                        <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
+                                      :articles="articles" :pager="pager"
                                       @data="getData"></article-list>
                     </div>
                 </el-card>
@@ -141,13 +142,12 @@
             return {
                 activeTrendName: '近30天',
                 activeBarName: '近30天',
-                activeNews: 'first',
-                name: '',
+                activeArticleTabName: 'news',
                 newsList: [],
                 weiboList: [],
                 bbsList: [],
                 tabArticleType: "news",
-                type: 'news',
+                articleType: 'news',
                 sentimentAnalysis: {
                     chartId: 'sentimentAnalysis',
                     option: {},
@@ -242,7 +242,9 @@
                     currentPage: 1,
                     totalElements: 1
                 },
-                timesType: 'month',
+                trendTimesType: 'month',
+                barTimesType: 'month',
+                articlesCondition: {}, // 获取文章列表相关条件
                 articles: [],
                 articleListId: 'article-list'
             }
@@ -260,7 +262,7 @@
             this.getCarrierAnalysisChart();
             this.getCarrierAnalysisBarChart();
             this.getMediaBarChart();
-            this.getArticleList();
+            this.getArticleTabList(this.tabArticleType);
         },
         methods: {
             getSentimentTypeChart: function () {
@@ -272,42 +274,63 @@
                 })
 
             },
-            getCarrierAnalysisChart: function () {
+            getCarrierAnalysisChart: function (type) {
                 var self = this;
-                service.actions.getCarrierAnalysisChart(self.timesType).then(function (option) {
-//                    self.carrierAnalysis.option = option;
-//                    self.carrierAnalysisYesterday.option = option;
-//                    self.carrierAnalysisNearlyDays.option = option;
-                    self.carrierAnalysisMonth.option = option;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
+                var width = document.getElementById('tab-contents').offsetWidth;
+                var chartWidth = width - 50 + "px";
+                service.actions.getCarrierAnalysisChart(type).then(function (option) {
+                    if (type == 'day') {
+                        document.getElementById("carrierAnalysis").style.width = chartWidth;
+                        self.carrierAnalysis.option = option;
+                    }
+                    if (type == 'yesterday') {
+                        document.getElementById("carrierAnalysisYesterday").style.width = chartWidth;
+                        self.carrierAnalysisYesterday.option = option;
+                    }
+                    if (type == 'nearlydays') {
+                        document.getElementById("carrierAnalysisNearlyDays").style.width = chartWidth;
+                        self.carrierAnalysisNearlyDays.option = option;
+                    }
+                    if (type == 'month') {
+                        document.getElementById("carrierAnalysisMonth").style.width = chartWidth;
+                        self.carrierAnalysisMonth.option = option;
+                    }
+                });
 
             },
-            getCarrierAnalysisBarChart: function () {
+            getCarrierAnalysisBarChart: function (type) {
                 var self = this;
-                service.actions.getCarrierAnalysisBarChart(self.timesType).then(function (option) {
-//                    self.carrierAnalysisType.option = option;
-//                    self.carrierAnalysisTypeYesterday.option = option;
-//                    self.carrierAnalysisTypeNearlyDays.option = option;
-                    self.carrierAnalysisTypeMonth.option = option;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-
+                var width = document.getElementById('tab-contents').offsetWidth;
+                var chartWidth = width - 50 + "px";
+                service.actions.getCarrierAnalysisBarChart(type).then(function (option) {
+                    if (type == 'day') {
+                        document.getElementById("carrierAnalysisType").style.width = chartWidth;
+                        self.carrierAnalysisType.option = option;
+                    }
+                    if (type == 'yesterday') {
+                        document.getElementById("carrierAnalysisTypeYesterday").style.width = chartWidth;
+                        self.carrierAnalysisTypeYesterday.option = option;
+                    }
+                    if (type == 'nearlydays') {
+                        document.getElementById("carrierAnalysisTypeNearlyDays").style.width = chartWidth;
+                        self.carrierAnalysisTypeNearlyDays.option = option;
+                    }
+                    if (type == 'month') {
+                        document.getElementById("carrierAnalysisTypeMonth").style.width = chartWidth;
+                        self.carrierAnalysisTypeMonth.option = option;
+                    }
+                });
             },
+
             getMediaBarChart: function () {
                 var self = this;
                 service.actions.getMediaBarChart().then(function (option) {
                     self.mediaBarChart.option = option;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-
+                });
             },
-            getArticleList: function () {
+            getArticleTabList: function (type) {
                 var self = this;
-                service.actions.getArticleList(self.tabArticleType).then(function (data) {
+                service.actions.getArticleTabList(type).then(function (data) {
                     self.newsList = data.content;
                 });
             },
@@ -315,16 +338,18 @@
                 var self = this;
                 switch (data.action) {
                     case 'clickArticleListPager':
+                        self.pager = data.articleListPager;
                         break;
                     case 'showMoreArticle':
+                        self.pager.currentPage = 1;
                         break;
                 }
-//                this.getNewsCurrentList();
+                self.getArticlePagerList();
             },
 
-            getNewsCurrentList: function () {
+            getArticlePagerList: function () {
                 var self = this;
-                service.actions.getNewsCurrentList(self.type, self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                service.actions.getNewsCurrentList(self.pager.pageSize, self.pager.currentPage, self.articlesCondition).then(function (data) {
                     self.News = data.content;
                     self.pager.totalElements = data.totalElements;
                 }, function (error) {
@@ -336,45 +361,56 @@
             handleClickTrendTab(tab, event) {
                 console.log(tab, event);
                 var self = this;
-                self.name = tab.name;
-                switch (self.name) {
+                switch (tab.name) {
                     case "今天":
-                        self.timesType = "day";
+                        self.trendTimesType = "day";
                         break;
                     case "昨天":
-                        self.timesType = "yesterday";
+                        self.trendTimesType = "yesterday";
                         break;
                     case "近7天":
-                        self.timesType = "nearlydays";
+                        self.trendTimesType = "nearlydays";
                         break;
                     case "近30天":
-                        self.timesType = "month";
+                        self.trendTimesType = "month";
                         break;
                 }
-                this.getCarrierAnalysisChart();
+                this.getCarrierAnalysisChart(self.trendTimesType);
             },
-            handleClickPieTab(tab, event) {
-                console.log(tab, event);
+
+            handleClickBarTab(tab) {
                 var self = this;
-                self.name = tab.name;
-                switch (self.name) {
+                switch (tab.name) {
                     case "今天":
-                        self.timesType = "day";
+                        self.barTimesType = "day";
                         break;
                     case "昨天":
-                        self.timesType = "yesterday";
+                        self.barTimesType = "yesterday";
                         break;
                     case "近7天":
-                        self.timesType = "nearlydays";
+                        self.barTimesType = "nearlydays";
                         break;
                     case "近30天":
-                        self.timesType = "month";
+                        self.barTimesType = "month";
                         break;
                 }
-                this.getCarrierAnalysisBarChart();
+                this.getCarrierAnalysisBarChart(self.barTimesType);
             },
-            handleClickListTab(tab, event) {
-//
+
+            handleClickListTab(tab) {
+                var self = this;
+                switch (tab.name) {
+                    case "news":
+                        self.tabArticleType = "news";
+                        break;
+                    case "weibo":
+                        self.tabArticleType = "weibo";
+                        break;
+                    case "bbs":
+                        self.tabArticleType = "bbs";
+                        break;
+                }
+                this.getArticleTabList(self.tabArticleType);
             }
         },
     }
