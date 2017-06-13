@@ -8,7 +8,9 @@ jQuery.ajaxSetup({
         debugger;
         console.log("ajaxSetup error", error);
         alert(error.responseJSON.message);
-        window.location.href = "../module/login.html";
+        if (error.status != 500) {
+            // window.location.href = "../module/login.html";
+        }
     }
 });
 

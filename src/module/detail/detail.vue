@@ -12,12 +12,12 @@
                             <!--标题-->
                             <el-row :gutter="1" class="list border_1">
                                 <el-col :span="22" class="font_style">
-                                    <div class="title">{{detailData.title}}</div>
+                                    <div class="title" v-if="detailData.title">{{detailData.title}}</div>
                                     <div class="new">
-                                        <el-col :span="8" class="m_t20"><span>文章来源：{{detailData.site}}</span></el-col>
-                                        <el-col :span="8" class="m_t20"><span>发布时间：{{new Date(detailData.pubTime).toLocaleString().substr(0,9)}}</span>
+                                        <el-col :span="8" class="m_t20"><span v-if="detailData.site">文章来源：{{detailData.site}}</span></el-col>
+                                        <el-col :span="8" class="m_t20"><span v-if="detailData.pubTime">发布时间：{{new Date(detailData.pubTime).toLocaleString().substr(0,9)}}</span>
                                         </el-col>
-                                        <el-col :span="8" class="m_t20"><span>作者：{{detailData.author}}</span></el-col>
+                                        <el-col :span="8" class="m_t20"><span v-if="detailData.author">作者：{{detailData.author}}</span></el-col>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -25,9 +25,9 @@
                             <el-row :gutter="2" class="list border_1">
                                 <el-col :span="22" class="main">
                                     <div class="key"><span
-                                        class="field">关键字</span>：<span class="keySpan">{{detailData.nlp.keywords}}</span></div>
+                                        class="field">关键字</span>：<span class="keySpan" v-if="detailData.nlp.keywords">{{detailData.nlp.keywords}}</span></div>
                                     <div class="content">
-                                        <span v-html="detailData.content"></span>
+                                        <span v-if="detailData.content" v-html="detailData.content"></span>
                                     </div>
                                     <div class="panel-footer text-left entity fiex_entity ">
                                         <dt class="dt_entity"> 实体类别图示</dt>
@@ -63,12 +63,13 @@
 
 </template>
 <script>
+    import GaugeChart from '@/components/commons/charts/gauge';
     import Header from '@/components/commons/header';
+    import KeywordsChart from '@/components/commons/charts/keywords-cloud';
+//    import $ from 'jquery'
     import service from '../../vuex/module/detail.js'
     import queryParam from '../../vuex/utils.js';
-    import GaugeChart from '@/components/commons/charts/gauge';
-    import KeywordsChart from '@/components/commons/charts/keywords-cloud';
-    import $ from 'jquery'
+
     export default {
         name: 'detail',
         data () {
@@ -111,8 +112,8 @@
                     }
                 },
                 emotionSrc: '../../static/img/xinxin.png',
-                hotSrc:'../../static/img/huohuo.png'
-            }
+                hotSrc:'../../static/img/huohuo.png',
+           }
         },
         components: {
             'common-header': Header,
@@ -120,6 +121,7 @@
             'keywords-chart': KeywordsChart
         },
         mounted () {
+            console.log(this.id)
             this.getNewsCurrentList();
             this.getCommentHotKeywordsChart();
         },
@@ -127,73 +129,77 @@
             getNewsCurrentList: function () {
                 var self = this;
                 service.actions.getNewsCurrentList(self.id).then(function (data) {
+                    debugger;
+
                     data.content = data.content.replace(/&nbsp;/ig, "");
                     self.detailData = data;
-                    self.mediaEmotionGauge.option = data.option;
+//                    self.mediaEmotionGauge.option = data.option;
                     self.detailData.nlp.keywords = data.nlp.keywords.join(" ").replace(/&nbsp/ig, "");
                     if (data.author == "" || data.author == undefined) {
                         self.detailData.author = "佚名";
                     }
-                    self.detailData.nlp.nameEntity.org.forEach(function (item) {
-                        var newStr = "";
-                        var nextStr = "";
-                        var temp = "";
-                        var middle = "";
-                        var next = "";
-                        if (self.detailData.content.indexOf(item) > 0) {
-                            newStr = "<span class='org_name'>";
-                            nextStr = "</span>";
-                            temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
-                            middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
-                            next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length + 1);
+                    if(self.detailData.nlp.nameEntity.org.length>0){
+                        self.detailData.nlp.nameEntity.org.forEach(function (item) {
+                            var newStr = "";
+                            var nextStr = "";
+                            var temp = "";
+                            var middle = "";
+                            var next = "";
+                            if (self.detailData.content.indexOf(item) > 0) {
+                                newStr = "<span class='org_name'>";
+                                nextStr = "</span>";
+                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
+                                middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
+                                next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length + 1);
 
 //
-                        }
-                        self.detailData.content = temp + newStr + middle + nextStr + next;
-                    });
-                    self.detailData.nlp.nameEntity.place.length = data.nlp.nameEntity.place.length - 2;
-                    self.detailData.nlp.nameEntity.place.forEach(function (node) {
-                        var newStr = "";
-                        var nextStr = "";
-                        var temp = "";
-                        var middle = "";
-                        var next = "";
-                        if (self.detailData.content.indexOf(node) > 0) {
-                            debugger;
-                            newStr = "<span class='area'>";
-                            nextStr = "</span>";
-                            temp = self.detailData.content.substr(0, self.detailData.content.indexOf(node));
-                            middle = self.detailData.content.substring(self.detailData.content.indexOf(node), self.detailData.content.indexOf(node) + node.length);
-                            next = self.detailData.content.substr(self.detailData.content.indexOf(node) + node.length, self.detailData.content.length + 1);
-                        }
-                        self.detailData.content = temp + newStr + middle + nextStr + next;
-                    })
-                    self.detailData.nlp.nameEntity.people.forEach(function (item) {
-                        var newStr = "";
-                        var nextStr = "";
-                        var temp = "";
-                        var middle = "";
-                        var next = "";
-                        if (self.detailData.content.indexOf(item) > 0) {
-                            newStr = "<span class='person_name'>";
-                            nextStr = "</span>";
-                            temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
-                            middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
-                            next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length);
+                            }
+                            self.detailData.content = temp + newStr + middle + nextStr + next;
+                        });
+                    }
+                    if(self.detailData.nlp.nameEntity.place.length>0){
+//                        self.detailData.nlp.nameEntity.place.length = data.nlp.nameEntity.place.length - 2;
+                        self.detailData.nlp.nameEntity.place.forEach(function (node) {
+                            var newStr = "";
+                            var nextStr = "";
+                            var temp = "";
+                            var middle = "";
+                            var next = "";
+                            if (self.detailData.content.indexOf(node) > 0) {
+                                newStr = "<span class='area'>";
+                                nextStr = "</span>";
+                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(node));
+                                middle = self.detailData.content.substring(self.detailData.content.indexOf(node), self.detailData.content.indexOf(node) + node.length);
+                                next = self.detailData.content.substr(self.detailData.content.indexOf(node) + node.length, self.detailData.content.length + 1);
+                            }
+                            self.detailData.content = temp + newStr + middle + nextStr + next;
+                        })
+                    }
+                    if( self.detailData.nlp.nameEntity.people.length>0){
+                        self.detailData.nlp.nameEntity.people.forEach(function (item) {
+                            var newStr = "";
+                            var nextStr = "";
+                            var temp = "";
+                            var middle = "";
+                            var next = "";
+                            if (self.detailData.content.indexOf(item) > 0) {
+                                newStr = "<span class='person_name'>";
+                                nextStr = "</span>";
+                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
+                                middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
+                                next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length);//
+                            }
 
-//
-                        }
-
-                        self.detailData.content = temp + newStr + middle + nextStr + next;
-                    });
+                            self.detailData.content = temp + newStr + middle + nextStr + next;
+                        });
+                    }
                 }, function (error) {
                     console.error('出错了', error);
                 })
-
             },
             getCommentHotKeywordsChart: function () {
                 var self = this;
-                service.actions.getCommentHotKeywordsChart().then(function (renderData) {
+                service.actions.getCommentHotKeywordsChart(self.id).then(function (renderData) {
                     self.hotLists.option = renderData.option;
                     self.hotList = renderData;
                 }, function (error) {

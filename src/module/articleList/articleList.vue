@@ -1,5 +1,6 @@
 <template>
     <div id="article">
+        <!--<div class="ceartspecial" @click="establish()"><span>更多新闻</span></div>-->
         <common-header></common-header>
         <div class="model">
             <span class="close" @click="close()"><i class="el-icon-circle-cross"></i></span>
@@ -120,6 +121,7 @@
     import $ from 'jquery'
     export default {
         name: 'articleList',
+        props: ['types'],
         data () {
             return {
                 type: queryParam.utils.getQueryVariable("type"),
@@ -167,11 +169,10 @@
             },
             close: function () {
                 $('.model').hide();
-            },
+            }
 
         },
         watch: {
-
             type: function (val, oldVal) {
 //                console.log(this.checkedItems)
                 console.log('new: %s, old: %s', val, oldVal)

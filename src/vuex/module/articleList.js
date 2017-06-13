@@ -7,6 +7,7 @@
 import $ from 'jquery'
 import common from '../common'
 import queryParam from '../utils'
+import dateUtil from '../dateUtil'
 
 const searchData = {
     searchParam: function () {
@@ -17,8 +18,8 @@ const searchData = {
             type: 'get',
             async: false,
             success: function (data) {
-                data.startDate = new Date(data.startDate).toJSON().substr(0, new Date(data.startDate).toJSON().indexOf("T"));
-                data.endDate = new Date(data.endDate).toJSON().substr(0, new Date(data.endDate).toJSON().indexOf("T"));
+                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
+                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
                 search = data;
             },
             error: function (error) {
@@ -53,7 +54,7 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType.json',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',
@@ -66,66 +67,6 @@ const actions = {
             });
         });
     },
-}
-
-const utils = {
-    resetArticleTypeName: function (source) {
-        var target = '';
-        switch (source) {
-            case 'news':
-                target = '新闻';
-                break;
-            case 'weibo':
-                target = '微博';
-                break;
-            case 'bbs':
-                target = '论坛';
-                break;
-            case 'bar':
-                target = '贴吧';
-                break;
-            case 'comments':
-                target = '评论';
-                break;
-        }
-
-        return target;
-    }
-}
-const numberLength = {
-    resetNumberType: function (num) {
-        var numbers = 0;
-        var l = num.toString().length;
-        if (l == 3) {
-            numbers = num / 2 - 100;
-        } else if (l == 4) {
-            numbers = num / 2 - 1000;
-        } else if (l >= 5) {
-            numbers = num / 2 - 10000;
-        } else {
-            numbers = num
-        }
-        return numbers
-    }
-
-}
-const emotion = {
-    resetEmotionTypeName: function (source) {
-        var type = '';
-        switch (source) {
-            case 'POS':
-                type = '正面';
-                break;
-            case 'NEG':
-                type = '负面';
-                break;
-            case 'NEU':
-                type = '中性';
-                break;
-        }
-
-        return type;
-    }
 }
 export default {
     actions, searchData

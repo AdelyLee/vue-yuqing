@@ -1,42 +1,25 @@
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from '../common'
 import dateUtil from '../dateUtil'
-const searchData = {
-    searchParam: function () {
-        var searchId = window.location.search.substr(4);
-        var search = {};
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/' + searchId,
-            type: 'get',
-            async: false,
-            success: function (data) {
-                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
-                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
-                search = data;
-            },
-            error: function (error) {
-            }
-        })
-        return search;
-    }
-}
+import typeUtil from '../typeUtil'
+
 const actions = {
     //近30天舆情
-    getyuqingChart: function () {
+    getSentimentTypeChart: function () {
         var data = new Date();
         var endDate = data.getTime();
-        var startDate = data.setMonth(data.getMonth()-1);
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var startDate = data.setMonth(data.getMonth() - 1);
         var param = {
             groupName: 'nlp.sentiment.label',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: '',
+            shouldWord: '',
+            mustNotWord: '',
             s_date: startDate,
-            e_date: endDate
+            e_date: endDate,
+            articleType: ''
         };
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
@@ -47,34 +30,35 @@ const actions = {
                     var lengeds = [];
                     $.each(data, function (i, item) {
                         var node = {};
-                        node.name = emotion.resetEmotionTypeName(item.key);
+                        var type = item.key;
+                        node.name = typeUtil.typeUtil.sentimentType(type);
                         node.value = item.value;
                         seriesData.push(node);
                         lengeds.push(node.name)
-                    })
+                    });
                     var option = {
-                        tooltip : {
+                        tooltip: {
                             trigger: 'item',
                             formatter: "{a} <br/>{b} : {c} ({d}%)"
                         },
                         legend: {
-                            x : 'center',
-                            y : 'top',
-                            data:lengeds
+                            x: 'center',
+                            y: 'top',
+                            data: lengeds
                         },
                         color: [
                             '#d2b356', '#db726c', '#56b6ff', '#E87C25', '#27727B',
                             '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
                             '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                         ],
-                        calculable : true,
-                        series : [
+                        calculable: true,
+                        series: [
                             {
-                                name:'情感类型',
-                                type:'pie',
-                                radius : [30, 110],
-                                center : ['50%', '50%'],
-                                roseType : 'area',
+                                name: '情感类型',
+                                type: 'pie',
+                                radius: [30, 110],
+                                center: ['50%', '50%'],
+                                roseType: 'area',
                                 label: {
                                     normal: {
                                         show: true,
@@ -96,22 +80,19 @@ const actions = {
                                         show: true
                                     }
                                 },
-                                data:seriesData
+                                data: seriesData
                             }
                         ]
                     };
 
                     resolve(option);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
     },
     getCarrierAnalysisChart: function (timesType) {
         var width = $('#tab-content').width();
-        $('#carrierAnalysis,#carrierAnalysismonth,#carrierAnalysisnearlydays,#carrierAnalysisyesterday').width(width - 50);
+        $('#carrierAnalysis,#carrierAnalysisMonth,#carrierAnalysisNearlyDays,#carrierAnalysisYesterday').width(width - 50);
         var data = new Date();
         switch (timesType) {
             case "day":
@@ -119,15 +100,13 @@ const actions = {
                 var end = data.getTime();
                 //var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd HH:mm:ss");
                 //var start = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd HH:mm:ss");
-                var dataType ='hour';
+                var dataType = 'hour';
                 var gap = 5;
                 break;
             case 'yesterday':
                 var end = data.getTime();
                 var start = data.setDate(data.getDate() - 1);
-                //var start = dateUtil.dateUtil.formatDate(new Date(startDate), "HH:mm:ss");
-                //var end = dateUtil.dateUtil.formatDate(new Date(endDate), "HH:mm:ss");
-                var dataType ='hour';
+                var dataType = 'hour';
                 var gap = 5;
                 break;
             case 'nearlydays':
@@ -135,30 +114,28 @@ const actions = {
                 var startDate = data.setDate(data.getDate() - 7);
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='day';
+                var dataType = 'day';
                 var gap = '';
                 break;
             case 'month':
                 var endDate = data.getTime();
-                var startDate = data.setMonth(data.getMonth()-1);
+                var startDate = data.setMonth(data.getMonth() - 1);
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='day';
+                var dataType = 'day';
                 var gap = '';
                 break;
             default:
                 break;
         }
-        var mySearch = {};
-        mySearch = searchData.searchParam();
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: '',
+            shouldWord: '',
+            mustNotWord: '',
             s_date: start,
             e_date: end,
-            dateType:dataType,
-            gap:gap
+            dateType: dataType,
+            gap: gap
         };
         var newsSeries = {"data": [], "xAxis": []};
         var weiboSeries = {"data": [], "xAxis": []};
@@ -174,8 +151,6 @@ const actions = {
                     newsSeries.data.push(item.value);
                     newsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -184,13 +159,10 @@ const actions = {
             data: param,
             type: 'get',
             success: function (data) {
-                console.log(data);
                 $.each(data, function (i, item) {
                     weiboSeries.data.push(item.value);
                     weiboSeries.xAxis.push(item.key);
-                })
-            },
-            error: function (error) {
+                });
             }
         });
         $.ajax({
@@ -203,8 +175,6 @@ const actions = {
                     bbsSeries.data.push(item.value);
                     bbsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -217,8 +187,6 @@ const actions = {
                     barSeries.data.push(item.value);
                     barSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         var myOption = {
@@ -243,13 +211,13 @@ const actions = {
                 }
             },
             dataZoom: [{
-                startValue: searchData.searchParam().startDate
+                startValue: start
             }, {
                 type: 'inside'
             }],
             xAxis: {
                 type: 'category',
-                name:'时间',
+                name: '时间',
                 data: weiboSeries.xAxis,
                 boundaryGap: false,
                 splitLine: {
@@ -276,7 +244,7 @@ const actions = {
             },
             yAxis: {
                 type: 'value',
-                name:'数量',
+                name: '数量',
                 splitLine: {
                     lineStyle: {
                         color: ['#cccccc']
@@ -302,11 +270,11 @@ const actions = {
                 name: '新闻',
                 type: 'line',
                 smooth: true,
-                show:true,
+                show: true,
                 showSymbol: false,
                 symbol: 'circle',
                 symbolSize: 6,
-                data:newsSeries.data ,
+                data: newsSeries.data,
                 itemStyle: {
                     normal: {
                         color: '#fc7f7d'
@@ -324,7 +292,7 @@ const actions = {
                 showSymbol: false,
                 symbol: 'circle',
                 symbolSize: 6,
-                data:weiboSeries.data ,
+                data: weiboSeries.data,
                 itemStyle: {
                     normal: {
                         color: '#efee55'
@@ -342,7 +310,7 @@ const actions = {
                 showSymbol: false,
                 symbol: 'circle',
                 symbolSize: 6,
-                data:bbsSeries.data ,
+                data: bbsSeries.data,
                 itemStyle: {
                     normal: {
                         color: '#4fa8e4'
@@ -360,7 +328,7 @@ const actions = {
                 showSymbol: false,
                 symbol: 'circle',
                 symbolSize: 6,
-                data:barSeries.data ,
+                data: barSeries.data,
                 itemStyle: {
                     normal: {
                         color: '#e679cc'
@@ -377,9 +345,9 @@ const actions = {
             resolve(myOption);
         });
     },
-    getCarrierAnalysispieChart: function (timesType) {
+    getCarrierAnalysisBarChart: function (timesType) {
         var width = $('#tab-contents').width();
-        $('#carrierAnalysisfb,#carrierAnalysisfbmonth,#carrierAnalysisfbnearlydays,#carrierAnalysisfbyesterday').width(width - 50);
+        $('#carrierAnalysisType,#carrierAnalysisTypeMonth,#carrierAnalysisTypeNearlyDays,#carrierAnalysisTypeYesterday').width(width - 50);
         var data = new Date();
         switch (timesType) {
             case "day":
@@ -387,7 +355,7 @@ const actions = {
                 var startDate = data.getTime();
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='hour';
+                var dataType = 'hour';
                 var gap = 5;
                 break;
             case 'yesterday':
@@ -395,7 +363,7 @@ const actions = {
                 var startDate = data.setDate(data.getDate() - 1);
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='hour';
+                var dataType = 'hour';
                 var gap = 5;
                 break;
             case 'nearlydays':
@@ -403,30 +371,28 @@ const actions = {
                 var startDate = data.setDate(data.getDate() - 7);
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='day';
+                var dataType = 'day';
                 var gap = '';
                 break;
             case 'month':
                 var endDate = data.getTime();
-                var startDate = data.setMonth(data.getMonth()-1);
+                var startDate = data.setMonth(data.getMonth() - 1);
                 var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
                 var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType ='day';
+                var dataType = 'day';
                 var gap = '';
                 break;
             default:
                 break;
         }
-        var mySearch = {};
-        mySearch = searchData.searchParam();
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: '',
+            shouldWord: '',
+            mustNotWord: '',
             s_date: start,
             e_date: end,
-            dateType:'day',
-            gap:''
+            dateType: 'day',
+            gap: ''
         };
         var newsSeries = {"data": [], "xAxis": []};
         var weiboSeries = {"data": [], "xAxis": []};
@@ -442,8 +408,6 @@ const actions = {
                     newsSeries.data.push(item.value);
                     newsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -456,8 +420,6 @@ const actions = {
                     weiboSeries.data.push(item.value);
                     weiboSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -470,8 +432,6 @@ const actions = {
                     bbsSeries.data.push(item.value);
                     bbsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -484,8 +444,6 @@ const actions = {
                     barSeries.data.push(item.value);
                     barSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         var myOption = {
@@ -556,9 +514,9 @@ const actions = {
                         textStyle: {color: '#000'},
                         formatter: '新闻',
                         label: {
-                        show: true,
-                        position: 'right',
-                        formatter: '{b}\n{c}'
+                            show: true,
+                            position: 'right',
+                            formatter: '{b}\n{c}'
                         }
                     }
                 },
@@ -607,13 +565,11 @@ const actions = {
     },
     //主流媒体
     getMediaBarChart: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
         var param = {
             groupName: 'source',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: '',
+            shouldWord: '',
+            mustNotWord: '',
             s_date: "",
             e_date: ""
         };
@@ -641,7 +597,7 @@ const actions = {
                         },
                         xAxis: {
                             data: xAxisData,
-                            name:'媒体类型',
+                            name: '媒体类型',
                             axisLine: {
                                 lineStyle: {
                                     color: '#4d94e2'
@@ -657,7 +613,7 @@ const actions = {
                             },
                         },
                         yAxis: [{
-                            name:'数量',
+                            name: '数量',
                             axisLine: {
                                 lineStyle: {
                                     color: '#4d94e2'
@@ -707,34 +663,65 @@ const actions = {
                     }
                     resolve(option);
 
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
 
     },
     //新闻列表
-    getNewsList: function (val) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+    getArticleList: function (type) {
         var param = {
             type: "source",
-            page:1,
-            limit:5,
+            page: 1,
+            limit: 5,
             sortBy: "pubTime",
             s_date: '',
             e_date: ''
         };
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/findPageByMustShouldDateInType.json',
+                url: common.url.webserviceUrl + "/" + type + '/findPageByMustShouldDateInType.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    data.content.forEach(function (item, i) {
+                    data.content.forEach(function (item) {
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                    });
+                    resolve(data);
+                }
+            });
+        });
+    },
+    getNewsCurrentList: function (reportType, pageSize, currentPage) {
+        reportType = reportType == undefined ? "MONTHLY" : reportType;
+        pageSize = pageSize == undefined ? 2 : pageSize;
+        currentPage = currentPage == undefined ? 1 : currentPage;
+        var param = {
+            "keyword": {
+                "mustNotWord": "",
+                "mustWord": "",
+                "shouldWord": ""
+            },
+            "page": {
+                "limit": pageSize,
+                "page": currentPage,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "dateCreated"
+                }],
+                "searchKv": ''
+            },
+            "type": [reportType]
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    data.content.forEach(function (item) {
+                        item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
                     });
                     resolve(data);
                 },
@@ -744,24 +731,6 @@ const actions = {
             });
         });
     },
-}
-const emotion = {
-    resetEmotionTypeName: function (source) {
-        var type = '';
-        switch (source) {
-            case 'POS':
-                type = '正面';
-                break;
-            case 'NEG':
-                type = '负面';
-                break;
-            case 'NEU':
-                type = '中性';
-                break;
-        }
-
-        return type;
-    }
 }
 export default {
     actions

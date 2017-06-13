@@ -6,9 +6,19 @@ body {
   .el-row:last-child {
     margin-bottom: 0; }
 
+body {
+  margin: 0 auto;
+  overflow-x: hidden; }
+
+#content {
+  width: 85%;
+  position: absolute;
+  left: 13.7%;
+  top: 75px; }
+
 .el-card {
-  border: 2px solid #1D90E6;
-  border-radius: 0;
+  border: 1px solid #ffffff;
+  border-radius: 0px;
   background-color: #ffffff; }
   .el-card .el-card__header {
     min-height: 30px;
@@ -24,6 +34,19 @@ body {
   color: #fff; }
   .el-card .el-card__header .clearfix {
     text-align: center; }
+
+body {
+  margin: 0 auto;
+  overflow-x: hidden; }
+
+#content {
+  width: 85%;
+  position: absolute;
+  left: 13.7%;
+  top: 75px; }
+
+.el-card {
+  border: 1px solid #ffffff; }
 
 .box-tablist {
   padding: 0px 20px;

@@ -2,11 +2,15 @@
     <div id="customize">
         <common-header></common-header>
         <el-row :gutter="5" class="list">
-            <el-col :span="24">
+            <el-col :span="3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span="21">
+                <div class="card-body" id="content">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
-                        <span style="line-height: 40px;"><i class="el-icon-document"></i> 定制化與情监测</span>
-                    </div>
+                    <!--<div slot="header" class="panel-height">-->
+                        <!--<span style="line-height: 40px;"><i class="el-icon-document"></i> 定制化與情监测</span>-->
+                    <!--</div>-->
                     <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane class="special" name="monthlyReport" value="专题管理">
                             <span slot="label"><i class="el-icon-menu"></i> 专题管理</span>
@@ -28,12 +32,14 @@
                         </el-tab-pane>
                     </el-tabs>
                 </el-card>
+                </div>
             </el-col>
         </el-row>
     </div>
 </template>
 <script>
     import Header from '@/components/commons/header';
+    import CommonMenu from '@/components/commons/menu';
     import Paging from '@/components/commons/paging';
     import SubjectList from '@/components/customizelist/list-subject';
     import AddSubject from '@/components/customizelist/add-subject';
@@ -97,6 +103,7 @@
         },
         components: {
             'common-header': Header,
+            'common-menu': CommonMenu,
             'list-subject': SubjectList,
             'list-page': Paging,
             'add-subject': AddSubject,
@@ -122,22 +129,41 @@
                 });
             },
             createUserContacts: function (contact) {
-                service.actions.createUserContacts(contact);
+                service.actions.createUserContacts(contact).then(function () {
+                    // 重新渲染专题列表，展示第一页数据
+                    self.pager.currentPage = 1;
+                    self.getSubjectList();
+                })
             },
             deleteUserContacts: function (contact) {
-                service.actions.deleteUserContacts(contact);
+                service.actions.deleteUserContacts(contact).then(function () {
+                    self.addWaringContactsPager.currentPage = 1;
+                    self.getUserContacts();
+                });
             },
             createSubject: function (subject) {
-                service.actions.createCustomSubject(subject);
+                service.actions.createCustomSubject(subject).then(function () {
+                    // 重新渲染专题列表，展示第一页数据
+                    self.pager.currentPage = 1;
+                    self.getSubjectList();
+                });
             },
             deleteSubject: function (subject) {
-                service.actions.deleteCustomSubject(subject.id);
+                service.actions.deleteCustomSubject(subject).then(function () {
+                    // 重新渲染专题列表，展示第一页数据
+                    self.pager.currentPage = 1;
+                    self.getSubjectList();
+                });
             },
             editSubject: function (subject) {
-                service.actions.editCustomSubject(subject);
+                service.actions.editCustomSubject(subject).then(function () {
+                    self.getSubjectList();
+                });
             },
             updateReport: function (subject) {
-                service.actions.updateCustomSubjectReport(subject);
+                service.actions.updateCustomSubjectReport(subject).then(function () {
+                    self.getSubjectList();
+                });
             },
             getSpecialReportList: function () {
                 var self = this;
@@ -201,18 +227,12 @@
                         this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
                             // delete the subject and get the new subject list
                             self.deleteSubject(data.subject);
-                            // 重新渲染专题列表，展示第一页数据
-                            self.pager.currentPage = 1;
-                            self.getSubjectList();
                         }).catch(() => {
                         });
                         break;
                     case 'addSubjectSubmit':
                         self.addDialog.addFormVisible = false;
                         self.createSubject(data.subject);
-                        // 重新渲染专题列表，展示第一页数据
-                        self.pager.currentPage = 1;
-                        self.getSubjectList();
                         break;
                     case 'estimateSubject':
                         // 获取专题预估量
@@ -227,7 +247,6 @@
                         self.editDialog.editFormVisible = false;
                         // 判断时间类型，将时间类型转换为Date,
                         self.editSubject(data.subject);
-                        self.getSubjectList();
                         break;
                     case 'updateReport':
                         // 更新报告
@@ -241,7 +260,6 @@
                     case 'handleEnableWarningChange':
                         // 修改是否预警
                         self.editSubject(data.subject);
-                        self.getSubjectList();
                         break;
                     case 'editWarning':
                         self.warningDialog.addFormVisible = true;
@@ -259,21 +277,17 @@
                         break;
                     case 'addContactSubmit':
                         self.createUserContacts(data.contact);
-
-                        self.addWaringContactsPager.currentPage = 1;
-                        self.getUserContacts();
                         break;
                     case 'handleDeleteContact':
                         self.deleteUserContacts(data.contact);
-
-                        self.addWaringContactsPager.currentPage = 1;
-                        self.getUserContacts();
                         break;
                     case 'addWarningFormSubmit':
                         data.subject.enableWarning = true;
+                        if(data.subject.warning){
+                            data.subject.warning.briefingType = 'SPECIAL';
+                        }
                         self.editSubject(data.subject);
                         self.warningDialog.addFormVisible = false;
-                        self.getSubjectList();
                         break;
                     case 'viewSpecialReport':
                         // 如果选中了某个专题, 不需要任何操作，在点击切换按钮时查询数据

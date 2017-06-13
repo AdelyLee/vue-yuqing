@@ -21,8 +21,6 @@
     </el-row>
 </template>
 <script>
-    import $ from 'jquery'
-    import common from '../../vuex/common'
     export default {
         props: ['reportList'],
         data () {
@@ -33,12 +31,11 @@
         },
         methods: {
             previewReport: function (id) {
-                window.open('../module/decisionReport.html?id=' + id);
+                window.open('../module/report.html?id=' + id);
             },
             downloadFile: function (attachment) {
                 if (attachment.length > 1) {
                     var file = attachment[0].substring(0, attachment[0].length - 4);
-                    debugger;
                     window.open("http://192.168.0.29:8888/yuqing/file/download/doc/" + file);
                 }
             }

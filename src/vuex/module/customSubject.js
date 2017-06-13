@@ -59,27 +59,33 @@ const actions = {
 
     createUserContacts: function (contact) {
         console.log("addUserContacts", JSON.stringify(contact));
-        $.ajax({
-            url: common.url.webserviceUrl + '/contact/',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            data: JSON.stringify(contact),
-            type: 'post',
-            success: function (data) {
-                console.log("create contact success");
-            }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/contact/',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify(contact),
+                type: 'post',
+                success: function (data) {
+                    console.log("create contact success");
+                    resolve(data);
+                }
+            });
         });
     },
 
     deleteUserContacts: function (contact) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/contact/' + contact.id,
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            type: 'delete',
-            success: function (data) {
-                console.log("delete contact success");
-            }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/contact/' + contact.id,
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                type: 'delete',
+                success: function (data) {
+                    console.log("delete contact success");
+                    resolve(data);
+                }
+            });
         });
     },
 
@@ -87,54 +93,66 @@ const actions = {
         subject.startDate = subject.startDate.getTime();
         subject.endDate = subject.endDate.getTime();
         console.log("createCustomSubject", JSON.stringify(subject));
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            data: JSON.stringify(subject),
-            type: 'post',
-            success: function (data) {
-                console.log("create custom subject success");
-            }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/customSubject/',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify(subject),
+                type: 'post',
+                success: function (data) {
+                    console.log("create custom subject success");
+                    resolve(data);
+                }
+            });
         });
     },
 
-    deleteCustomSubject: function (subjectId) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/' + subjectId,
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            type: 'delete',
-            success: function (data) {
-                console.log("delete custom subject success");
-            }
+    deleteCustomSubject: function (subject) {
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/customSubject/' + subject.id,
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                type: 'delete',
+                success: function (data) {
+                    console.log("delete custom subject success");
+                    resolve(data);
+                }
+            });
         });
     },
 
     editCustomSubject: function (subject) {
         subject = util.encodeSubject(subject);
         console.log("editCustomSubject", JSON.stringify(subject));
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/' + subject.id,
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(subject),
-            async: false,
-            type: 'put',
-            success: function (data) {
-                console.log("edit custom subject success");
-            }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/customSubject/' + subject.id,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(subject),
+                async: false,
+                type: 'put',
+                success: function (data) {
+                    console.log("edit custom subject success");
+                    resolve(data);
+                }
+            });
         });
     },
 
     updateCustomSubjectReport: function (subject) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/updateReport/' + subject.id,
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            type: 'get',
-            success: function (data) {
-                console.log("update custom subject report success");
-            }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/customSubject/updateReport/' + subject.id,
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                type: 'get',
+                success: function (data) {
+                    console.log("update custom subject report success");
+                    resolve(data);
+                }
+            });
         });
     },
 
@@ -249,13 +267,17 @@ const util = {
             subject.warning.receiveEndTime = subject.warning.receiveEndTime + ":00";
             subject.warning.atWeekends = subject.warning.atWeekends.toString();
             var sentimentLabel = [], type = [];
-            subject.warning.sentimentLabel.forEach(function (item) {
-                sentimentLabel.push(typeUtil.typeUtil.sentimentType(item));
-            });
+            if (subject.warning.sentimentLabel) {
+                subject.warning.sentimentLabel.forEach(function (item) {
+                    sentimentLabel.push(typeUtil.typeUtil.sentimentType(item));
+                });
+            }
             subject.warning.sentimentLabel = sentimentLabel;
-            subject.warning.type.forEach(function (item) {
-                type.push(typeUtil.typeUtil.articleType(item));
-            });
+            if (subject.warning.type) {
+                subject.warning.type.forEach(function (item) {
+                    type.push(typeUtil.typeUtil.articleType(item));
+                });
+            }
             subject.warning.type = type;
         }
 

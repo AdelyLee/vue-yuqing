@@ -10,6 +10,8 @@
 import $ from 'jquery'
 import common from '../common'
 import queryParam from '../utils'
+import dateUtil from '../dateUtil'
+import typeParam from '../typeUtil'
 
 const searchData = {
     searchParam: function () {
@@ -20,14 +22,14 @@ const searchData = {
             type: 'get',
             async: false,
             success: function (data) {
-                data.startDate = new Date(data.startDate).toJSON().substr(0, new Date(data.startDate).toJSON().indexOf("T"));
-                data.endDate = new Date(data.endDate).toJSON().substr(0, new Date(data.endDate).toJSON().indexOf("T"));
+                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
+                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
                 search = data;
             },
-            error: function (error) {
-            }
         })
         return search;
+    },
+    error: function (error) {
     }
 }
 
@@ -65,18 +67,18 @@ const actions = {
                                     lineStyle:{
                                         width:30,
                                         shadowBlur:0,
-                                        color:[[0.3,'#52B5FF'],[0.7,'#D2DD2A'],[1,'#E96C6C']]
+                                        color:[[0.3,'#E96C6C'],[0.7,'#D2DD2A'],[1,'#E96C6C']]
                                     }
                                 },
                                 axisLabel: {
                                     formatter: function(e) {
                                         switch (e + "") {
                                             case "0":
-                                                return "正面";
+                                                return "负面";
                                             case "50":
                                                 return "中性";
                                             case "100":
-                                                return "负面";
+                                                return "正面";
                                             default:
                                                 return "";
                                         }
@@ -86,44 +88,43 @@ const actions = {
                                         fontWeight: ""
                                     }
                                 },
-                                data: [{value: parseInt(data.nlp.sentiment.value*100), name: emotion.resetEmotionTypeName(data.nlp.sentiment.lable)}],
-                            }
+                                data: [{value: parseInt(data.nlp.sentiment.value*100), name:typeParam.typeUtil.sentimentType(data.nlp.sentiment.label)}],
+
+                            },
                         ]
                     };
                      data.option=option;
                     resolve(data);
                 },
                 error: function (error) {
-                    reject(error);
                 }
             });
         });
     },
-    getCommentHotKeywordsChart: function () {
+    getCommentHotKeywordsChart: function (id) {
+        debugger;
         var mySearch = searchData.searchParam();
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: '',
-            e_date: '',
-            limit: 50
+            id:id,
+            count:50
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/hotWords.json',
+                url: common.url.webserviceUrl +'/keywords/hotkeywords',
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    console.log(data);
+                    debugger;
                     data.sort(function (a, b) {
-                        return b.value - a.value
+                        return b.score - a.score
                     });
                     var renderData = {};
                     var seriesData = [];
                     $.each(data, function (i, item) {
                         var node = {};
                         node.keyword = item.key;
-                        node.score = item.value;
+                        node.score = item.score;
                         seriesData.push(node);
                     });
                     renderData.option = {"data": seriesData};
@@ -131,72 +132,12 @@ const actions = {
                     resolve(renderData);
                 },
                 error: function (error) {
-                    reject(error);
                 }
             });
         });
     },
 }
 
-const utils = {
-    resetArticleTypeName: function (source) {
-        var target = '';
-        switch (source) {
-            case 'news':
-                target = '新闻';
-                break;
-            case 'weibo':
-                target = '微博';
-                break;
-            case 'bbs':
-                target = '论坛';
-                break;
-            case 'bar':
-                target = '贴吧';
-                break;
-            case 'comments':
-                target = '评论';
-                break;
-        }
-
-        return target;
-    }
-}
-const numberLength = {
-    resetNumberType: function (num) {
-        var numbers = 0;
-        var l = num.toString().length;
-        if (l == 3) {
-            numbers = num / 2 - 100;
-        } else if (l == 4) {
-            numbers = num / 2 - 1000;
-        } else if (l >= 5) {
-            numbers = num / 2 - 10000;
-        } else {
-            numbers = num
-        }
-        return numbers
-    }
-
-}
-const emotion = {
-    resetEmotionTypeName: function (source) {
-        var type = '';
-        switch (source) {
-            case 'POS':
-                type = '正面';
-                break;
-            case 'NEG':
-                type = '负面';
-                break;
-            case 'NEU':
-                type = '中性';
-                break;
-        }
-
-        return type;
-    }
-}
 export default {
     actions, searchData
 }

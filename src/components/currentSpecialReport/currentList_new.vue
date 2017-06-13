@@ -2,6 +2,7 @@
     <el-table
         ref="multipleTable"
         :data="currentList"
+
         border
         tooltip-effect="dark"
         style="width: 100%"
@@ -30,7 +31,23 @@
         <el-table-column
             prop="pubTime"
             label="时间"
+            width = "180"
             show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+            prop="emotion"
+            label="情感" width = "80">
+            <template scope="scope">
+                <el-tag  v-if="scope.row.emotion=='中性'" type="warning" >
+                    {{scope.row.emotion}}
+                </el-tag>
+                <el-tag  v-if="scope.row.emotion=='正面'" type="success" >
+                    {{scope.row.emotion}}
+                </el-tag>
+                <el-tag v-if="scope.row.emotion=='负面'" type="danger" >
+                    {{scope.row.emotion}}
+                </el-tag>
+            </template>
         </el-table-column>
     </el-table>
 </template>

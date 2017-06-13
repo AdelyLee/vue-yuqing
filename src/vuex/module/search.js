@@ -39,9 +39,6 @@ const actions = {
                         item.content = item.content.length > 100 ? item.content.substring(0, 100) + "..." : item.content;
                     });
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });

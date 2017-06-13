@@ -1,0 +1,59 @@
+@charset "utf-8";
+@import "../../../assets/scss/common";
+.content{
+    width: 100%;
+    margin: 0 auto;
+    height: auto;
+    /* position: absolute; */
+    /* z-index: 999; */
+    .model{
+        padding: 20px;
+        /* position: absolute; */
+        float: left;
+        top: 210px;
+        margin: 5% 0 10% 25%;
+        width: 50%;
+        left: 25%;
+        height: 60%;
+        box-shadow: 0 0 10px #666;
+        background-color: #ffffff;
+        .close{
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: #ccc;
+            z-index: 10000;
+        }
+    },
+
+
+    .f_l{
+        float: left;
+    }
+}
+.m_b50{
+    margin-bottom: 50px!important;
+}
+.pTitle{
+    font-size: 20px;
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 60px;
+    font-family: "微软雅黑";
+    color: #5C9FE4;
+}
+.el-card {
+    border: none;
+    border-radius: 0;
+    -webkit-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    -moz-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    background-color: #f8f9fb;
+    .card-body {
+        height: auto;
+    }
+    .el-select-dropdown__item.selected{
+        color:#000;
+    }
+
+}

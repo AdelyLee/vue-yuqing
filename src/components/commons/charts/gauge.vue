@@ -4,7 +4,6 @@
         </div>
     </div>
 </template>
-
 <script>
     import Chart from '../../../../lib/draw-echarts'
     export default {

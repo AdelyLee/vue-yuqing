@@ -1,27 +1,14 @@
 <template>
     <div class="menu">
-        <el-menu theme="white" :default-active="activeIndex" class="el-menu-demo" mode="horizontal"
-                 @select="handleSelect">
-            <el-menu-item index="1" class="item_li"><a href="../module/index.html" target = "_blank">首页</a></el-menu-item>
-            <!--<el-menu-item index="3" class="item_li"><a href="../module/enterpriseInspect.html" target="_blank">企业监测</a></el-menu-item>-->
-            <el-menu-item index="4" class="item_li"><a href="../module/customize.html">定制化舆情监测</a></el-menu-item>
-            <el-menu-item index="6" class="item_li"><a href="../module/presentationList.html">决策报告</a></el-menu-item>
-            <el-menu-item index="7" class="item_li"><a href="../module/search.html">舆情搜索</a></el-menu-item>
-            <!--<el-menu-item index="8" class="item_li"><a href="../module/specialReport.html" target = "_blank">专报</a></el-menu-item>-->
-            <!--<el-menu-item index="9" class="item_li"><a href="../module/baseKeywords.html" target = "_blank">系统关键词</a></el-menu-item>-->
-            <!--<el-menu-item index="9" class="item_li"><a href="../module/currentSpecialReport.html" target = "_blank">当前专报</a></el-menu-item>-->
-            <el-dropdown class="management">
-                <span class="el-dropdown-link">
-                 <img :src="logoSrc" alt="">
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item > <a href="../module/baseKeywords.html">关键词设置</a>
-                    <el-dropdown-item class="m_f10"><a href="<%=path%>/admin/user/index.html">后台管理</a></el-dropdown-item>
-                    <el-dropdown-item class="m_f10"><a href="<%=path%>/login/logout.do">退出</a></el-dropdown-item></el-dropdown-item>
-                </el-dropdown-menu>
-            </el-dropdown>
-
-        </el-menu>
+        <ul>
+            <li class="active"><i class="fa fa-home fa-lg"></i> <i class="el-icon-menu"></i> <a href="../module/index.html">全景舆情</a></li>
+            <li><i class="fa fa-envelope fa-lg"></i> <i class="el-icon-edit"></i> <a href="../module/customize.html">定制化舆情监测</a></li>
+            <li><i class="fa fa-user fa-lg"></i> <i class="el-icon-document"></i> <a href="../module/presentationList.html">决策报告</a></li>
+            <li><i class="fa fa-cogs fa-lg"></i> <i class="el-icon-search"></i> <a href="../module/search.html">舆情搜索</a></li>
+            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-setting"></i>  <a href="../module/baseKeywords.html">关键词设置</a></li>
+            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-star-on"></i><a href="../module/contacts.html">联系人设置</a> </li>
+            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-document"></i> 报告设置</li>
+        </ul>
     </div>
 </template>
 
@@ -41,9 +28,9 @@
             handleSelect (key, keyPath) {
                 console.log(key, keyPath)
             },
-//            establish: function (){
-//                $('.model').show();
-//            },
+            handleCommand(command) {
+                this.$message('click on item ' + command);
+            },
         }
     }
 </script>
@@ -83,5 +70,44 @@
     }
     .el-dropdown-menu{
         min-height:100px;
+    }
+    .menu{
+        position: fixed;
+        width: 12.5%;
+        left: 0px;
+        height: 100%;
+        background-color: #4d637b;
+        top: 55px;
+    }
+    ul{
+        margin: -0.2em auto;
+        list-style: none;
+        padding: 0;
+    }
+
+    ul>li{
+        color: #fff;
+        /*background: #3893fe;*/
+        padding: 1em;
+        border-bottom: 0.1em solid #6c7481;
+        margin-top: 0.25em;
+        /*border-left: 0.5em groove #9bca62;*/
+        cursor: pointer;
+        transition: 0.4s all;
+    }
+    ul>li>a{
+        color: #fff;
+    }
+    i{
+        padding-right: 0.5em;
+    }
+    .active{
+        background: #14529d;
+        /*border-left: 0.5em groove #fdce0f;*/
+    }
+
+    li:hover{
+        background: #14529d;
+        /*border-left: 0.5em groove #fdce0f;*/
     }
 </style>

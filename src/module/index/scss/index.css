@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   background-color: #ffffff; }
 
@@ -6,9 +7,19 @@ body {
   .el-row:last-child {
     margin-bottom: 0; }
 
+body {
+  margin: 0 auto;
+  overflow-x: hidden; }
+
+#content {
+  width: 85%;
+  position: absolute;
+  left: 13.7%;
+  top: 75px; }
+
 .el-card {
-  border: 2px solid #1D90E6;
-  border-radius: 0;
+  border: 1px solid #ffffff;
+  border-radius: 0px;
   background-color: #ffffff; }
   .el-card .el-card__header {
     min-height: 30px;
@@ -32,14 +43,19 @@ body {
   -moz-box-shadow: 0 0 10px rgba(196, 192, 193, 0.5);
   box-shadow: 0 0 10px rgba(196, 192, 193, 0.5);
   background-color: #f8f9fb; }
-  .el-card .card-body {
-    height: auto; }
+
+.el-card .el-card__header {
+  padding: 5px 10px;
+  background-color: #dde1e3;
+  color: #223048;
+  border: none; }
 
 .el-card__body {
   background-color: #ffffff; }
 
 .lists {
-  height: 100%; }
+  height: 100%;
+  margin-bottom: 20px; }
   .lists .list-box li {
     cursor: pointer; }
   .lists .list-box .table-top {
@@ -98,12 +114,120 @@ body {
   width: 100%;
   height: 400px; }
 
-#carrierAnalysis, #carrierAnalysismonth, #carrierAnalysisnearlydays, #carrierAnalysisyesterday {
+#carrierAnalysis, #carrierAnalysisMonth, #carrierAnalysisNearlyDays, #carrierAnalysisYesterday {
   width: 100%;
   height: 341px; }
 
-#carrierAnalysisfb, #carrierAnalysisfbmonth, #carrierAnalysisfbnearlydays, #carrierAnalysisfbyesterday {
+#carrierAnalysisType, #carrierAnalysisTypeMonth, #carrierAnalysisTypeNearlyDays, #carrierAnalysisTypeYesterday {
   width: 100%;
   height: 341px; }
+
+.el-dialog--small {
+  width: 80%; }
+
+.list {
+  width: 100%;
+  margin: 0 auto; }
+  .list .el-tabs__item.is-active {
+    width: 191px;
+    height: 55px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    background: url("../../../../static/img/dzhyqbj.png") no-repeat;
+    color: #ffffff; }
+  .list .el-tabs__item {
+    width: 200px;
+    height: 50px;
+    font-size: 18px;
+    font-weight: 600; }
+  .list .ceartspecial {
+    float: right;
+    margin-right: -5%;
+    margin-bottom: 2px;
+    width: 128px;
+    height: 47px;
+    line-height: 48px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: url("../../../../static/img/button.png") no-repeat;
+    outline: 0; }
+    .list .ceartspecial span {
+      cursor: pointer; }
+  .list .row-bg {
+    padding: 10px 0; }
+  .list .content {
+    width: 100%;
+    margin: 0 auto;
+    height: auto; }
+    .list .content .l_style {
+      width: 90%;
+      list-style-type: none;
+      margin-bottom: 20px;
+      padding: 20px;
+      position: relative;
+      margin-left: 24px; }
+    .list .content .l_bottom {
+      width: 100%;
+      position: absolute;
+      background-color: #F9F9F9;
+      box-sizing: content-box;
+      height: 40px;
+      list-style-type: none;
+      color: #444342;
+      padding-left: 20px; }
+    .list .content .a_position {
+      line-height: 41px;
+      font-size: 14px; }
+    .list .content .a_font {
+      font-size: 18px;
+      font-family: '微软雅黑';
+      font-weight: 600; }
+    .list .content .a_font:hover {
+      color: #FFC265;
+      cursor: pointer; }
+    .list .content .author {
+      display: inline-block;
+      font-size: 14px;
+      width: 180px;
+      text-align: left;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      color: #6664C2; }
+    .list .content .author:hover {
+      cursor: pointer; }
+    .list .content .bar_title {
+      cursor: pointer;
+      display: inline-block;
+      width: 110px;
+      border: 1px solid #ddd;
+      overflow: hidden;
+      font-size: 12px;
+      color: #4c4c4c;
+      text-align: center;
+      height: 25px;
+      line-height: 25px;
+      left: 0;
+      font-family: arial, SimSun; }
+    .list .content .news_p {
+      padding-left: 20px; }
+    .list .content .news_m {
+      margin-top: 10px;
+      line-height: 30px;
+      font-size: 16px;
+      margin-bottom: 10px; }
+    .list .content .block {
+      display: block; }
+    .list .content .el_coldate {
+      width: 90%;
+      margin-left: 100px;
+      margin-right: auto; }
+    .list .content .ul_p {
+      padding-top: 10px; }
+    .list .content .sours, .list .content .time, .list .content .number {
+      color: #6b7eeb; }
 
 /*# sourceMappingURL=index.css.map */

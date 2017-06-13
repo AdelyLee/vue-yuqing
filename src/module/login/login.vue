@@ -43,8 +43,7 @@
     </div>
 </template>
 
-<script type="text/javascript">
-    import $ from 'jquery';
+<script type="text/ecmascript-6">
     import service from '../../vuex/module/login.js'
 
     export default {

@@ -2,11 +2,15 @@
     <div id="presentation">
         <common-header></common-header>
         <el-row :gutter="5" class="list">
-            <el-col :span="24">
+            <el-col :span="3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span="21">
+                <div class="card-body" id="content">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
-                        <span style="line-height: 40px;"><i class="el-icon-document"></i> 舆情报告</span>
-                    </div>
+                    <!--<div slot="header" class="panel-height">-->
+                        <!--<span style="line-height: 40px;"><i class="el-icon-document"></i> 舆情报告</span>-->
+                    <!--</div>-->
                     <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane name="往期月报" value="月报">
                             <span slot="label"><i class="el-icon-date"></i> 月报</span>
@@ -14,7 +18,7 @@
                                 <div class="title">{{reportListHeader}}</div>
                             </div>
                             <el-row type="flex" class="row-bg" justify="space-around">
-                                <list-presentation :id="monthlyReport" :reportList="reportList"></list-presentation>
+                                <list-presentation :reportList="reportList"></list-presentation>
                             </el-row>
                         </el-tab-pane>
                         <el-tab-pane name="往期周报" value="周报">
@@ -23,18 +27,20 @@
                                 <div class="title">{{reportListHeader}}</div>
                             </div>
                             <el-row type="flex" class="row-bg" justify="space-around">
-                                <list-presentation :id="weeklyReport" :reportList="reportList"></list-presentation>
+                                <list-presentation :reportList="reportList"></list-presentation>
                             </el-row>
                         </el-tab-pane>
                     </el-tabs>
                     <list-page :pager="pager" @data="getPager"></list-page>
                 </el-card>
+                </div>
             </el-col>
         </el-row>
     </div>
 </template>
 <script>
     import Header from '@/components/commons/header';
+    import CommonMenu from '@/components/commons/menu';
     import Paging from '@/components/commons/paging';
     import ListPresentation from '@/components/presentationList/list-presentation';
 
@@ -56,6 +62,7 @@
         },
         components: {
             'common-header': Header,
+            'common-menu': CommonMenu,
             'list-presentation': ListPresentation,
             'list-page': Paging
         },
@@ -71,6 +78,7 @@
                 });
             },
             getPager(pager) {
+                debugger;
                 this.pager = pager;
                 this.getReportList();
             },

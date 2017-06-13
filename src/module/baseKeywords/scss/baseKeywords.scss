@@ -1,15 +1,31 @@
 @charset "utf-8";
 @import "../../../assets/scss/common";
+
+body{
+    margin: 0 auto;
+    overflow-x: hidden;
+}
+#content{
+    width: 85%;
+    position: absolute;
+    left: 13.7%;
+    top: 75px
+}
+.el-card{
+    border: 1px solid #ffffff;
+}
 .content{
-    //width: 90%;
-    //margin: 0 auto;
+    width: 100%;
+    margin: 0 auto;
     height: auto;
     /* position: absolute; */
     /* z-index: 999; */
     .model{
         padding: 20px;
-        position: absolute;
+        /* position: absolute; */
+        float: left;
         top: 210px;
+        margin: 5% 0 10% 25%;
         width: 50%;
         left: 25%;
         height: 60%;
@@ -24,12 +40,13 @@
         }
     },
 
-    .m_b50{
-        margin-bottom: 50px!important;
-    }
+
     .f_l{
         float: left;
     }
+}
+.m_b50{
+    margin-bottom: 50px!important;
 }
 .pTitle{
     font-size: 20px;
@@ -38,4 +55,16 @@
     margin-bottom: 60px;
     font-family: "微软雅黑";
     color: #5C9FE4;
+}
+.el-card {
+    border: none;
+    border-radius: 0;
+    -webkit-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    -moz-box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    box-shadow:0 0 10px rgba(196, 192, 193, .5);
+    background-color: #f8f9fb;
+    .card-body {
+        height: auto;
+    }
+
 }

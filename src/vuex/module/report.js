@@ -44,7 +44,8 @@ const actions = {
         var reportId = utils.utils.getQueryVariable('id');
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/briefing/detail/' + reportId,
+                // url: common.url.webserviceUrl + '/briefing/detail/' + reportId,
+                url: 'http://localhost:8081/briefingJson.json',
                 type: 'get',
                 success: function (data) {
                     resolve(data);

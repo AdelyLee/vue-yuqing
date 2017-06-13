@@ -4,7 +4,8 @@
 /**
  * Created by topcom on 2017/5/24.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from '../common'
 import dateUtil from '../dateUtil'
 import queryParam from '../utils'
@@ -21,8 +22,6 @@ const searchData = {
                 data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
                 data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
                 search = data;
-            },
-            error: function (error) {
             }
         })
         return search;
@@ -46,9 +45,6 @@ const actions = {
                 type: 'get',
                 success: function (data) {
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -67,7 +63,7 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
@@ -119,11 +115,7 @@ const actions = {
                             }
                         ]
                     };
-
                     resolve(option);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -140,6 +132,7 @@ const actions = {
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         }
+        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
@@ -175,7 +168,8 @@ const actions = {
                             {
                                 name: '媒体类型',
                                 type: 'pie',
-                                radius: ['20%', '55%'],
+                                radius: [0,'55%'],
+                                // roseType: 'area',
                                 label: {
                                     normal: {
                                         show: true,
@@ -188,11 +182,7 @@ const actions = {
                             }
                         ]
                     };
-
                     resolve(option);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -288,15 +278,7 @@ const actions = {
                             }
                         ]
                     }
-
-                    // renderData.option = option;
-                    // renderData.description = "<div class = 'descript-text'><span class = 'highlight'>"+top2.join("、")+"</span>媒体新闻客户端对该话题保持了较高频次的关注和讨论量。<span class = 'highlight'>"+next3.join("、")+"</span>等媒体客户端也保持着较高的关注度。</div>";
-                    // renderData.descriptionthree="尤其是<div class = 'highlight'>"+top2.join(",")+"</div>";
                     resolve(option);
-
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -328,8 +310,6 @@ const actions = {
                     newsSeries.data.push(item.value);
                     newsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -342,8 +322,6 @@ const actions = {
                     weiboSeries.data.push(item.value);
                     weiboSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -356,8 +334,6 @@ const actions = {
                     bbsSeries.data.push(item.value);
                     bbsSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         $.ajax({
@@ -370,8 +346,6 @@ const actions = {
                     barSeries.data.push(item.value);
                     barSeries.xAxis.push(item.key);
                 })
-            },
-            error: function (error) {
             }
         });
         var myOption = {
@@ -382,6 +356,7 @@ const actions = {
                 trigger: 'axis'
             },
             xAxis: {
+                name:'时间',
                 boundaryGap:false,
                 data: newsSeries.xAxis
             },
@@ -389,6 +364,7 @@ const actions = {
                 data: ["新闻", "微博", "论坛", "贴吧"]
             },
             yAxis: {
+                name:'数量',
                 splitLine: {
                     show: false
                 }
@@ -524,167 +500,161 @@ const actions = {
                     };
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
     },
     //网络主要观点分布
-    getNetizenOptionPie: function () {
-        var param = {
-            "endDate": "2017-02",
-            "startDate": "2017-01"
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
-                data: JSON.stringify(param),
-                type: 'Post',
-                contentType: "application/json;charset=utf-8",
-                success: function (data) {
-                    data = data.sort(function (a, b) {
-                        return b.value - a.value;
-                    });
-                    var dataStyle = {
-                        normal: {
-                            label: {show: false},
-                            labelLine: {show: false},
-                            shadowBlur: 40,
-                            shadowColor: 'rgba(40, 40, 40, 0.5)',
-                        }
-                    };
-                    var placeHolderStyle = {
-                        normal: {
-                            color: 'rgba(0,0,0,0)',
-                            label: {show: false},
-                            labelLine: {show: false}
-                        },
-                        emphasis: {
-                            color: 'rgba(0,0,0,0)'
-                        }
-                    };
-                    var option = {
-                        color: ['#85b6b2', '#6d4f8d', '#cd5e7e', '#e38980', '#f7db88'],
-                        tooltip: {
-                            show: true,
-                            formatter: "{a} <br/>{b} : {c} ({d}%)"
-                        },
-                        series: [
-                            {
-                                name: data[0].key,
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                radius: [180, 200],
-                                itemStyle: dataStyle,
-                                hoverAnimation: false,
-                                data: [{
-                                    value: data[0].value
-                                },
-                                    {
-                                        value: 4,
-                                        // value: numberLength.resetNumberType(data[0].value),
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-                            {
-                                name: data[1].key,
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                radius: [160, 180],
-                                itemStyle: dataStyle,
-                                hoverAnimation: false,
-                                data: [{
-                                    value: data[1].value
-                                },
-                                    {
-                                        value: 14,
-                                        // value: numberLength.resetNumberType(data[1].value),
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-
-                                ]
-                            },
-                            {
-                                name: data[2].key,
-                                type: 'pie',
-                                clockWise: false,
-                                hoverAnimation: false,
-                                center: ['50%', '50%'],
-                                radius: [140, 160],
-                                itemStyle: dataStyle,
-                                data: [
-                                    {
-                                        value: data[2].value
-                                    },
-                                    {
-                                        // value: numberLength.resetNumberType(data[2].value),
-                                        value: 24,
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-
-
-                            {
-                                name: data[3].key,
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                radius: [120, 140],
-                                hoverAnimation: false,
-                                itemStyle: dataStyle,
-                                data: [
-                                    {
-                                        value: data[3].value
-                                    },
-                                    {
-                                        // value: numberLength.resetNumberType(data[3].value),
-                                        value: 34,
-                                        name: 'invisible',
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-                            {
-                                name: data[4].key,
-                                type: 'pie',
-                                clockWise: false,
-                                center: ['50%', '50%'],
-                                radius: [100, 120],
-                                hoverAnimation: false,
-                                itemStyle: dataStyle,
-                                data: [
-                                    {
-                                        value: data[4].value
-                                    },
-                                    {
-                                        // value: numberLength.resetNumberType(data[4].value),
-                                        name: 'invisible',
-                                        value: 44,
-                                        itemStyle: placeHolderStyle
-                                    }
-                                ]
-                            },
-
-                        ]
-                    };
-                    resolve(option);
-                },
-                error: function (error) {
-                    reject(error);
-                }
-            })
-
-        })
-    },
+    // getNetizenOptionPie: function () {
+    //     var param = {
+    //         "endDate": "2017-02",
+    //         "startDate": "2017-01"
+    //     }
+    //     return new Promise(function (resolve, reject) {
+    //         $.ajax({
+    //             url: common.url.webserviceUrl + '/accidentYuqing/hotAccidentComment',
+    //             data: JSON.stringify(param),
+    //             type: 'Post',
+    //             contentType: "application/json;charset=utf-8",
+    //             success: function (data) {
+    //                 data = data.sort(function (a, b) {
+    //                     return b.value - a.value;
+    //                 });
+    //                 var dataStyle = {
+    //                     normal: {
+    //                         label: {show: false},
+    //                         labelLine: {show: false},
+    //                         shadowBlur: 40,
+    //                         shadowColor: 'rgba(40, 40, 40, 0.5)',
+    //                     }
+    //                 };
+    //                 var placeHolderStyle = {
+    //                     normal: {
+    //                         color: 'rgba(0,0,0,0)',
+    //                         label: {show: false},
+    //                         labelLine: {show: false}
+    //                     },
+    //                     emphasis: {
+    //                         color: 'rgba(0,0,0,0)'
+    //                     }
+    //                 };
+    //                 var option = {
+    //                     color: ['#85b6b2', '#6d4f8d', '#cd5e7e', '#e38980', '#f7db88'],
+    //                     tooltip: {
+    //                         show: true,
+    //                         formatter: "{a} <br/>{b} : {c} ({d}%)"
+    //                     },
+    //                     series: [
+    //                         {
+    //                             name: data[0].key,
+    //                             type: 'pie',
+    //                             clockWise: false,
+    //                             center: ['50%', '50%'],
+    //                             radius: [180, 200],
+    //                             itemStyle: dataStyle,
+    //                             hoverAnimation: false,
+    //                             data: [{
+    //                                 value: data[0].value
+    //                             },
+    //                                 {
+    //                                     value: 4,
+    //                                     // value: numberLength.resetNumberType(data[0].value),
+    //                                     name: 'invisible',
+    //                                     itemStyle: placeHolderStyle
+    //                                 }
+    //                             ]
+    //                         },
+    //                         {
+    //                             name: data[1].key,
+    //                             type: 'pie',
+    //                             clockWise: false,
+    //                             center: ['50%', '50%'],
+    //                             radius: [160, 180],
+    //                             itemStyle: dataStyle,
+    //                             hoverAnimation: false,
+    //                             data: [{
+    //                                 value: data[1].value
+    //                             },
+    //                                 {
+    //                                     value: 14,
+    //                                     // value: numberLength.resetNumberType(data[1].value),
+    //                                     name: 'invisible',
+    //                                     itemStyle: placeHolderStyle
+    //                                 }
+    //
+    //                             ]
+    //                         },
+    //                         {
+    //                             name: data[2].key,
+    //                             type: 'pie',
+    //                             clockWise: false,
+    //                             hoverAnimation: false,
+    //                             center: ['50%', '50%'],
+    //                             radius: [140, 160],
+    //                             itemStyle: dataStyle,
+    //                             data: [
+    //                                 {
+    //                                     value: data[2].value
+    //                                 },
+    //                                 {
+    //                                     // value: numberLength.resetNumberType(data[2].value),
+    //                                     value: 24,
+    //                                     name: 'invisible',
+    //                                     itemStyle: placeHolderStyle
+    //                                 }
+    //                             ]
+    //                         },
+    //
+    //
+    //                         {
+    //                             name: data[3].key,
+    //                             type: 'pie',
+    //                             clockWise: false,
+    //                             center: ['50%', '50%'],
+    //                             radius: [120, 140],
+    //                             hoverAnimation: false,
+    //                             itemStyle: dataStyle,
+    //                             data: [
+    //                                 {
+    //                                     value: data[3].value
+    //                                 },
+    //                                 {
+    //                                     // value: numberLength.resetNumberType(data[3].value),
+    //                                     value: 34,
+    //                                     name: 'invisible',
+    //                                     itemStyle: placeHolderStyle
+    //                                 }
+    //                             ]
+    //                         },
+    //                         {
+    //                             name: data[4].key,
+    //                             type: 'pie',
+    //                             clockWise: false,
+    //                             center: ['50%', '50%'],
+    //                             radius: [100, 120],
+    //                             hoverAnimation: false,
+    //                             itemStyle: dataStyle,
+    //                             data: [
+    //                                 {
+    //                                     value: data[4].value
+    //                                 },
+    //                                 {
+    //                                     // value: numberLength.resetNumberType(data[4].value),
+    //                                     name: 'invisible',
+    //                                     value: 44,
+    //                                     itemStyle: placeHolderStyle
+    //                                 }
+    //                             ]
+    //                         },
+    //
+    //                     ]
+    //                 };
+    //                 resolve(option);
+    //             }
+    //         })
+    //
+    //     })
+    // },
     getNetionTitleBar: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
@@ -775,9 +745,6 @@ const actions = {
                     };
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -799,6 +766,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     var renderData = {};
                     var seriesData = [];
                     var xAxisData = [];
@@ -866,9 +834,6 @@ const actions = {
                     };
                     renderData.option = option;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -891,55 +856,54 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    var renderData = {};
-                    var maxCount = 0;
-                    var seriesData = [];
-                    $.each(data, function (i, item) {
-                        var node = {};
-                        node.name = item.key;
-                        node.value = item.value;
-                        seriesData.push(node);
-                    });
-                    seriesData.sort(function (a, b) {
-                        return b.value - a.value
-                    });
-                    maxCount = seriesData[0].value == undefined ? 10 : seriesData[0].value;
-                    var option = {
-                        tooltip: {
-                            trigger: 'item',
-                            formatter: "{a} <br/>{b}: {c}"
-                        },
-                        visualMap: {
-                            min: 0,
-                            max: maxCount,
-                            left: 'left',
-                            top: 'bottom',
-                            text: ['高', '低'],           // 文本，默认为数值文本
-                            calculable: true,
-                            inRange: {
-                                color: ['#B7EEEB', '#FEFDC7', '#FCC171', '#F27449', '#DB3B29'],
+                    if(data && data.length>0) {
+                        var renderData = {};
+                        var maxCount = 0;
+                        var seriesData = [];
+                        $.each(data, function (i, item) {
+                            var node = {};
+                            node.name = item.key;
+                            node.value = item.value;
+                            seriesData.push(node);
+                        });
+                        seriesData.sort(function (a, b) {
+                            return b.value - a.value
+                        });
+                        maxCount = seriesData[0].value == undefined ? 10 : seriesData[0].value;
+                        var option = {
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c}"
                             },
-
-                        },
-                        series: [
-                            {
-                                name: '地域分布',
-                                type: 'map',
-                                mapType: 'china',
-                                label: {
-                                    normal: {
-                                        show: true,
-                                    }
+                            visualMap: {
+                                min: 0,
+                                max: maxCount,
+                                left: 'left',
+                                top: 'bottom',
+                                text: ['高', '低'],           // 文本，默认为数值文本
+                                calculable: true,
+                                inRange: {
+                                    color: ['#B7EEEB', '#FEFDC7', '#FCC171', '#F27449', '#DB3B29'],
                                 },
-                                data: seriesData
-                            }
-                        ]
-                    };
-                    renderData.option = option;
-                    resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
+
+                            },
+                            series: [
+                                {
+                                    name: '地域分布',
+                                    type: 'map',
+                                    mapType: 'china',
+                                    label: {
+                                        normal: {
+                                            show: true,
+                                        }
+                                    },
+                                    data: seriesData
+                                }
+                            ]
+                        };
+                        renderData.option = option;
+                        resolve(renderData);
+                    }
                 }
             });
         });
@@ -972,12 +936,8 @@ const actions = {
                         node.score = item.value;
                         seriesData.push(node);
                     });
-                    renderData.description = "<div class = 'descript-text'>从词频分析，与话题相关的主要关联词汇包括，<span class = 'highlight'>\"" + data[0].key + "\"、\"" + data[1].key + "\"、\"" + data[2].key + "\"、\"" + data[3].key + "\"、\"" + data[4].key + "\"、\"" + data[5].key + "\"</span>等词</div>";
                     renderData.option = {"data": seriesData};
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -1004,9 +964,6 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     resolve(data);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             });
         });
@@ -1033,7 +990,6 @@ const actions = {
             "searchKv": searchParam.searchKey,
             "type": searchParam.type
         }
-        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
@@ -1050,7 +1006,7 @@ const actions = {
                     $.each(datas, function (i, item) {
                         var node = {};
                         if(item.title) {
-                            node.title = item.title.length>30?item.title.substr(0,30)+"...":item.title;
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
                         }else {
                             node.title = "暂无数据";
                         }
@@ -1062,28 +1018,29 @@ const actions = {
                         }else {
                             node.content = "暂无数据";
                         }
+                        // if(node.content != "暂无数据" && searchParam.searchWord != "") {
+                        //     node.content.split(searchParam.searchWord);
+                        //     node.content.join('<span style = "color:red;">'+searchParam.searchWord+'</span>');
+                        // }
                         if(item.source && item.source != null) {
                             node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
                         }else {
                             node.source = "暂无数据";
                         }
-                        node.emotion = item.nlp.sentiment.label;
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
                         node.type = item.type;
                         node.id = item.id;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd");
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
                         node.isActive = false;
                         seriesData.push(node);
                     });
                     renderData.seriesData = seriesData;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             })
         })
     },
-    getYujingListData: function (pageSize,currentPage) {
+    getWarningListData: function (pageSize,currentPage) {
         var subjectId = queryParam.utils.getQueryVariable('id');
         var param = {
             "limit": pageSize,
@@ -1114,31 +1071,10 @@ const actions = {
                     });
                     renderData.seriesData = seriesData;
                     resolve(renderData);
-                },
-                error: function (error) {
-                    reject(error);
                 }
             })
         })
     }
-}
-
-const numberLength = {
-    resetNumberType: function (num) {
-        var numbers = 0;
-        var l = num.toString().length;
-        if (l == 3) {
-            numbers = num / 2 - 100;
-        } else if (l == 4) {
-            numbers = num / 2 - 1000;
-        } else if (l >= 5) {
-            numbers = num / 2 - 10000;
-        } else {
-            numbers = num
-        }
-        return numbers
-    }
-
 }
 export default {
     actions, searchData

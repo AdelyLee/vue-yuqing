@@ -1,0 +1,161 @@
+body {
+  background-color: #ffffff; }
+
+.el-row {
+  margin-bottom: 10px; }
+  .el-row:last-child {
+    margin-bottom: 0; }
+
+body {
+  margin: 0 auto;
+  overflow-x: hidden; }
+
+#content {
+  width: 85%;
+  position: absolute;
+  left: 13.7%;
+  top: 75px; }
+
+.el-card {
+  border: 1px solid #ffffff;
+  border-radius: 0px;
+  background-color: #ffffff; }
+  .el-card .el-card__header {
+    min-height: 30px;
+    border-bottom: 1px solid #1D90E6;
+    background-color: #1D90E6;
+    color: #000; }
+
+.el-card .panel-height {
+  height: 40px;
+  color: #fff; }
+.el-card .el-card__header {
+  padding: 5px 10px;
+  color: #fff; }
+  .el-card .el-card__header .clearfix {
+    text-align: center; }
+
+.report-header {
+  text-align: center;
+  border-bottom: 2px solid #888;
+  font-size: 20px;
+  height: 110px; }
+  .report-header .title {
+    color: #ff0000;
+    font-size: 30px;
+    line-height: 78px;
+    width: 378px;
+    height: 78px;
+    margin: auto;
+    background-image: url("../../../../static/img/titlebj.png"); }
+  .report-header .organization {
+    padding: 0 10px;
+    text-align: center;
+    float: left; }
+  .report-header .createTime {
+    padding: 0 10px;
+    text-align: center;
+    float: right; }
+
+.report-content {
+  padding: 10px 80px; }
+  .report-content .outline {
+    text-align: center;
+    border: 1px solid #7DB5EE;
+    -webkit-box-shadow: 0 0 10px #1D90E6;
+    -moz-box-shadow: 0 0 10px #1D90E6;
+    box-shadow: 0 0 10px #1D90E6;
+    border-radius: 5px;
+    font-size: 20px;
+    min-height: 50px;
+    margin: 50px;
+    margin-bottom: 20px;
+    line-height: 50px;
+    font-weight: 600; }
+    .report-content .outline div {
+      display: inline-block; }
+    .report-content .outline .listNum {
+      color: #EB7E23;
+      font-size: 24px; }
+    .report-content .outline .percent {
+      color: #7BDF86;
+      font-size: 24px; }
+  .report-content .title.level-one {
+    color: #333;
+    font-size: 26px;
+    line-height: 78px; }
+  .report-content .title.level-two {
+    color: #555;
+    font-size: 18px;
+    line-height: 50px; }
+  .report-content .title.level-three {
+    color: #777;
+    font-size: 16px;
+    line-height: 40px; }
+  .report-content .describe-text {
+    text-indent: 2em;
+    color: #000000;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 36px; }
+    .report-content .describe-text .describe-redText {
+      color: #eb7e23;
+      font-size: 24px; }
+  .report-content #article-type-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #news-emotion-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #accident-area-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #media-bar-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #article-trend-chart {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #news-hot-point {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #month-accident-bar-chart {
+    margin: auto;
+    width: 1200px;
+    height: 400px; }
+  .report-content #accident-type-pie-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #accident-map-chart {
+    margin: auto;
+    width: 800px;
+    height: 500px; }
+  .report-content #comment-pie-chart {
+    margin: auto;
+    width: 1200px;
+    height: 600px; }
+  .report-content #hot-keywords-chart {
+    margin: auto;
+    width: 400px;
+    height: 300px; }
+  .report-content #comment-keywords-chart {
+    margin: auto;
+    width: 400px;
+    height: 300px; }
+  .report-content #hot-author-bar-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+  .report-content #focus-people-map-chart {
+    margin: auto;
+    width: 800px;
+    height: 400px; }
+
+/*# sourceMappingURL=contacts.css.map */
