@@ -50,7 +50,7 @@
                                         <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
-                                <el-form-item label="报告生成日期" class="displayIn">
+                                <el-form-item label="报告接收日期" class="displayIn">
                                     <el-select v-model="addForm.day" placeholder="请选择(几号)" :disabled="isDisable">
                                         <el-option
                                             v-for="item in options"
@@ -60,7 +60,7 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="报告生成小时" class="displayIn">
+                                <el-form-item label="报告接收成小时" class="displayIn">
                                     <el-time-select placeholder="报告生成小时" v-model="addForm.hours"
                                                     :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
                                     </el-time-select>
