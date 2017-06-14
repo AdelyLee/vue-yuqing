@@ -10,6 +10,7 @@ import common from '../common'
 import dateUtil from '../dateUtil'
 import queryParam from '../utils'
 import typeParam from '../typeUtil'
+import utils from '../utils'
 const searchData = {
     searchParam: function () {
         var searchId = queryParam.utils.getQueryVariable('id');
@@ -28,6 +29,11 @@ const searchData = {
     }
 }
 const actions = {
+    // 获取关键词
+    config: utils.utils.getUserBaseKeyword(),
+
+    // 获取高亮的词
+    heightLightWords: utils.utils.getCustomSubjectHeightLightKeywords(),
     //新闻列表
     getNewsCurrentList: function () {
         var mySearch = {};
@@ -49,17 +55,18 @@ const actions = {
             });
         });
     },
-    //current里面新闻情感类型
+    //新闻情感类型分析饼图
     getNewsEmotionPieChart: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'nlp.sentiment.label',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            e_date: mySearch.endDate,
+            articleType:'news@weibo@bar@bbs'
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -126,13 +133,12 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'type',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         }
-        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
@@ -193,9 +199,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'source',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -284,132 +290,151 @@ const actions = {
         });
 
     },
-
+    //趋势图
     getMediaReportTrendBar: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
+        var articleType = 'news@weibo@bbs@bar';
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
-            dateType: "day"
+            dateType: "day",
+            articleType: articleType
         };
-        var newsSeries = {"data": [], "xAxis": []};
-        var weiboSeries = {"data": [], "xAxis": []};
-        var bbsSeries = {"data": [], "xAxis": []};
-        var barSeries = {"data": [], "xAxis": []};
-        $.ajax({
-            url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    newsSeries.data.push(item.value);
-                    newsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/weibo/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    weiboSeries.data.push(item.value);
-                    weiboSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bbs/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    bbsSeries.data.push(item.value);
-                    bbsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bar/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    barSeries.data.push(item.value);
-                    barSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        var myOption = {
-            title: {
-                text: ''
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            xAxis: {
-                name:'时间',
-                boundaryGap:false,
-                data: newsSeries.xAxis
-            },
-            legend: {
-                data: ["新闻", "微博", "论坛", "贴吧"]
-            },
-            yAxis: {
-                name:'数量',
-                splitLine: {
-                    show: false
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupByTime.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var xAxis = [];
+                    var seriesData = {news: [], weibo: [], bbs: [], bar: []};
+                    var articleTypeArray = articleType.split("@");
+                    articleTypeArray.forEach(function (type) {
+                        data[type].forEach(function (item) {
+                            if (type == 'news') {
+                                xAxis.push(item.key);
+                            }
+                            seriesData[type].push(item.value);
+                        });
+                    });
+                    var myOption = {
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ["新闻", "微博", "论坛", "贴吧"]
+                        },
+                        dataZoom: [{
+                            startValue: mySearch.startDate
+                        }, {
+                            type: 'inside'
+                        }],
+                        xAxis: {
+                            type: 'category',
+                            name: '时间',
+                            data: xAxis,
+                            boundaryGap: false,
+                            splitLine: {
+                                show: true,
+                                interval: 'auto',
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                // margin: 10,
+                                textStyle: {
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '数量',
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        series: [{
+                            name: '新闻',
+                            type: 'line',
+                            smooth: true,
+                            show: true,
+                            data: seriesData.news,
+                            itemStyle: {
+                                normal: {
+                                    color: '#fc7f7d'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '微博',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.weibo,
+                            itemStyle: {
+                                normal: {
+                                    color: '#efee55'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '论坛',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bbs,
+                            itemStyle: {
+                                normal: {
+                                    color: '#4fa8e4'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '贴吧',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bar,
+                            itemStyle: {
+                                normal: {
+                                    color: '#e679cc'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }]
+                    };
+
+                    resolve(myOption);
                 }
-            },
-            toolbox: {
-                show: false,
-                left: 'center',
-                feature: {
-                    dataZoom: {
-                        yAxisIndex: 'none'
-                    },
-                    restore: {},
-                    saveAsImage: {}
-                }
-            },
-            dataZoom: [{
-                startValue: searchData.searchParam().startDate
-            }, {
-                type: 'inside'
-            }],
-            color: [
-                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-            ],
-            series: [{
-                name: '新闻',
-                type: 'line',
-                data: newsSeries.data
-            }, {
-                name: '微博',
-                type: 'line',
-                data: weiboSeries.data
-            }, {
-                name: '论坛',
-                type: 'line',
-                data: bbsSeries.data
-            }, {
-                name: '贴吧',
-                type: 'line',
-                data: barSeries.data
-            }]
-        };
-        return new Promise(function (resolve, reject) {
-            resolve(myOption);
+            });
         });
     },
     //网民观点
@@ -418,9 +443,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'title.raw',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -655,14 +680,15 @@ const actions = {
     //
     //     })
     // },
+    //网民话题柱图
     getNetionTitleBar: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'title.raw',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -749,14 +775,15 @@ const actions = {
             });
         });
     },
+    //热议网民柱图
     getNetizenConsensusBar: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'author',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -766,7 +793,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     var renderData = {};
                     var seriesData = [];
                     var xAxisData = [];
@@ -838,14 +864,15 @@ const actions = {
             });
         });
     },
+    //网民地图分布
     getNetizenMap: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'area',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -856,6 +883,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     if(data && data.length>0) {
                         var renderData = {};
                         var maxCount = 0;
@@ -908,13 +936,14 @@ const actions = {
             });
         });
     },
+    //关键词云
     getKeywordsChart: function () {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
             limit: 50
@@ -942,33 +971,36 @@ const actions = {
             });
         });
     },
-    getNetizenOptions: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
-        var param = {
-            "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
-            },
-            "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
-            }
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/comments/viewport',
-                data: JSON.stringify(param),
-                contentType: 'application/json;charset=utf-8',
-                type: 'post',
-                success: function (data) {
-                    resolve(data);
-                }
-            });
-        });
-    },
+    //网民观点
+    // getNetizenOptions: function () {
+    //     var mySearch = {};
+    //     mySearch = searchData.searchParam();
+    //     var param = {
+    //         "date": {
+    //             "endDate": mySearch.endDate,
+    //             "startDate": mySearch.startDate
+    //         },
+    //         "keyword": {
+    //             "mustNotWord": mySearch.mustNotWord,
+    //             "mustWord": mySearch.mustWord,
+    //             "shouldWord": mySearch.shouldWord
+    //         }
+    //     }
+    //     return new Promise(function (resolve, reject) {
+    //         $.ajax({
+    //             url: common.url.webserviceUrl + '/comments/viewport',
+    //             data: JSON.stringify(param),
+    //             contentType: 'application/json;charset=utf-8',
+    //             type: 'post',
+    //             success: function (data) {
+    //                 resolve(data);
+    //             }
+    //         });
+    //     });
+    // },
+    //信息列表
     getmylist : function (searchParam,pageSize, currentPage) {
+        var self = this;
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
@@ -1006,22 +1038,27 @@ const actions = {
                     $.each(datas, function (i, item) {
                         var node = {};
                         if(item.title) {
-                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                            node.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
+                            if(searchParam.searchWord != "" && node.title.indexOf(searchParam.searchWord) != -1 && param.filed != "content.cn") {
+                                var fen = node.title.split(searchParam.searchWord);
+                                node.title = fen.join('<span style="color:red;">'+searchParam.searchWord + '</span>')
+                            }
                         }else {
                             node.title = "暂无数据";
                         }
                         node.time = item.dateCreated;
                         node.url = item.url;
                         if(item.content) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                            node.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
+                            debugger;
+
+                            if(searchParam.searchWord != "" && node.content.indexOf(searchParam.searchWord) != -1 && param.filed != "title.cn") {
+                                var fen = node.content.split(searchParam.searchWord);
+                                node.content = fen.join('<span style="color:red;">' + searchParam.searchWord + '</span>')
+                            }
                         }else {
                             node.content = "暂无数据";
                         }
-                        // if(node.content != "暂无数据" && searchParam.searchWord != "") {
-                        //     node.content.split(searchParam.searchWord);
-                        //     node.content.join('<span style = "color:red;">'+searchParam.searchWord+'</span>');
-                        // }
                         if(item.source && item.source != null) {
                             node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
                         }else {
@@ -1040,6 +1077,7 @@ const actions = {
             })
         })
     },
+    //历史预警列表
     getWarningListData: function (pageSize,currentPage) {
         var subjectId = queryParam.utils.getQueryVariable('id');
         var param = {
@@ -1074,7 +1112,408 @@ const actions = {
                 }
             })
         })
-    }
+    },
+    //舆情预警列表
+    getpublicSentimentListData: function (pageSize,currentPage) {
+        var param = {
+            "limit": pageSize,
+            "page": currentPage
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/warningLog/findByUser/',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        node.keyWord = item.mustWord;
+                        node.dateCreated = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), "yyyy-MM-dd hh:mm:ss");
+                        node.id = item.id;
+                        node.set = "查看预警";
+                        node.subjectName = item.subjectName;
+                        node.timeChange = item.startDate+"至"+item.endDate;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
+    //点击情感分析饼图弹出列表
+    getEmotionList: function (searchKv,pageSize,currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": searchKv,
+            "type": ["article"]
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    debugger;
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.site = item.site;
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
+    //点击载体类型饼图弹出列表
+    getTypeList: function (type,pageSize,currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": [],
+            "type": type
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
+    //点击热议网民柱图弹出列表
+    getAuthorList: function (searchKv,pageSize,currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": searchKv,
+            "type": ["article"]
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    debugger;
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.site = item.site;
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
+    //点击网民话题柱图弹出列表
+    getTitleList: function (searchKv,pageSize,currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": searchKv,
+            "type": ["article"]
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    debugger;
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
+    //点击网站来源饼图弹出列表
+    getSourceList: function (searchKv,pageSize,currentPage) {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": searchKv,
+            "type": ["article"]
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    debugger;
+                    var renderData = {};
+                    renderData.limits = data.size;
+                    renderData.pages = data.totalPages;
+                    renderData.total = data.totalElements;
+                    var datas = data.content;
+                    var seriesData = [];
+                    $.each(datas, function (i, item) {
+                        var node = {};
+                        if(item.title) {
+                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
+                        }else {
+                            node.title = "暂无数据";
+                        }
+                        node.time = item.dateCreated;
+                        node.url = item.url;
+                        if(item.content) {
+                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
+                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                        }else {
+                            node.content = "暂无数据";
+                        }
+                        if(item.source && item.source != null) {
+                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
+                        }else {
+                            node.source = "暂无数据";
+                        }
+                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        node.type = item.type;
+                        node.id = item.id;
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.isActive = false;
+                        seriesData.push(node);
+                    });
+                    renderData.seriesData = seriesData;
+                    resolve(renderData);
+                }
+            })
+        })
+    },
 }
 export default {
     actions, searchData

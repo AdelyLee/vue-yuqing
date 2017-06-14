@@ -54,7 +54,7 @@
                                                 <el-radio :label="3">相关度降序</el-radio>
                                             </el-radio-group>
                                         </el-col>
-                                        <el-col :span="10" style="margin-bottom: 15px;">
+                                        <el-col :span="12" style="margin-bottom: 15px;">
                                             <span class="text">匹配方式: </span>
                                             <el-radio-group v-model="radio4" @change="changeTitle(radio4)">
                                                 <el-radio :label="1">按全文</el-radio>
@@ -70,17 +70,13 @@
                                                 <el-checkbox v-for="emotion in emotions" :label="emotion" :key="emotion">{{emotion}}</el-checkbox>
                                             </el-checkbox-group>
                                         </el-col>
-                                        <el-col :span="10" style="margin-bottom: 15px;">
-                                            <span class="text">载体类型: </span>
-                                            <el-checkbox :indeterminate="isIndeterminateType" v-model="checkAllType"
-                                                         @change="handleCheckAllTypeChange">全部
-                                            </el-checkbox>
-                                            <el-checkbox-group v-model="checkedType" @change="handleCheckedTypesChange"
-                                                               style="display: inline-block;">
-                                                <el-checkbox v-for="type in types" :label="type" :key="type">{{type}}</el-checkbox>
-                                            </el-checkbox-group>
-
-                                        </el-col>
+                                       <el-col :span="12" style="margin-bottom: 15px;">
+                                        <span class="text">载体类型:  </span>
+                                        <el-checkbox :indeterminate="isIndeterminateType" v-model="checkAllType" @change="handleCheckAllChange">全选</el-checkbox>
+                                        <el-checkbox-group v-model="checkedType" @change="handleCheckedCitiesChange" style="display: inline-block;">
+                                            <el-checkbox v-for="type in types" :label="type" :key="type">{{type}}</el-checkbox>
+                                        </el-checkbox-group>
+                                      </el-col>
                                     <hr size=1 style="color: #ccc;border-style:dashed ;width:100%">
                                        <el-col :span="10" style="margin-bottom: 15px;">
                                         <span class="text">显示条数: </span>

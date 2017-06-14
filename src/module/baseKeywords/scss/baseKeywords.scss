@@ -1,19 +1,6 @@
 @charset "utf-8";
 @import "../../../assets/scss/common";
 
-body{
-    margin: 0 auto;
-    overflow-x: hidden;
-}
-#content{
-    width: 85%;
-    position: absolute;
-    left: 13.7%;
-    top: 75px
-}
-.el-card{
-    border: 1px solid #ffffff;
-}
 .content{
     width: 100%;
     margin: 0 auto;
@@ -24,12 +11,11 @@ body{
         padding: 20px;
         /* position: absolute; */
         float: left;
-        top: 210px;
-        margin: 5% 0 10% 25%;
-        width: 50%;
-        left: 25%;
+        //margin: 5% 0 10% 25%;
+        width: 80%;
         height: 60%;
-        box-shadow: 0 0 10px #666;
+        margin-left: 5%;
+        //box-shadow: 0 0 10px #666;
         background-color: #ffffff;
         .close{
             position: absolute;
@@ -42,19 +28,29 @@ body{
 
 
     .f_l{
-        float: left;
+       margin: 0 auto;
+    }
+    .el-form-item__content{
+        text-align: center;
+    }
+    .el-textarea__inner {
+        min-height: 100px;
     }
 }
-.m_b50{
-    margin-bottom: 50px!important;
-}
+//.m_b50{
+//    //margin-bottom: 50px!important;
+//}
 .pTitle{
-    font-size: 20px;
-    font-weight: 700;
-    text-align: left;
-    margin-bottom: 60px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 40px;
     font-family: "微软雅黑";
-    color: #5C9FE4;
+    color: #ffffff;
+    text-align: center;
+    line-height: 45px;
+    width: 191px;
+    height: 55px;
+    background: url('../../../../static/img/dzhyqbj.png') no-repeat;
 }
 .el-card {
     border: none;

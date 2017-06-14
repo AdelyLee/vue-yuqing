@@ -1,19 +1,7 @@
 @charset "utf-8";
 @import "../../../assets/scss/common";
 
-body{
-    margin: 0 auto;
-    overflow-x: hidden;
-}
-#content{
-    width: 85%;
-    position: absolute;
-    left: 13.7%;
-    top: 75px
-}
-.el-card{
-    border: 1px solid #ffffff;
-}
+
 .text{
     background-color: #14529d;
     padding: 2px;
@@ -24,14 +12,7 @@ body{
     font-weight: 600;
     margin-right: 15px;
 }
-.el-radio__input.is-checked .el-radio__inner {
-    border-color: #95c8c5;
-    background: #95c8c5;
-}
-.el-checkbox__input.is-checked .el-checkbox__inner {
-    border-color: #95c8c5;
-    background: #95c8c5;
-}
+
 #search {
     width: 100%;
     .content {
@@ -89,13 +70,17 @@ body{
         .search-list {
             .article {
                 cursor: pointer;
-                background-color: #f4f2e3;
+                border-left: 3px solid #6595df;
+                background-color: #fbfdff;
                 margin-bottom: 5px;
-                height: 140px;
+                height: 120px;
+                margin-bottom: 5px;
+
             }
             .title {
                 font-size: 16px;
-                color: #4b95e2;
+                color: #6395df;
+                padding-top: 10px;
                 font-weight: 600;
             }
             .cont {
@@ -105,7 +90,7 @@ body{
                 font-size: 36px;
                 color: #4b95e2;
                 font-weight: 600;
-                padding-top: 10px;
+                padding-top: 16px;
             }
             span {
                 float: left;

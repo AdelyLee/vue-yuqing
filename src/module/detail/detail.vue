@@ -2,11 +2,15 @@
     <div id="detail">
         <common-header></common-header>
         <el-row :gutter="5" class="list">
-            <el-col :span="24">
+            <el-col :span="3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span="21">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
-                        <span style="line-height: 40px;"><i class="el-icon-document"></i> 文章详情</span>
-                    </div>
+                    <!--<div slot="header" class="panel-height">-->
+                        <!--<span style="line-height: 40px;"><i class="el-icon-document"></i> 文章详情</span>-->
+                    <!--</div>-->
+                    <div class="card-body" id="content">
                     <el-row :gutter="5" class="list">
                         <el-col :span="20" class="m_l10">
                             <!--标题-->
@@ -44,18 +48,19 @@
                                         <img :src="emotionSrc" class="imgStyle">
                                     </el-col>
                                     <div class="emotionTitle">情感分析</div>
-                                    <gauge-chart :chartConfig="mediaEmotionGauge"></gauge-chart>
+                                    <gauge-chart :chartConfig="mediaEmotionGauge" class="p_t"></gauge-chart>
                                 </el-col>
                                 <el-col :span="12">
                                     <el-col :span="1">
                                         <img :src="hotSrc" class="imgStyle">
                                     </el-col>
                                     <div class="emotionTitle">热点词云</div>
-                                    <keywords-chart :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
+                                        <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
                                 </el-col>
                             </el-row>
                         </el-col>
                     </el-row>
+                    </div>
                 </el-card>
             </el-col>
         </el-row>
@@ -63,8 +68,9 @@
 
 </template>
 <script>
-    import GaugeChart from '@/components/commons/charts/gauge';
+    import Gauge from '@/components/commons/charts/gauge';
     import Header from '@/components/commons/header';
+    import CommonMenu from '@/components/commons/menu';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
 //    import $ from 'jquery'
     import service from '../../vuex/module/detail.js'
@@ -76,7 +82,7 @@
             return {
                 id: queryParam.utils.getQueryVariable("id"),
                 mediaEmotionGauge: {
-                    chartId: 'emotion-guage',
+                    chartId: 'emotion-gauge',
                     option: {},
                     events: {
                         'click': function (param) {
@@ -117,11 +123,11 @@
         },
         components: {
             'common-header': Header,
-            'gauge-chart': GaugeChart,
+            'common-menu': CommonMenu,
+            'gauge-chart': Gauge,
             'keywords-chart': KeywordsChart
         },
         mounted () {
-            console.log(this.id)
             this.getNewsCurrentList();
             this.getCommentHotKeywordsChart();
         },
@@ -129,70 +135,14 @@
             getNewsCurrentList: function () {
                 var self = this;
                 service.actions.getNewsCurrentList(self.id).then(function (data) {
-                    debugger;
-
-                    data.content = data.content.replace(/&nbsp;/ig, "");
+//                    data.content = data.content.replace(/&nbsp;/ig, "");
                     self.detailData = data;
-//                    self.mediaEmotionGauge.option = data.option;
+                    self.mediaEmotionGauge.option = data.option;
                     self.detailData.nlp.keywords = data.nlp.keywords.join(" ").replace(/&nbsp/ig, "");
                     if (data.author == "" || data.author == undefined) {
                         self.detailData.author = "佚名";
                     }
-                    if(self.detailData.nlp.nameEntity.org.length>0){
-                        self.detailData.nlp.nameEntity.org.forEach(function (item) {
-                            var newStr = "";
-                            var nextStr = "";
-                            var temp = "";
-                            var middle = "";
-                            var next = "";
-                            if (self.detailData.content.indexOf(item) > 0) {
-                                newStr = "<span class='org_name'>";
-                                nextStr = "</span>";
-                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
-                                middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
-                                next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length + 1);
 
-//
-                            }
-                            self.detailData.content = temp + newStr + middle + nextStr + next;
-                        });
-                    }
-                    if(self.detailData.nlp.nameEntity.place.length>0){
-//                        self.detailData.nlp.nameEntity.place.length = data.nlp.nameEntity.place.length - 2;
-                        self.detailData.nlp.nameEntity.place.forEach(function (node) {
-                            var newStr = "";
-                            var nextStr = "";
-                            var temp = "";
-                            var middle = "";
-                            var next = "";
-                            if (self.detailData.content.indexOf(node) > 0) {
-                                newStr = "<span class='area'>";
-                                nextStr = "</span>";
-                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(node));
-                                middle = self.detailData.content.substring(self.detailData.content.indexOf(node), self.detailData.content.indexOf(node) + node.length);
-                                next = self.detailData.content.substr(self.detailData.content.indexOf(node) + node.length, self.detailData.content.length + 1);
-                            }
-                            self.detailData.content = temp + newStr + middle + nextStr + next;
-                        })
-                    }
-                    if( self.detailData.nlp.nameEntity.people.length>0){
-                        self.detailData.nlp.nameEntity.people.forEach(function (item) {
-                            var newStr = "";
-                            var nextStr = "";
-                            var temp = "";
-                            var middle = "";
-                            var next = "";
-                            if (self.detailData.content.indexOf(item) > 0) {
-                                newStr = "<span class='person_name'>";
-                                nextStr = "</span>";
-                                temp = self.detailData.content.substr(0, self.detailData.content.indexOf(item));
-                                middle = self.detailData.content.substring(self.detailData.content.indexOf(item), self.detailData.content.indexOf(item) + item.length);
-                                next = self.detailData.content.substr(self.detailData.content.indexOf(item) + item.length, self.detailData.content.length);//
-                            }
-
-                            self.detailData.content = temp + newStr + middle + nextStr + next;
-                        });
-                    }
                 }, function (error) {
                     console.error('出错了', error);
                 })

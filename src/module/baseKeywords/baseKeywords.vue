@@ -18,13 +18,16 @@
                             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
                                      class="demo-ruleForm">
                                 <el-form-item class="m_b50" label="关键词" prop="mustWord">
-                                    <el-input :span="4" v-model="ruleForm.mustWord" placeholder="关键词之间用@隔开"></el-input>
+                                    <el-input type="textarea" v-model="ruleForm.mustWord" placeholder="关键词之间用@隔开"></el-input>
+                                    <!--<el-input :span="4" v-model="ruleForm.mustWord" placeholder="关键词之间用@隔开"></el-input>-->
                                 </el-form-item>
                                 <el-form-item class="m_b50" label="同现词" required prop="shouldWord">
-                                    <el-input placeholder="同现词之间用@隔开" v-model="ruleForm.shouldWord"></el-input>
+                                    <el-input type="textarea" v-model="ruleForm.shouldWord" placeholder="同现词之间用@隔开"></el-input>
+                                    <!--<el-input placeholder="同现词之间用@隔开" v-model="ruleForm.shouldWord"></el-input>-->
                                 </el-form-item>
                                 <el-form-item class="m_b50" label="排除词" prop="mustNotWord">
-                                    <el-input placeholder="排除词之间用@隔开" v-model="ruleForm.mustNotWord"></el-input>
+                                    <el-input type="textarea" v-model="ruleForm.mustNotWord" placeholder="排除词之间用@隔开"></el-input>
+                                    <!--<el-input placeholder="排除词之间用@隔开" v-model="ruleForm.mustNotWord"></el-input>-->
                                 </el-form-item>
                                 <el-form-item class="f_l">
                                     <el-button type="primary" @click="submitForm()">保存</el-button>

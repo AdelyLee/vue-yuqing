@@ -1,7 +1,4 @@
 /**
- * Created by Administrator on 2017/6/13.
- */
-/**
  * Created by lyc on 17-6-6.
  */
 import jquery from '../api';
@@ -11,35 +8,20 @@ import dateUtil from '../dateUtil'
 import typeUtil from '../typeUtil'
 
 const actions = {
-    getCustomSubjectList: function (pageSize, currentPage) {
-        pageSize = pageSize == undefined ? 10 : pageSize;
-        currentPage = currentPage == undefined ? 1 : currentPage;
-        var param = {
-            "limit": pageSize,
-            "page": currentPage
-        };
-        return new Promise(function (resolve, reject) {
+    getMonthlyReportInfo: function () {
+        return new Promise(function (resolve) {
             $.ajax({
-                url: common.url.webserviceUrl + '/customSubject/findByUser/',
+                url: common.url.webserviceUrl + '/briefingTask/4',
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
+                type: 'get',
                 success: function (data) {
-                    var subjectLst = [];
-                    var skip = pageSize * (currentPage - 1);
-                    data.content.forEach(function (item, i) {
-                        var subject = util.decodeSubject(item);
-                        subject.number = skip + i + 1;
-
-                        subjectLst.push(subject);
-                    });
-                    data.content = subjectLst;
+                    data.hours = data.hours + ":00";
                     resolve(data);
-                }
+                },
             });
         });
     },
-
+    // 获取联系人
     getUserContacts: function (pageSize, currentPage) {
         pageSize = pageSize == undefined ? 5 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
@@ -59,7 +41,7 @@ const actions = {
             });
         });
     },
-
+    //创建用户
     createUserContacts: function (contact) {
         console.log("addUserContacts", JSON.stringify(contact));
         $.ajax({
@@ -73,7 +55,7 @@ const actions = {
             }
         });
     },
-
+    //删除用户
     deleteUserContacts: function (contact) {
         $.ajax({
             url: common.url.webserviceUrl + '/contact/' + contact.id,
@@ -85,36 +67,8 @@ const actions = {
             }
         });
     },
-
-    createCustomSubject: function (subject) {
-        subject.startDate = subject.startDate.getTime();
-        subject.endDate = subject.endDate.getTime();
-        console.log("createCustomSubject", JSON.stringify(subject));
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/',
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            data: JSON.stringify(subject),
-            type: 'post',
-            success: function (data) {
-                console.log("create custom subject success");
-            }
-        });
-    },
-
-    deleteCustomSubject: function (subjectId) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/' + subjectId,
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            type: 'delete',
-            success: function (data) {
-                console.log("delete custom subject success");
-            }
-        });
-    },
-
-    editCustomSubject: function (subject) {
+    //保存
+    saveSetting: function (subject) {
         subject = util.encodeSubject(subject);
         console.log("editCustomSubject", JSON.stringify(subject));
         $.ajax({
@@ -127,111 +81,7 @@ const actions = {
                 console.log("edit custom subject success");
             }
         });
-    },
-
-    updateCustomSubjectReport: function (subject) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/updateReport/' + subject.id,
-            contentType: "application/json; charset=utf-8",
-            async: false,
-            type: 'get',
-            success: function (data) {
-                console.log("update custom subject report success");
-            }
-        });
-    },
-
-    getSubjectEstimate: function (subject) {
-        if (typeof subject.startDate != 'string') {
-            subject.startDate = dateUtil.dateUtil.formatDate(subject.startDate, 'yyyy-MM-dd');
-        }
-        if (typeof subject.endDate != 'string') {
-            subject.endDate = dateUtil.dateUtil.formatDate(subject.endDate, 'yyyy-MM-dd');
-        }
-        var param = {
-            "groupName": "_type",
-            "mustWord": subject.mustWord,
-            "shouldWord": subject.shouldWord,
-            "mustNotWord": subject.mustNotWord,
-            "s_date": subject.startDate,
-            "e_date": subject.endDate
-        };
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
-                contentType: "application/json; charset=utf-8",
-                data: param,
-                type: 'get',
-                success: function (data) {
-                    var estimateCount = 0;
-                    if (data.length > 0) {
-                        estimateCount = data[0].value;
-                    }
-                    resolve(estimateCount);
-                }
-            });
-        });
-    },
-
-    getSpecialReportList: function (pageSize, currentPage) {
-        pageSize = pageSize == undefined ? 10 : pageSize;
-        currentPage = currentPage == undefined ? 1 : currentPage;
-        var param = {
-            "page": {
-                "limit": pageSize,
-                "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
-                }]
-            },
-            "type": "SPECIAL"
-        };
-        console.log("getSpecialReportList", JSON.stringify(param));
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/briefing/searchByUser/',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    debugger;
-                    data.content.forEach(function (item) {
-                        item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
-                    });
-                    resolve(data);
-                }
-            });
-        });
-    },
-
-    getSpecialReport: function (pageSize, currentPage, subject) {
-        pageSize = pageSize == undefined ? 10 : pageSize;
-        currentPage = currentPage == undefined ? 1 : currentPage;
-        var param = {
-            "limit": pageSize,
-            "page": currentPage,
-            "orders": [{
-                "direction": "DESC",
-                "orderBy": "dateCreated"
-            }]
-        };
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/briefing/subject/page/' + subject.id,
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    data.content.forEach(function (item) {
-                        item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
-                    });
-                    resolve(data);
-                }
-            });
-        });
-    },
-
+    }
 };
 
 const util = {

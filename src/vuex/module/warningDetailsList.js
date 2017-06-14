@@ -3,12 +3,18 @@
  */
 import jquery from '../api';
 const $ = jquery.jQuery;
-import common from '../common'
-import dateUtil from '../dateUtil'
-import queryParam from '../utils'
-import typeParam from '../typeUtil'
+import common from '../common';
+import dateUtil from '../dateUtil';
+import queryParam from '../utils';
+import typeParam from '../typeUtil';
+import utils from '../utils'
 const actions = {
+    // 获取关键词
+    config: utils.utils.getUserBaseKeyword(),
+    // 获取高亮的词
+    heightLightWords: utils.utils.getBaseHeightLightKeywords(),
     getWarningDetailsList: function (pageSize,currentPage) {
+        var self = this;
         var searchId = queryParam.utils.getQueryVariable('id');
         var param = {
             id:searchId,
@@ -35,10 +41,9 @@ const actions = {
                         node.type = typeParam.typeUtil.articleType(item.type);
                         node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
                         node.source = item.source;
-                        node.title = item.title;
+                        node.title = utils.utils.heightLightKeywords(item.title, 30, '...', self.heightLightWords);
                         if(item.content && item.content != null) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
+                            node.content = utils.utils.heightLightKeywords(item.content, 120, '...', self.heightLightWords);
                         }else {
                             node.content = "暂无数据";
                         }

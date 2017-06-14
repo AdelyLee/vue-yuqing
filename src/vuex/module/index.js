@@ -3,8 +3,15 @@ const $ = jquery.jQuery;
 import common from '../common'
 import dateUtil from '../dateUtil'
 import typeUtil from '../typeUtil'
+import utils from '../utils'
 
 const actions = {
+    // 获取关键词
+    config: utils.utils.getUserBaseKeyword(),
+
+    // 获取高亮的词
+    heightLightWords: utils.utils.getBaseHeightLightKeywords(),
+
     //近30天舆情
     getSentimentTypeChart: function () {
         var data = new Date();
@@ -12,9 +19,9 @@ const actions = {
         var startDate = data.setMonth(data.getMonth() - 1);
         var param = {
             groupName: 'nlp.sentiment.label',
-            mustWord: '',
-            shouldWord: '',
-            mustNotWord: '',
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: startDate,
             e_date: endDate,
             articleType: ''
@@ -86,476 +93,266 @@ const actions = {
         });
     },
 
-    // TODO: 该方法接口需要重新对接
+    // 载体趋势图
     getCarrierAnalysisChart: function (timesType) {
-        var data = new Date();
+        var date = new Date();
+        var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'news@weibo@bbs@bar';
         switch (timesType) {
             case "day":
-                var start = data.getTime();
-                var end = data.getTime();
-                //var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd HH:mm:ss");
-                //var start = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd HH:mm:ss");
-                var dataType = 'hour';
-                var gap = 5;
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
+                dateType = 'hour';
+                gap = 5;
                 break;
             case 'yesterday':
-                var end = data.getTime();
-                var start = data.setDate(data.getDate() - 1);
-                var dataType = 'hour';
-                var gap = 5;
+                e_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -1), "yyyy-MM-dd");
+                dateType = 'hour';
+                gap = 5;
                 break;
             case 'nearlydays':
-                var endDate = data.getTime();
-                var startDate = data.setDate(data.getDate() - 7);
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'day';
-                var gap = '';
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
+                dateType = 'day';
+                gap = '1';
                 break;
             case 'month':
-                var endDate = data.getTime();
-                var startDate = data.setMonth(data.getMonth() - 1);
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'day';
-                var gap = '';
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+                dateType = 'day';
+                gap = '1';
                 break;
             default:
                 break;
         }
         var param = {
-            mustWord: '',
-            shouldWord: '',
-            mustNotWord: '',
-            s_date: start,
-            e_date: end,
-            dateType: dataType,
-            gap: gap
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
+            s_date: s_date,
+            e_date: e_date,
+            dateType: dateType,
+            gap: gap,
+            articleType: articleType
         };
-        var newsSeries = {"data": [], "xAxis": []};
-        var weiboSeries = {"data": [], "xAxis": []};
-        var bbsSeries = {"data": [], "xAxis": []};
-        var barSeries = {"data": [], "xAxis": []};
-        $.ajax({
-            url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    newsSeries.data.push(item.value);
-                    newsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/weibo/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    weiboSeries.data.push(item.value);
-                    weiboSeries.xAxis.push(item.key);
-                });
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bbs/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    bbsSeries.data.push(item.value);
-                    bbsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bar/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    barSeries.data.push(item.value);
-                    barSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        var myOption = {
-            title: {
-                text: ''
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                data: ["新闻", "微博", "论坛", "贴吧"]
-            },
-            toolbox: {
-                show: false,
-                left: 'center',
-                feature: {
-                    dataZoom: {
-                        yAxisIndex: 'none'
-                    },
-                    restore: {},
-                    saveAsImage: {}
-                }
-            },
-            dataZoom: [{
-                startValue: start
-            }, {
-                type: 'inside'
-            }],
-            xAxis: {
-                type: 'category',
-                name: '时间',
-                data: weiboSeries.xAxis,
-                boundaryGap: false,
-                splitLine: {
-                    show: true,
-                    interval: 'auto',
-                    lineStyle: {
-                        color: ['#cccccc']
-                    }
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    lineStyle: {
-                        color: '#4d94e2'
-                    }
-                },
-                axisLabel: {
-                    margin: 10,
-                    textStyle: {
-                        fontSize: 14
-                    }
-                }
-            },
-            yAxis: {
-                type: 'value',
-                name: '数量',
-                splitLine: {
-                    lineStyle: {
-                        color: ['#cccccc']
-                    }
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    lineStyle: {
-                        color: '#4d94e2'
-                    }
-                },
-                axisLabel: {
-                    margin: 10,
 
-                    textStyle: {
-                        fontSize: 14
-                    }
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupByTime.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var dataZoomStart = s_date;
+                    var xAxis = [];
+                    var seriesData = {news: [], weibo: [], bbs: [], bar: []};
+                    var articleTypeArray = articleType.split("@");
+                    articleTypeArray.forEach(function (type) {
+                        data[type].forEach(function (item) {
+                            if (type == 'news') {
+                                xAxis.push(item.key);
+                            }
+                            seriesData[type].push(item.value);
+                        });
+                    });
+                    var myOption = {
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ["新闻", "微博", "论坛", "贴吧"]
+                        },
+                        dataZoom: [{
+                            startValue: dataZoomStart
+                        }, {
+                            type: 'inside'
+                        }],
+                        xAxis: {
+                            type: 'category',
+                            name: '时间',
+                            data: xAxis,
+                            boundaryGap: false,
+                            splitLine: {
+                                show: true,
+                                interval: 'auto',
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '数量',
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        series: [{
+                            name: '新闻',
+                            type: 'line',
+                            smooth: true,
+                            show: true,
+                            data: seriesData.news,
+                            itemStyle: {
+                                normal: {
+                                    color: '#fc7f7d'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '微博',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.weibo,
+                            itemStyle: {
+                                normal: {
+                                    color: '#efee55'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '论坛',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bbs,
+                            itemStyle: {
+                                normal: {
+                                    color: '#4fa8e4'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '贴吧',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bar,
+                            itemStyle: {
+                                normal: {
+                                    color: '#e679cc'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }]
+                    };
+
+                    resolve(myOption);
                 }
-            },
-            series: [{
-                name: '新闻',
-                type: 'line',
-                smooth: true,
-                show: true,
-                showSymbol: false,
-                symbol: 'circle',
-                symbolSize: 6,
-                data: newsSeries.data,
-                itemStyle: {
-                    normal: {
-                        color: '#fc7f7d'
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        width: 3
-                    }
-                }
-            }, {
-                name: '微博',
-                type: 'line',
-                smooth: true,
-                showSymbol: false,
-                symbol: 'circle',
-                symbolSize: 6,
-                data: weiboSeries.data,
-                itemStyle: {
-                    normal: {
-                        color: '#efee55'
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        width: 3
-                    }
-                }
-            }, {
-                name: '论坛',
-                type: 'line',
-                smooth: true,
-                showSymbol: false,
-                symbol: 'circle',
-                symbolSize: 6,
-                data: bbsSeries.data,
-                itemStyle: {
-                    normal: {
-                        color: '#4fa8e4'
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        width: 3
-                    }
-                }
-            }, {
-                name: '贴吧',
-                type: 'line',
-                smooth: true,
-                showSymbol: false,
-                symbol: 'circle',
-                symbolSize: 6,
-                data: barSeries.data,
-                itemStyle: {
-                    normal: {
-                        color: '#e679cc'
-                    }
-                },
-                lineStyle: {
-                    normal: {
-                        width: 3
-                    }
-                }
-            }]
-        };
-        return new Promise(function (resolve, reject) {
-            resolve(myOption);
+            });
         });
     },
 
-    // TODO: 该方法接口需要重新对接
     getCarrierAnalysisBarChart: function (timesType) {
-        var data = new Date();
+        var date = new Date();
+        var s_date = '', e_date = '', articleType = 'news@weibo@bbs@bar';
         switch (timesType) {
             case "day":
-                var endDate = data.getTime();
-                var startDate = data.getTime();
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'hour';
-                var gap = 5;
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
                 break;
             case 'yesterday':
-                var endDate = data.getTime();
-                var startDate = data.setDate(data.getDate() - 1);
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'hour';
-                var gap = 5;
+                e_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -1), "yyyy-MM-dd");
                 break;
             case 'nearlydays':
-                var endDate = data.getTime();
-                var startDate = data.setDate(data.getDate() - 7);
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'day';
-                var gap = '';
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
                 break;
             case 'month':
-                var endDate = data.getTime();
-                var startDate = data.setMonth(data.getMonth() - 1);
-                var start = dateUtil.dateUtil.formatDate(new Date(startDate), "yyyy-MM-dd");
-                var end = dateUtil.dateUtil.formatDate(new Date(endDate), "yyyy-MM-dd");
-                var dataType = 'day';
-                var gap = '';
+                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
                 break;
             default:
                 break;
         }
         var param = {
-            mustWord: '',
-            shouldWord: '',
-            mustNotWord: '',
-            s_date: start,
-            e_date: end,
-            dateType: 'day',
-            gap: ''
+            groupName: 'type',
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
+            s_date: s_date,
+            e_date: e_date,
+            articleType: articleType
         };
-        var newsSeries = {"data": [], "xAxis": []};
-        var weiboSeries = {"data": [], "xAxis": []};
-        var bbsSeries = {"data": [], "xAxis": []};
-        var barSeries = {"data": [], "xAxis": []};
-        $.ajax({
-            url: common.url.webserviceUrl + '/news/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    newsSeries.data.push(item.value);
-                    newsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/weibo/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    weiboSeries.data.push(item.value);
-                    weiboSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bbs/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    bbsSeries.data.push(item.value);
-                    bbsSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        $.ajax({
-            url: common.url.webserviceUrl + '/bar/filterAndGroupByTime.json',
-            async: false,
-            data: param,
-            type: 'get',
-            success: function (data) {
-                $.each(data, function (i, item) {
-                    barSeries.data.push(item.value);
-                    barSeries.xAxis.push(item.key);
-                })
-            }
-        });
-        var myOption = {
-            title: {
-                text: ''
-            },
-            color: ['#fc7f7d', '#efee55', '#4fa8e4', '#e679cc'],
-            xAxis: {
-                axisLine: {
-                    lineStyle: {
-                        color: '#4d94e2'
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var yAxisData = [], seriesData = [];
+                    if (data.length > 0) {
+                        data.reverse();
+                        data.forEach(function (item) {
+                            yAxisData.push(typeUtil.typeUtil.articleType(item.key));
+                            seriesData.push(item.value);
+                        });
                     }
-                },
-                axisLabel: {
-                    margin: 10,
-                    textStyle: {
-                        fontSize: 14
-                    }
-                },
-            },
-            yAxis: [{
-                //axisLine: {
-                //    lineStyle: {
-                //        color: '#4d94e2'
-                //    }
-                //},
-                inverse: true,
-                splitLine: {
-                    show: true
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    lineStyle: {
-                        color: '#4d94e2'
-                    }
-                },
-                axisLabel: {
-                    margin: 10,
-                    textStyle: {
-                        fontSize: 14
-                    }
-                },
-                data: ['-']
-            }],
-            legend: {
-                data: ["新闻", "微博", "论坛", "贴吧"]
-            },
-            toolbox: {
-                show: false,
-                left: 'center',
-                feature: {
-                    dataZoom: {
-                        yAxisIndex: 'none'
-                    },
-                    restore: {},
-                    saveAsImage: {}
+                    var myOption = {
+                        yAxis: {
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        xAxis: {
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 16
+                                }
+                            }
+                        },
+                        series: [{
+                            name: '文章数目',
+                            type: 'bar',
+                            data: seriesData,
+                            barMaxWidth: 45,
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        var colorList = ['#fc7f7d', '#efee55', '#4fa8e4', '#e679cc'];
+                                        return colorList[params.dataIndex % 4]
+                                    }
+                                }
+                            }
+                        }]
+                    };
+                    resolve(myOption);
                 }
-            },
-            series: [{
-                name: '新闻',
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'left',
-                        textStyle: {color: '#000'},
-                        formatter: '新闻',
-                        label: {
-                            show: true,
-                            position: 'right',
-                            formatter: '{b}\n{c}'
-                        }
-                    }
-                },
-                data: newsSeries.data
-            }, {
-                name: '微博',
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'left',
-                        textStyle: {color: '#000'},
-                        formatter: '微博',
-                    }
-                },
-                data: weiboSeries.data
-            }, {
-                name: '论坛',
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'left',
-                        textStyle: {color: '#000'},
-                        formatter: '论坛',
-                    }
-                },
-                data: bbsSeries.data
-            }, {
-                name: '贴吧',
-                type: 'bar',
-                label: {
-                    normal: {
-                        show: true,
-                        position: 'left',
-                        textStyle: {color: '#000'},
-                        formatter: '贴吧',
-                    }
-                },
-                data: barSeries.data
-            }]
-        };
-        return new Promise(function (resolve, reject) {
-            resolve(myOption);
+            });
         });
     },
 
@@ -563,9 +360,9 @@ const actions = {
     getMediaBarChart: function () {
         var param = {
             groupName: 'source',
-            mustWord: '',
-            shouldWord: '',
-            mustNotWord: '',
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
             s_date: "",
             e_date: ""
         };
@@ -667,13 +464,44 @@ const actions = {
 
     //新闻列表
     getArticleTabList: function (type) {
+            var param = {
+                type: "source",
+                page: 1,
+                size: 5,
+                sortBy: "pubTime",
+                s_date: '',
+                e_date: ''
+            };
+            return new Promise(function (resolve) {
+                $.ajax({
+                    url: common.url.webserviceUrl + "/" + type + '/findPageByMustShouldDateInType.json',
+                    data: param,
+                    type: 'get',
+                    success: function (data) {
+                        data.content.forEach(function (item) {
+                            if (type == 'news') {
+                                if (item.title.length > 17) {
+                                    item.title = item.title.substring(0, 17) + "...";
+                                }
+                            }
+                            item.type = item.type.toLowerCase();
+                            item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        });
+                        resolve(data);
+                    }
+                });
+            });
+    },
+    //论坛列表
+    getArticlebbsTabList: function (type) {
+        var self = this;
         var param = {
-            type: "source",
             page: 1,
-            limit: 5,
-            sortBy: "pubTime",
-            s_date: '',
-            e_date: ''
+            size: 5,
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
+            sortBy: "pubTime"
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -681,8 +509,17 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    console.log(data);
                     data.content.forEach(function (item) {
+                        if (type == 'bbs') {
+                            if (item.title.length > 17) {
+                                item.title = item.title.substring(0, 17) + "...";
+                            }
+                        }
+                        item.type = item.type.toLowerCase();
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
+                        item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
                     });
                     resolve(data);
                 }
@@ -690,16 +527,17 @@ const actions = {
         });
     },
 
+
     // 点击显示article列表
-    // TODO: 需要更改
-    getNewsCurrentList: function (pageSize, currentPage, condition) {
-        pageSize = pageSize == undefined ? 2 : pageSize;
+    getArticleListByCondition: function (pageSize, currentPage, condition) {
+        var self = this;
+        pageSize = pageSize == undefined ? 10 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
         var param = {
             "keyword": {
-                "mustNotWord": "",
-                "mustWord": "",
-                "shouldWord": ""
+                "mustNotWord": this.config.mustWord,
+                "mustWord": this.config.shouldWord,
+                "shouldWord": this.config.mustNotWord,
             },
             "page": {
                 "limit": pageSize,
@@ -710,8 +548,9 @@ const actions = {
                 }],
                 "searchKv": ''
             },
+            "type": [condition.type]
         };
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
                 contentType: "application/json; charset=utf-8",
@@ -719,7 +558,13 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
-                        item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
+                        item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
+                        item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
                     });
                     resolve(data);
                 }

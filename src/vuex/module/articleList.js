@@ -4,7 +4,8 @@
 /**
  * Created by topcom on 2017/5/24.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from '../common'
 import queryParam from '../utils'
 import dateUtil from '../dateUtil'
@@ -22,8 +23,6 @@ const searchData = {
                 data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
                 search = data;
             },
-            error: function (error) {
-            }
         })
         return search;
     }
@@ -61,9 +60,6 @@ const actions = {
                 success: function (data) {
                     resolve(data);
                 },
-                error: function (error) {
-                    reject(error);
-                }
             });
         });
     },

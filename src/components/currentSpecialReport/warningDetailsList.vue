@@ -31,13 +31,13 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" style = "color:#475669;font-weight:600;">
-                                               {{item.title}}
+                                            <td colspan="3" style = "color:#475669;font-weight:600;" v-html = "item.title">
+
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" style = "color:#475669;background:#F9FAFC;padding:5px;">
-                                               {{item.content}}
+                                            <td colspan="3" style = "color:#475669;background:#F9FAFC;padding:5px;" v-html="item.content">
+
                                             </td>
                                         </tr>
                                         </tbody>

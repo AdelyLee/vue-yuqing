@@ -8,7 +8,7 @@
             border
             tooltip-effect="dark"
             style="width: 100%"
-            max-height="450">
+            height="400">
             <el-table-column
                 prop="subjectName"
                 label="专题名称"

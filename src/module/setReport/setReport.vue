@@ -1,8 +1,11 @@
 <template>
     <div class="content" id="keyWords">
         <common-header></common-header>
-        <el-row :gutter="5" class="list">
-            <el-col :span="24">
+        <el-row :gutter="5" class="list" style="margin-left:auto; margin-right:auto">
+            <el-col :span="3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span="21" style="margin-left: 12.5%">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
                     <div slot="header" class="panel-height">
                         <span style="line-height: 40px;"><i class="el-icon-document"></i>报告设置</span>
@@ -11,49 +14,62 @@
                         <div class="model">
                             <!--<span class="close" @click="close()"><i class="el-icon-circle-cross"></i></span>-->
                             <p class="pTitle">报告设置</p>
-
-                            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"
+                            <el-form :inline="true" :model="contactForm" :rules="rules" label-width="100px"
                                      class="demo-ruleForm">
-                                <el-form-item class="m_b50" label="是否启用" prop="use">
-                                    <el-radio-group v-model="ruleForm.use">
-                                        <el-radio label="是" value="1"></el-radio>
-                                        <el-radio label="否" value="2"></el-radio>
+                                <el-form-item label="联系人" prop="name" class="m_r">
+                                    <el-input v-model="contactForm.name" placeholder="请输入联系人"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮箱" prop="account">
+                                    <el-input v-model="contactForm.account" placeholder="请输入联系人邮箱"></el-input>
+                                </el-form-item>
+                                <el-button type="primary" @click.native="createUserContacts(contactForm)">添加</el-button>
+                            </el-form>
+                            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm">
+                                <el-table ref="multipleTable" :data="contacts" border height="150"
+                                          tooltip-effect="dark"
+                                          style="width: 80%; margin-left: 10%"
+                                          @selection-change="handleSelectionChange">
+                                    <el-table-column type="selection" width="55"></el-table-column>
+                                    <el-table-column prop="name" label="联系人" width="180"></el-table-column>
+                                    <el-table-column prop="account" label="邮箱" min-width="180"></el-table-column>
+                                    <el-table-column label="操作">
+                                        <template scope="scope">
+                                            <el-button size="small" type="danger"
+                                                       @click="deleteUserContacts(scope.$index, scope.row)">
+                                                删除
+                                            </el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                                <el-form-item class="pager">
+                                    <list-page :pager="pager"></list-page>
+                                </el-form-item>
+                                <el-form-item label="是否启用">
+                                    <el-radio-group v-model="addForm.enable" class="displayIn">
+                                        <el-radio :label="true">是</el-radio>
+                                        <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
-                                <!--<el-form-item class="m_b50" label="是否启用" prop="radio">-->
-                                    <!--<el-radio class="radio" v-model="radio" label="1">是</el-radio>-->
-                                    <!--<el-radio class="radio" v-model="radio" label="2">否</el-radio>-->
-                                <!--</el-form-item>-->
-                                <el-form-item class="m_b50" label="生成时间" prop="region">
-                                    <el-select v-model="ruleForm.region" placeholder="请选择活动区域" :disabled="isDisable">
-                                        <el-option label="区域一" value="shanghai"></el-option>
-                                        <el-option label="区域二" value="beijing"></el-option>
+                                <el-form-item label="生成时间" class="displayIn">
+                                    <el-select v-model="addForm.day" placeholder="请选择(几号)" :disabled="isDisable">
+                                        <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                        </el-option>
                                     </el-select>
                                 </el-form-item>
-
-                                <!--<el-form-item class="m_b50" label="生成时间">-->
-                                    <!--<el-select v-model="value" placeholder="请选择" :disabled="isDisable">-->
-                                        <!--<el-option-->
-                                            <!--v-for="item in options"-->
-                                            <!--:key="item.value"-->
-                                            <!--:label="item.label"-->
-                                            <!--:value="item.value">-->
-                                        <!--</el-option>-->
-                                    <!--</el-select>-->
-                                <!--</el-form-item>-->
-                                <el-form-item class="m_b50" label="预警时间">
-                                    <el-time-picker :disabled="isDisable"
-                                        v-model="warnTime"
-                                        :picker-options="{selectableRange: '00:00:01 - 23:59:59'}"
-                                        placeholder="请选择时间点">
-                                    </el-time-picker>
-                                </el-form-item>
-                                <el-form-item class="f_l">
-                                    <el-button type="primary" @click="submitForm()">保存</el-button>
-                                    <el-button @click="resetForm('ruleForm')">重置</el-button>
+                                <el-form-item label="预警时间" class="displayIn">
+                                    <el-time-select placeholder="结束时间" v-model="addForm.hours"
+                                                    :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
+                                    </el-time-select>
                                 </el-form-item>
                             </el-form>
-
+                            <div slot="footer" class="dialog-footer">
+                                <!--<el-button @click.native="warningDialog.addFormVisible = false">取消</el-button>-->
+                                <el-button type="primary" @click.native="addFormSubmit(addForm)">保存</el-button>
+                            </div>
                         </div>
                     </div>
                 </el-card>
@@ -65,200 +81,164 @@
 </template>
 
 <script>
+    import Paging from '@/components/commons/paging';
     import $ from 'jquery';
     import common from '../../vuex/common';
+    import CommonMenu from '@/components/commons/menu';
     import Header from '@/components/commons/header';
+    import service from '../../vuex/module/setReport.js'
+
+    var optionData = [];
+    optionData.push({value: "first", label: '倒数第一天'});
+    optionData.push({value: "second", label: '倒数第二天'});
+    optionData.push({value: "third", label: '倒数第三天'});
+    for (var i = 28; i > 0; i--) {
+        var node = {};
+        node.value = i;
+        node.label = i;
+        optionData.push(node);
+    }
     export default {
-        data() {
+        data () {
             return {
-                ruleForm: {
-                    use:'',
-                    region:"",
-
+                contactForm: {
+                    name: "",
+                    account: ""
                 },
-                options: [{
-                    value: '31',
-                    label: '倒数第一天'
-                },{
-                    value: '30',
-                    label: '倒数第二天'
-                },{
-                    value: '29',
-                    label: '倒数第三天'
-                },{
-                    value: '28',
-                    label: '28'
-                },{
-                    value: '27',
-                    label: '27'
-                },{
-                    value: '26',
-                    label: '26'
-                },{
-                    value: '25',
-                    label: '25'
-                },{
-                    value: '24',
-                    label: '24'
-                },{
-                    value: '23',
-                    label: '23'
-                },{
-                    value: '22',
-                    label: '22'
-                },{
-                    value: '21',
-                    label: '21'
-                },{
-                    value: '20',
-                    label: '20'
-                },{
-                    value: '19',
-                    label: '19'
-                },{
-                    value: '18',
-                    label: '18'
-                },{
-                    value: '17',
-                    label: '17'
-                },{
-                    value: '16',
-                    label: '16'
-                },{
-                    value: '15',
-                    label: '15'
-                },{
-                    value: '14',
-                    label: '14'
-                },{
-                    value: '13',
-                    label: '13'
-                },{
-                    value: '12',
-                    label: '12'
-                },{
-                    value: '11',
-                    label: '11'
-                },{
-                    value: '10',
-                    label: '10'
-                },{
-                    value: '9',
-                    label: '9'
-                },{
-                    value: '8',
-                    label: '8'
-                },{
-                    value: '7',
-                    label: '7'
-                },{
-                    value: '6',
-                    label: '6'
-                },{
-                    value: '5',
-                    label: '5'
-                },{
-                    value: '4',
-                    label: '4'
-                },{
-                    value: '3',
-                    label: '3'
-                },{
-                    value: '2',
-                    label: '2'
-                },{
-                    value: '1',
-                    label: '1'
-                }],
-                value1: '',
-                isDisable:false,
-                warnTime:new Date(2017, 9, 10, 18, 40),
-
                 rules: {
-                    mustWord: [
-                        {required: true, message: '请输入关键词', trigger: 'blur'}
-                    ],
-                    shouldWord: [
-                        {required: true, message: '请输入同现词', trigger: 'blur'}
-                    ],
-                    region: [
-                        { required: true, message: '请选择活动区域', trigger: 'change' }
-                    ],
-                }
+                    name: [{required: true, message: '请输入联系人名称', trigger: 'blur'}],
+                    account: [
+                        {required: true, message: '请输入邮箱地址', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change'}
+                    ]
+                },
+                concatSelectedClick: true,
+                multipleSelection: [],
+                pager: {
+                    pageSize: 5,
+                    currentPage: 1,
+                    totalElements: 1
+                },
+                addForm: {
+                    enable: false,
+                    briefingType: "",
+                    contacts: [],
+                    hours: 1,
+                    day: 1
+                },
+                contacts: [],// 所有联系人
+                options: optionData,
+                isDisable: false
             };
         },
         mounted () {
-            var self = this;
-            console.log(self.ruleForm.use)
-//            $.ajax({
-//                url: common.url.webserviceUrl + '/keywords/findByUser',
-////                contentType: "application/json; charset=utf-8",
-//                type: 'get',
-//                success: function (data) {
-//                    console.log(data)
-//                    if (data.mustWord && data.shouldWord) {
-//                        self.ruleForm.mustWord = data.mustWord;
-//                        self.ruleForm.shouldWord = data.shouldWord;
-//                    }
-//                    self.ruleForm.mustNotWord = data.mustNotWord;
-//                    self.ruleForm.id = data.id;
-//                },
-//                error: function (error) {
-//                    console.error('出错了', error);
-//                }
-//            });
+            this.getUserContacts();  //获取联系人
+            this.getMonthlyReportInfo();  //获取默认参数
         },
         components: {
             'common-header': Header,
+            'list-page': Paging,
+            'common-menu': CommonMenu,
         },
         methods: {
-//            submitForm: function () {
+            getMonthlyReportInfo: function () {
+                var self = this;
+                service.actions.getMonthlyReportInfo().then(function (data) {
+                    self.addForm = data;
+                    var rows = [];
+                    self.contacts.forEach(function (obj) {
+                        self.addForm.contacts.forEach(function (item) {
+                            if (item.id == obj.id) {
+                                rows.push(obj);
+                            }
+                        });
+                    });
+                    self.$nextTick(function () {
+                        // DOM 现在更新了
+                        // `this` 绑定到当前实例
+                        self.toggleSelection(rows);
+                    })
+                })
+            },
+
+            handleSelectionChange(val) {
+                this.concatSelectedClick = true;
+                this.multipleSelection = val;
+            },
+
+            // 获取联系人参数
+            getUserContacts: function () {
+                var self = this;
+                service.actions.getUserContacts(self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                    self.pager.totalElements = data.totalElements;
+                    self.contacts = data.content;
+
+                });
+            },
+
+            // 添加联系人
+            createUserContacts: function (contact) {
 //                var self = this;
+//                service.actions.createUserContacts(contact);
+//                self.pager.currentPage = 1;
+//                self.getUserContacts();
+            },
+            // 删除联系人
+            deleteUserContacts: function (index, row) {
+//                var self = this;
+//                var contact = row;
+//                service.actions.deleteUserContacts(contact);
+//                self.pager.currentPage = 1;
+//                self.getUserContacts();
+
+            },
+
+            toggleSelection(rows) {
+                if (rows) {
+                    rows.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row, true);
+                    });
+                }
+            },
+//            保存按钮
+            addFormSubmit: function (warning) {
+//                debugger;
+//                var self = this;
+//                if (self.addForm.day == "倒数第一天") {
+//                    self.addForm.day = 31
+//                } else if (self.addForm.day == "倒数第二天") {
+//                    self.addForm.day = 30
+//                } else if (self.addForm.day == "倒数第三天") {
+//                    self.addForm.day = 29
+//                }
+//                console.log("addWarningFormSubmit", warning);
+//                // 获取选中的联系人，
+//                warning.contacts = this.multipleSelection;
+//                warning.contacts.forEach(function (item) {
+//                    item.type = "EMAIL";
+//                });
 //                var param = {
-//                    id: self.ruleForm.id,
-//                    mustWord: self.ruleForm.mustWord,
-//                    mustNotWord: self.ruleForm.mustNotWord,
-//                    shouldWord: self.ruleForm.shouldWord,
+//                    "briefingType": self.addForm.briefingType,
+//                    "contacts": warning.contacts,
+//                    "day": self.addForm.day,
+//                    "enable": self.atWeekends,
+//                    "hours": self.addForm.hours
 //                };
 //                $.ajax({
-//                    url: common.url.webserviceUrl + '/keywords/' + self.ruleForm.id,
+//                    url: common.url.webserviceUrl + '/briefingTask/' + self.addForm.id,
 //                    data: JSON.stringify(param),
 //                    contentType: "application/json; charset=utf-8",
 //                    type: 'PUT',
 //                    success: function (data) {
+//                        debugger;
 //                        window.location.reload();
 //                    },
 //                    error: function (error) {
 //                        console.error('出错了', error);
 //                    }
 //                });
-//            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
             },
-            establish: function () {
-                $('.model').show();
-            },
-            close: function () {
-                $('.model').hide();
-            },
-        },
-        watch: {
-//            radio: function (val, oldVal) {
-////                console.log(this.checkedItems)
-//                var self=this;
-//                  self.ruleForm.use=val;
-//                  if(self.ruleForm.use==2){
-//                      self.isDisable=true
-//                  }else{
-//                      self.isDisable=false
-//                  }
-//                console.log('new: %s, old: %s', val, oldVal)
-//            },
-            options: function (val, oldVal) {
-//                console.log(this.checkedItems)
-                console.log('new: %s, old: %s', val, oldVal)
-            },
+
         },
     }
 </script>

@@ -63,7 +63,6 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/contact/',
                 contentType: "application/json; charset=utf-8",
-                async: false,
                 data: JSON.stringify(contact),
                 type: 'post',
                 success: function (data) {
@@ -79,7 +78,6 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/contact/' + contact.id,
                 contentType: "application/json; charset=utf-8",
-                async: false,
                 type: 'delete',
                 success: function (data) {
                     console.log("delete contact success");
@@ -97,7 +95,6 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/',
                 contentType: "application/json; charset=utf-8",
-                async: false,
                 data: JSON.stringify(subject),
                 type: 'post',
                 success: function (data) {
@@ -113,7 +110,6 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/' + subject.id,
                 contentType: "application/json; charset=utf-8",
-                async: false,
                 type: 'delete',
                 success: function (data) {
                     console.log("delete custom subject success");
@@ -131,7 +127,6 @@ const actions = {
                 url: common.url.webserviceUrl + '/customSubject/' + subject.id,
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(subject),
-                async: false,
                 type: 'put',
                 success: function (data) {
                     console.log("edit custom subject success");
@@ -146,7 +141,6 @@ const actions = {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/updateReport/' + subject.id,
                 contentType: "application/json; charset=utf-8",
-                async: false,
                 type: 'get',
                 success: function (data) {
                     console.log("update custom subject report success");
@@ -203,14 +197,13 @@ const actions = {
             "type": "SPECIAL"
         };
         console.log("getSpecialReportList", JSON.stringify(param));
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/briefing/searchByUser/',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    debugger;
                     data.content.forEach(function (item) {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });

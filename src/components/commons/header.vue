@@ -16,7 +16,7 @@
                         <!--<li class="keywordSetting"><i class="el-icon-setting"></i> 关键词设置</li>-->
                         <!--<li class="contactSettings"><i class="el-icon-star-on"></i> 联系人设置</li>-->
                         <!--<li class="reportSettings"><i class="el-icon-document"></i> 报告设置</li>-->
-                        <li class="signOut"><i class="el-icon-upload2"></i> <a href="<%=path%>/login/logout.do">退出</a></li>
+                        <li class="signOut"><i class="el-icon-upload2"></i> <a href="../module/login.html">退出</a></li>
                     </div>
                 </el-col>
             </el-col>
@@ -78,6 +78,7 @@
     }
     .icon li a{
         color: #fff;
+        text-decoration: none;
     }
     .signOut{
         padding: 5px;

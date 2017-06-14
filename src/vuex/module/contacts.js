@@ -1,8 +1,6 @@
 import jquery from '../api';
 const $ = jquery.jQuery;
 import common from '../common';
-import dateUtil from '../dateUtil'
-import utils from '../utils'
 
 const actions = {
     getContacts: function (pageSize, currentPage) {

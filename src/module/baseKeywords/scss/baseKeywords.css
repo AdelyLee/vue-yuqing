@@ -1,21 +1,21 @@
 /*
 Error: Invalid CSS after "": expected selector, was ","
-        on line 41 of baseKeywords.scss
+        on line 27 of baseKeywords.scss
 
-36:             right: 10px;
-37:             top: 10px;
-38:             color: #ccc;
-39:             z-index: 10000;
-40:         }
-41:     },
-42: 
-43: 
-44:     .f_l{
-45:         float: left;
-46:     }
+22:             right: 10px;
+23:             top: 10px;
+24:             color: #ccc;
+25:             z-index: 10000;
+26:         }
+27:     },
+28: 
+29: 
+30:     .f_l{
+31:        margin: 0 auto;
+32:     }
 
 Backtrace:
-baseKeywords.scss:41
+baseKeywords.scss:27
 /var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1207:in `expected'
 /var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1137:in `expected'
 /var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1117:in `expr!'
@@ -69,4 +69,4 @@ baseKeywords.scss:41
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Error: Invalid CSS after \"\": expected selector, was \",\"\A         on line 41 of baseKeywords.scss\A \A 36:             right: 10px;\A 37:             top: 10px;\A 38:             color: #ccc;\A 39:             z-index: 10000;\A 40:         }\A 41:     },\A 42: \A 43: \A 44:     .f_l{\A 45:         float: left;\A 46:     }"; }
+  content: "Error: Invalid CSS after \"\": expected selector, was \",\"\A         on line 27 of baseKeywords.scss\A \A 22:             right: 10px;\A 23:             top: 10px;\A 24:             color: #ccc;\A 25:             z-index: 10000;\A 26:         }\A 27:     },\A 28: \A 29: \A 30:     .f_l{\A 31:        margin: 0 auto;\A 32:     }"; }

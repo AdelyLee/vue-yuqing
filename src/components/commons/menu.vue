@@ -3,11 +3,12 @@
         <ul>
             <li class="active"><i class="fa fa-home fa-lg"></i> <i class="el-icon-menu"></i> <a href="../module/index.html">全景舆情</a></li>
             <li><i class="fa fa-envelope fa-lg"></i> <i class="el-icon-edit"></i> <a href="../module/customize.html">定制化舆情监测</a></li>
+            <li><i class="fa fa-envelope fa-lg"></i> <i class="el-icon-warning"></i> <a href="../module/publicSentimentWarning.html">舆情预警</a></li>
             <li><i class="fa fa-user fa-lg"></i> <i class="el-icon-document"></i> <a href="../module/presentationList.html">决策报告</a></li>
             <li><i class="fa fa-cogs fa-lg"></i> <i class="el-icon-search"></i> <a href="../module/search.html">舆情搜索</a></li>
             <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-setting"></i>  <a href="../module/baseKeywords.html">关键词设置</a></li>
             <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-star-on"></i><a href="../module/contacts.html">联系人设置</a> </li>
-            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-document"></i> 报告设置</li>
+            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-document"></i><a href="../module/setReport.html"> 报告设置</a></li>
         </ul>
     </div>
 </template>
@@ -109,5 +110,15 @@
     li:hover{
         background: #14529d;
         /*border-left: 0.5em groove #fdce0f;*/
+    }
+    @media screen and (min-width: 1360px) and (max-width: 1366px) {
+        ul>li>a{
+            font-size: 12px;
+        }
+    }
+    @media screen and (min-width: 1280px) and (max-width: 1281px) {
+        ul>li>a{
+            font-size: 12px;
+        }
     }
 </style>

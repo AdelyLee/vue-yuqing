@@ -1,15 +1,10 @@
-/**
- * Created by Administrator on 2017/5/3.
- */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
-import SetReport from './setReport.vue'
+import warningList from './publicSentimentWarning.vue'
 import VueResource from 'vue-resource'
-
 import 'element-ui/lib/theme-default/index.css'   // 默认主题
-import '../customize/scss/customize.scss'
-import './scss/setReport.scss'
+import './scss/publicSentimentWarning.scss'
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
@@ -19,20 +14,20 @@ Vue.use(VueResource)
 // 并且配置路由规则
 const router = new VueRouter({
     mode: 'history',
-// base: baseUrl,
+    // base: baseUrl,
     routes: [
         {
-            path: '/setReport',
-            component: SetReport
+            path: '/publicSentimentWarning',
+            component: warningList
         }
     ]
 })
 
 new Vue({
-    el: '#setReport',
+    el: '#warningList',
     router: router,
-    template: '<set-report></set-report>',
+    template: '<home-presentation></home-presentation>',
     components: {
-        'set-report': SetReport
+        'home-presentation': warningList
     }
 })

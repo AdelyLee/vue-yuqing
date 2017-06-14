@@ -13,25 +13,24 @@ import queryParam from '../utils'
 import dateUtil from '../dateUtil'
 import typeParam from '../typeUtil'
 
-const searchData = {
-    searchParam: function () {
-        var searchId = queryParam.utils.getQueryVariable('id');
-        var search = {};
-        $.ajax({
-            url: common.url.webserviceUrl + '/customSubject/' + searchId,
-            type: 'get',
-            async: false,
-            success: function (data) {
-                data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
-                data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
-                search = data;
-            },
-        })
-        return search;
-    },
-    error: function (error) {
-    }
-}
+// const searchData = {
+//     searchParam: function () {
+//         var searchId = queryParam.utils.getQueryVariable('id');
+//         var search = {};
+//         $.ajax({
+//             url: common.url.webserviceUrl + '/customSubject/' + searchId,
+//             type: 'get',
+//                success: function (data) {
+//                 data.startDate = dateUtil.dateUtil.formatDate(new Date(data.startDate), "yyyy-MM-dd");
+//                 data.endDate = dateUtil.dateUtil.formatDate(new Date(data.endDate), "yyyy-MM-dd");
+//                 search = data;
+//             },
+//         })
+//         return search;
+//     },
+//     error: function (error) {
+//     }
+// }
 
 const actions = {
     //新闻列表
@@ -41,15 +40,31 @@ const actions = {
                 url: common.url.webserviceUrl + '/news/findById/'+id,
                 contentType: "application/json; charset=utf-8",
                 type: 'get',
+                async: false,
                 success: function (data) {
-                  var option = {
+                    debugger;
+
+                    if(data.nlp.nameEntity.org){
+                        data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.org,"","org_name");
+
+                    }
+                    if(data.nlp.nameEntity.place){
+                        data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.place,"","area");
+
+                    }
+                    if(data.nlp.nameEntity.people){
+                        data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.people,"","person_name");
+
+                    }
+
+                    var option = {
                         tooltip : {
                             formatter: "{a} <br/>{b} : {c}%"
                         },
                       grid:{
                             top:80
                       },
-                        series: [
+                        series:[
                             {
                                 name: '情感类型',
                                 startAngle:180,
@@ -59,15 +74,15 @@ const actions = {
                                 type: 'gauge',
                                 detail: {formatter:'{value}'},
                                 radius: '85%',
-                                axisTick: {
-                                    splitNumber: 10
-                                },
+                                // axisTick: {
+                                //     splitNumber: 10
+                                // },
                                 axisLine:{
                                     show:true,
                                     lineStyle:{
                                         width:30,
                                         shadowBlur:0,
-                                        color:[[0.3,'#E96C6C'],[0.7,'#D2DD2A'],[1,'#E96C6C']]
+                                        color:[[0.3,'#E96C6C'],[0.7,'#52B5FF'],[1,'#D2DD2A']]
                                     }
                                 },
                                 axisLabel: {
@@ -103,7 +118,7 @@ const actions = {
     },
     getCommentHotKeywordsChart: function (id) {
         debugger;
-        var mySearch = searchData.searchParam();
+        // var mySearch = searchData.searchParam();
         var param = {
             id:id,
             count:50
@@ -137,7 +152,54 @@ const actions = {
         });
     },
 }
+const heightLightKeywords={
+    heightLightKeywords:function (content, length, append, keywords, divider,className) {
+        var script_Pattern = "<script[^>]*?>[\\s\\S]*?<\/script>";    // '匹配js标签
+        var style_Pattern = "<style[^>]*?>[\\s\\S]*?<\/style>";      //'匹配style标签
+        // var tag_Pattern = "<[^>].*?>";// '匹配html标签
+
+        if (!content) {
+            return '';
+        }
+        var temp;
+        content = content.replace(new RegExp("&#60;", "gm"), '<');
+        content = content.replace(new RegExp("&#62;", "gm"), '>');
+        content = content.replace(new RegExp("<!--;", "gm"), '<style>');
+        content = content.replace(new RegExp("-->;", "gm"), '</style>');
+        content = content.replace(new RegExp(script_Pattern, 'gi'), '');
+        content = content.replace(new RegExp(style_Pattern, 'gi'), '');
+        // content = content.replace(new RegExp(tag_Pattern, 'gi'), '');
+        if (divider == undefined) {
+            divider = '@';
+        }
+        if (content.length < length) {
+            length = content.length;
+        }
+        temp = content.substring(0, length);
+        if (length != content.length && append != '') {
+            temp += append;
+        }
+        var ks = [];
+        if (typeof(keywords) != 'undefined') {
+            if (keywords.constructor != Array) {// 如果不是数组,则形式为a@b@c,先分割为数组
+                ks = keywords.split(divider);
+                //去除为" "的元素
+                for (var i = 0; i < ks.length; i++) {
+                    if (ks[i].replace(/(^\s*)|(\s*$)/g, "") == '') {
+                        ks.splice(i);
+                    }
+                }
+            } else {
+                ks = keywords;
+            }
+            for (var i = 0; i < ks.length; i++) {
+                temp = temp.replace(new RegExp(ks[i], "gm"), '<font class='+className+'>' + ks[i] + '</font>');
+            }
+        }
+        return temp;
+    }
+}
 
 export default {
-    actions, searchData
+    actions
 }

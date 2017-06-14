@@ -17,9 +17,9 @@
             <template scope="scope">
                 <div class = "title-content" title = "点击查看详情" style = "cursor: pointer" @click = "getChange(scope.row.id)">
                     <img src="../../../static/img/default_avatar_male_50.gif" alt="暂无图片" >
-                    <h3 >{{scope.row.title}}</h3>
+                    <h3 v-html="scope.row.title"></h3>
                     <div class = "p-box" >
-                        <p>{{scope.row.content}}</p>
+                        <p v-html = "scope.row.content" style ="text-align: left;"></p>
                     </div>
                 </div>
             </template>

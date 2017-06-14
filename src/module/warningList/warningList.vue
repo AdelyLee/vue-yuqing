@@ -1,16 +1,25 @@
 <template>
     <div id="warningList">
         <common-header></common-header>
-        <el-card class="box-card">
-            <div>
-                <warningDetails-list :yujingDetailsList = "warningDetailsList"></warningDetails-list>
-                <list-page :pager="pager" @data="getPager"></list-page>
-            </div>
-        </el-card>
+        <el-row :gutter = "15">
+            <el-col :span = "3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span = "21" :offset = "3">
+                <el-card class="box-card my-card">
+                    <div>
+                        <warningDetails-list :yujingDetailsList = "warningDetailsList"></warningDetails-list>
+                        <list-page :pager="pager" @data="getPager"></list-page>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+
     </div>
 </template>
 <script>
     import Header from '@/components/commons/header';
+    import CommonMenu from '@/components/commons/menu';
     import Paging from '@/components/commons/paging';
     import warningDetailsListData from '@/components/currentSpecialReport/warningDetailsList';
     import service from '../../vuex/module/warningDetailsList.js';
@@ -30,6 +39,7 @@
             }
         },
         components: {
+            'common-menu': CommonMenu,
             'common-header': Header,
             'list-page':Paging,
             'warningDetails-list':warningDetailsListData

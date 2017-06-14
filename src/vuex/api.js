@@ -7,7 +7,7 @@ jQuery.ajaxSetup({
     error: function (error) {
         debugger;
         console.log("ajaxSetup error", error);
-        alert(error.responseJSON.message);
+        // alert(error.responseJSON.message);
         if (error.status != 500) {
             // window.location.href = "../module/login.html";
         }

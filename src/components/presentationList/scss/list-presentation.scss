@@ -77,6 +77,21 @@ $font-family: 微软雅黑;
                 margin-top: -20px;
                 cursor: pointer;
             }
+            @media screen and (min-width: 1360px) and (max-width: 1366px) {
+                .img {
+                    width: 72px;
+                    height: 63px;
+                    background-image: url("../../../static/img/news_bj1360.png");
+                }
+            }
+            @media screen and (min-width: 1280px) and (max-width: 1281px) {
+                .img {
+                    width: 72px;
+                    height: 63px;
+                    background-image: url("../../../static/img/news_bj1360.png");
+                }
+            }
+
         }
     }
 }

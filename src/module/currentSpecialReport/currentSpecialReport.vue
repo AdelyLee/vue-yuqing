@@ -2,18 +2,18 @@
     <div id="currentSpecial">
         <common-header></common-header>
         <el-row :gutter="15">
-            <el-col :span="4">
+            <el-col :span="3">
                 <common-menu></common-menu>
             </el-col>
-            <el-col :span="20" :offset ="4">
-                <el-card class="box-card " style ="margin-top:70px;">
+            <el-col :span="21" :offset="3">
+                <el-card class="box-card " style="margin-top:70px;">
                     <div slot="header" class="clearfix" style="line-height: 40px;text-align: left"><i
                         class="el-icon-star-off"></i>专题 ：{{subjectName}}
                     </div>
                     <el-row :gutter="15" class="list">
                         <el-col :span="24">
                             <div style="height:5px;"></div>
-                            <el-menu :default-active="1" class="el-menu-demo" mode="horizontal">
+                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal">
                                 <el-menu-item index="1" @click="changeIndex(1)"><i class="el-icon-message"></i>信息列表
                                 </el-menu-item>
                                 <el-menu-item index="2" @click="changeIndex(2)"><i class="el-icon-menu"></i>舆论分析
@@ -77,40 +77,34 @@
                                         </el-card>
                                     </el-col>
                                 </el-row>
-                                <el-row :gutter="15">
-                                    <el-col :span="24">
-                                        <el-card class=" my-card" style="margin-top:5px;">
-                                            <span class="my-title">舆论热点</span>
-                                            <el-tabs type="card">
-                                                <el-tab-pane label="新闻观点">
-                                                    <el-col :span="24" class="lists">
-                                                        <bar-chart :chartConfig="netizenTypeTitleBar"></bar-chart>
-                                                        <!--<news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>-->
-                                                    </el-col>
-                                                </el-tab-pane>
-                                                <el-tab-pane label="微博观点">
-                                                    <el-col :span="24" class="lists">
-                                                        <weibo-list :type="weiboUrl"
-                                                                    :checkedItems="checkedItems"></weibo-list>
-                                                    </el-col>
-                                                </el-tab-pane>
-                                                <el-tab-pane label="论坛观点">
-                                                    <el-col :span="24" class="lists">
-                                                        <bbs-list :type="bbsUrl"
-                                                                  :checkedItems="checkedItems"></bbs-list>
-                                                    </el-col>
-                                                </el-tab-pane>
-                                            </el-tabs>
-                                        </el-card>
-                                    </el-col>
-                                </el-row>
-                                <el-dialog title="收货地址" size="large" :visible="dialogTableVisible">
-                                    <el-table :data="gridData">
-                                        <el-table-column property="date" label="日期" width="150"></el-table-column>
-                                        <el-table-column property="name" label="姓名" width="200"></el-table-column>
-                                        <el-table-column property="address" label="地址"></el-table-column>
-                                    </el-table>
-                                </el-dialog>
+                                <!--<el-row :gutter="15">-->
+                                    <!--<el-col :span="24">-->
+                                        <!--<el-card class=" my-card" style="margin-top:5px;">-->
+                                            <!--<span class="my-title">舆论热点</span>-->
+                                            <!--<el-tabs type="card">-->
+                                                <!--<el-tab-pane label="新闻观点">-->
+                                                    <!--<el-col :span="24" class="lists">-->
+                                                        <!--<bar-chart :chartConfig="netizenTypeTitleBar"></bar-chart>-->
+                                                        <!--&lt;!&ndash;<news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>&ndash;&gt;-->
+                                                    <!--</el-col>-->
+                                                <!--</el-tab-pane>-->
+                                                <!--<el-tab-pane label="微博观点">-->
+                                                    <!--<el-col :span="24" class="lists">-->
+                                                        <!--<weibo-list :type="weiboUrl"-->
+                                                                    <!--:checkedItems="checkedItems"></weibo-list>-->
+                                                    <!--</el-col>-->
+                                                <!--</el-tab-pane>-->
+                                                <!--<el-tab-pane label="论坛观点">-->
+                                                    <!--<el-col :span="24" class="lists">-->
+                                                        <!--<bbs-list :type="bbsUrl"-->
+                                                                  <!--:checkedItems="checkedItems"></bbs-list>-->
+                                                    <!--</el-col>-->
+                                                <!--</el-tab-pane>-->
+                                            <!--</el-tabs>-->
+                                        <!--</el-card>-->
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+                                <article-list v-if="getListEmotionData.length > 0" :id="articleListId" :articles ="getListEmotionData" :pager = "articlePager" @data = "getArticleData"></article-list>
                             </div>
                             <div v-if="myIndex==3">
                                 <el-row :gutter="15">
@@ -149,19 +143,6 @@
                                         </el-card>
                                     </el-col>
                                 </el-row>
-                                <el-row :gutter="15">
-                                    <el-col :span="12">
-                                        <el-card class="box-card my-card" style="margin-top:5px;">
-                                            <div slot="header" class="clearfix">
-                                                <span class="my-title">网民观点</span>
-                                            </div>
-                                            <pie-chart :chartConfig="netizenOptions"></pie-chart>
-                                        </el-card>
-                                    </el-col>
-                                    <el-col :span="12">
-
-                                    </el-col>
-                                </el-row>
                             </div>
                             <div v-if="myIndex == 4">
                                 <warning-list :yujingList="warningList"></warning-list>
@@ -182,6 +163,7 @@
     import CommonMenu from '@/components/commons/menu';
     import LineBarChart from '@/components/commons/charts/line-bar';
     import PieChart from '@/components/commons/charts/pie';
+    import articleList from '@/components/index/articleList';
     import MapChart from '@/components/commons/charts/map';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
     import currentListComponent from '@/components/currentSpecialReport/currentList_new';
@@ -191,33 +173,25 @@
     import yujingPagerData from '@/components/commons/paging';
     import service from '../../vuex/module/currentSpecialReport.js';
     import dateUtil from '../../vuex/dateUtil'
+    import typeUtil from '../../vuex/typeUtil'
+    import $ from 'jquery';
     export default {
         name: 'presentationList',
         data () {
+            var that = this;
             return {
-                gridData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }],
-                dialogTableVisible: false,
+                articleListId:'article-list',
+                activeIndex2: '1',
                 currentListNew: [],
                 myListPagination: {
                     pageSize: 5,
                     currentPage4: 1,
-                    total: 0,
+                    total: 0
+                },
+                articlePager:{
+                    pageSize: 10,
+                    currentPage: 1,
+                    totalElements: 10
                 },
                 yujignPager: {
                     pageSize: 10,
@@ -226,15 +200,7 @@
                 },
                 warningList: {
                     loading3: false,
-                    tableData3: [
-                        {
-                            "subjectName": "六一儿童节",
-                            "keyWord": "快乐@happy",
-                            "timeChange": "2017-06至2017-07",
-                            "dateCreated": "2017-06-01",
-                            "set": "查看预警",
-                            "id": "8"
-                        }]
+                    tableData3: []
                 },
                 mylistSearch: {
                     startDate: service.searchData.searchParam().startDate,
@@ -257,15 +223,20 @@
                 weiboUrl: 'weibo',
                 bbsUrl: 'bbs',
                 checkedItems: [],
+                getListEmotionData: [],
+                getListTypeData: [],
+                getListAuthorData: [],
+                getListTitleData: [],
+                getListSourceData: [],
                 activeName: 'first',
                 mediaReportAnalysisPie: {
                     chartId: 'media-report-analysis-pie',
                     option: {},
                     events: {
                         'click': function (param) {
-                            var self = this;
-                            debugger;
-                            this.dialogTableVisible = true
+                            var value = typeUtil.typeUtil.encodeSentimentType(param.name);
+                            var searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            that.getEmotionList(searchKv);
                         }
                     }
                 },
@@ -274,6 +245,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var name = typeUtil.typeUtil.encodeArticleType(param.name);
+                            var type = [];
+                            type.push(name);
+                            that.getTypeList(type);
                         }
                     }
                 },
@@ -282,6 +257,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var value = param.name;
+                            var searchKv = [{"key": "source", "value": value}];
+                            that.getSourceList(searchKv);
                         }
                     }
                 },
@@ -306,6 +284,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var value = param.name;
+                            var searchKv = [{"key": "title.raw", "value": value}];
+                            that.getTitleList(searchKv);
                         }
                     }
                 },
@@ -314,6 +295,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var value = param.name;
+                            var searchKv = [{"key": "author", "value": value}];
+                            that.getAuthorList(searchKv);
                         }
                     }
                 },
@@ -337,6 +321,7 @@
             }
         },
         components: {
+            'article-list': articleList,
             'common-menu': CommonMenu,
             'current-list': currentListComponent,
             'warning-list': warningListData,
@@ -351,32 +336,84 @@
         },
         mounted () {
             this.getmylist();
-//            this.getPager();
         },
         methods: {
+            getArticleData: function (data) {
+                var self = this;
+                switch (data.action) {
+                    case 'clickArticleListPager':
+                        self.articlePager = data.articleListPager;
+                        break;
+                }
+                self.getEmotionList();
+            },
+            getEmotionList: function (searchKv) {
+                var self = this;
+                service.actions.getEmotionList(searchKv, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
+                    self.getListEmotionData = renderData.seriesData;
+                    self.articlePager.totalElements = renderData.total;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getTypeList: function (type) {
+                var self = this;
+                service.actions.getTypeList(type, 10, 1).then(function (renderData) {
+                    self.getListTypeData = renderData.seriesData;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getAuthorList: function (searchKv) {
+                var self = this;
+                service.actions.getAuthorList(searchKv, 10, 1).then(function (renderData) {
+                    self.getListAuthorData = renderData.seriesData;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getTitleList: function (searchKv) {
+                var self = this;
+                service.actions.getTitleList(searchKv, 10, 1).then(function (renderData) {
+                    self.getListTitleData = renderData.seriesData;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getSourceList: function (searchKv) {
+                var self = this;
+                service.actions.getSourceList(searchKv, 10, 1).then(function (renderData) {
+                    self.getListSourceData = renderData.seriesData;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
             changeIndex: function (index) {
                 var self = this;
                 self.myIndex = index;
-                if (index == 1) {
-                    this.getmylist();//信息列表
-                } else if (index == 2) {
-                    this.getNewsEmotionPieChart();//情感类型分析饼图
-                    this.getArticleTypeChart();   //新闻载体分析饼图
-                    this.getMediaBarChart();        //主流媒体
-                    this.getMediaReportTrendBar();//媒体报道走势柱图
-                    this.getNetionTypeTitleBar();//网民观点
-
-                } else if (index == 3) {
-                    this.getNetionTitleBar();//网民舆论热点柱图
-                    this.getNetizenConsensusBar();//热议网民柱图
-                    this.getNetizenMap();//网民地图分布
-                    this.getKeywordsChart();//热点词云
-                    this.getNetizenOptions();//网民观点饼图
-                } else if (index == 4) {
-                    this.getWarningListData();
+                switch (index) {
+                    case 1:
+                        this.getmylist();//信息列表
+                        break;
+                    case 2:
+                        this.getNewsEmotionPieChart();//情感类型分析饼图
+                        this.getArticleTypeChart();   //新闻载体分析饼图
+                        this.getMediaBarChart();        //主流媒体
+                        this.getMediaReportTrendBar();//媒体报道走势柱图
+                        this.getNetionTypeTitleBar();//网民观点
+//                        this.getEmotionList();
+                        break;
+                    case 3:
+                        this.getNetionTitleBar();//网民舆论热点柱图
+                        this.getNetizenConsensusBar();//热议网民柱图
+                        this.getNetizenMap();//网民地图分布
+                        this.getKeywordsChart();//热点词云
+//                        this.getNetizenOptions();//网民观点饼图
+                        break;
+                    case 4:
+                        this.getWarningListData();
+                        break;
                 }
-            },
-            handleClick(tab, event) {
             },
             getNewsEmotionPieChart: function () {
                 var self = this;
@@ -454,25 +491,19 @@
                 })
 
             },
-            getNetizenOptions: function () {
-                var self = this;
-                service.actions.getNetizenOptions().then(function (renderData) {
-                    self.netizenOptions.option = renderData.option;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-            },
+//            getNetizenOptions: function () {
+//                var self = this;
+//                service.actions.getNetizenOptions().then(function (renderData) {
+//                    self.netizenOptions.option = renderData.option;
+//                }, function (error) {
+//                    console.error('出错了', error);
+//                })
+//            },
             getmylist: function () {
                 var self = this;
                 service.actions.getmylist(self.mylistSearch, self.myListPagination.pageSize, self.myListPagination.currentPage4).then(function (renderData) {
-//                    self.mylist.items = renderData.seriesData;
                     self.currentListNew = renderData.seriesData;
                     self.myListPagination.total = renderData.total;
-//                    if(renderData.seriesData.length == 0) {
-//                      self.mylist.show = true;
-//                    }else {
-//                        self.mylist.show = false;
-//                    }
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -500,6 +531,22 @@
                 }, function (error) {
                     console.error('出错了', error);
                 })
+            }
+        },
+        watch: {
+            getListEmotionData: function (val, oldVal) {
+                var self = this;
+                debugger;
+                if (val) {
+                    self.$nextTick(function () {
+                        // DOM 现在更新了
+                        // `this` 绑定到当前实例
+                        // 页面滚动到指定位置
+                        $('html, body').animate({
+                            scrollTop: $("#article-list").offset().top
+                        }, 500);
+                    })
+                }
             }
         }
     }
