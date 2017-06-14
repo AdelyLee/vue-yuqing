@@ -50,7 +50,7 @@
                                         <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
-                                <el-form-item label="生成时间" class="displayIn">
+                                <el-form-item label="报告生成日期" class="displayIn">
                                     <el-select v-model="addForm.day" placeholder="请选择(几号)" :disabled="isDisable">
                                         <el-option
                                             v-for="item in options"
@@ -60,14 +60,13 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="预警时间" class="displayIn">
-                                    <el-time-select placeholder="结束时间" v-model="addForm.hours"
+                                <el-form-item label="报告生成小时" class="displayIn">
+                                    <el-time-select placeholder="报告生成小时" v-model="addForm.hours"
                                                     :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
                                     </el-time-select>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer">
-                                <!--<el-button @click.native="warningDialog.addFormVisible = false">取消</el-button>-->
                                 <el-button type="primary" @click.native="addFormSubmit(addForm)">保存</el-button>
                             </div>
                         </div>
@@ -87,6 +86,7 @@
     import CommonMenu from '@/components/commons/menu';
     import Header from '@/components/commons/header';
     import service from '../../vuex/module/setReport.js'
+    import contactService from '../../vuex/module/customSubject.js'
 
     var optionData = [];
     optionData.push({value: "first", label: '倒数第一天'});
@@ -123,8 +123,8 @@
                     enable: false,
                     briefingType: "",
                     contacts: [],
-                    hours: 1,
-                    day: 1
+                    hours: '',
+                    day: ''
                 },
                 contacts: [],// 所有联系人
                 options: optionData,
@@ -169,7 +169,7 @@
             // 获取联系人参数
             getUserContacts: function () {
                 var self = this;
-                service.actions.getUserContacts(self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                contactService.actions.getUserContacts(self.pager.pageSize, self.pager.currentPage).then(function (data) {
                     self.pager.totalElements = data.totalElements;
                     self.contacts = data.content;
 
@@ -178,19 +178,20 @@
 
             // 添加联系人
             createUserContacts: function (contact) {
-//                var self = this;
-//                service.actions.createUserContacts(contact);
-//                self.pager.currentPage = 1;
-//                self.getUserContacts();
+                var self = this;
+                contactService.actions.createUserContacts(contact).then(function () {
+                    self.pager.currentPage = 1;
+                    self.getUserContacts();
+                });
+
             },
             // 删除联系人
             deleteUserContacts: function (index, row) {
-//                var self = this;
-//                var contact = row;
-//                service.actions.deleteUserContacts(contact);
-//                self.pager.currentPage = 1;
-//                self.getUserContacts();
-
+                var self = this;
+                contactService.actions.deleteUserContacts(row).then(function () {
+                    self.pager.currentPage = 1;
+                    self.getUserContacts();
+                });
             },
 
             toggleSelection(rows) {
@@ -200,43 +201,18 @@
                     });
                 }
             },
-//            保存按钮
-            addFormSubmit: function (warning) {
-//                debugger;
-//                var self = this;
-//                if (self.addForm.day == "倒数第一天") {
-//                    self.addForm.day = 31
-//                } else if (self.addForm.day == "倒数第二天") {
-//                    self.addForm.day = 30
-//                } else if (self.addForm.day == "倒数第三天") {
-//                    self.addForm.day = 29
-//                }
-//                console.log("addWarningFormSubmit", warning);
-//                // 获取选中的联系人，
-//                warning.contacts = this.multipleSelection;
-//                warning.contacts.forEach(function (item) {
-//                    item.type = "EMAIL";
-//                });
-//                var param = {
-//                    "briefingType": self.addForm.briefingType,
-//                    "contacts": warning.contacts,
-//                    "day": self.addForm.day,
-//                    "enable": self.atWeekends,
-//                    "hours": self.addForm.hours
-//                };
-//                $.ajax({
-//                    url: common.url.webserviceUrl + '/briefingTask/' + self.addForm.id,
-//                    data: JSON.stringify(param),
-//                    contentType: "application/json; charset=utf-8",
-//                    type: 'PUT',
-//                    success: function (data) {
-//                        debugger;
-//                        window.location.reload();
-//                    },
-//                    error: function (error) {
-//                        console.error('出错了', error);
-//                    }
-//                });
+            // 保存按钮
+            addFormSubmit: function (briefingConfig) {
+                // 获取选中的联系人，
+                briefingConfig.contacts = this.multipleSelection;
+                briefingConfig.contacts.forEach(function (item) {
+                    item.type = "EMAIL";
+                });
+
+                service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
+
+                });
+
             },
 
         },

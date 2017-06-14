@@ -377,7 +377,6 @@
                     self.articles = data.content;
                     self.pager.totalElements = data.totalElements;
                 })
-
             },
 
             handleClickTrendTab(tab, event) {
