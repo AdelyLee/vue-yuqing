@@ -75,13 +75,12 @@
         },
         mounted () {
             this.checkBrowserSupport();
+            this.replaceImg();
         },
         methods: {
             checkBrowserSupport: function () {
                 // Check browser support
-                if (typeof(Storage) !== "undefined") {
-                    this.replaceImg();
-                } else {
+                if (typeof(Storage) === "undefined") {
                     alert("抱歉！您的浏览器不支持当前系统，请更换浏览器．");
                 }
             },
@@ -103,7 +102,11 @@
                             localStorage.setItem("token", data.token);
                             var config = utils.utils.getUserBaseKeyword();
                             localStorage.setItem("baseKeywords", config);
-                            window.location.href = "../module/index.html";
+                            if (typeof(Storage) !== "undefined") {
+                                window.location.href = "../module/index.html";
+                            } else {
+                                alert("抱歉！您的浏览器不支持当前系统，请更换浏览器．");
+                            }
                         }).catch(error => {
                             self.buttonText = '登录';
                             self.loginMessage = error.responseJSON.message;

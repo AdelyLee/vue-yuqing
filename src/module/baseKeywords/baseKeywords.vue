@@ -11,6 +11,7 @@
                     <div class="card-body" id="content">
                         <div class="model">
                             <p class="pTitle">关键词设置</p>
+                            <div class="message" :class="result.type">{{result.message}}</div>
                             <el-form :model="editForm" :rules="rules" ref="editForm" label-width="100px">
                                 <el-form-item class="m_b50" label="关键词" prop="mustWord">
                                     <el-input type="textarea" v-model="editForm.mustWord"
@@ -48,6 +49,10 @@
     export default {
         data () {
             return {
+                result: {
+                    type: "",
+                    message: ""
+                },
                 editForm: {},
                 rules: {
                     mustWord: [
@@ -74,9 +79,14 @@
                 var self = this;
                 service.actions.editUserBaseKeywords(keywords).then(function () {
                     // 重置localStorage　baseKeywords
+                    self.result.type = "success";
+                    self.result.message = "保存关键词成功！";
                     var config = utils.utils.getUserBaseKeyword();
                     localStorage.setItem("baseKeywords", config);
                     self.getUserBaseKeyword();
+                }).catch(() => {
+                    self.result.type = "error";
+                    self.result.message = "保存关键词失败！";
                 })
             },
             resetForm(editForm) {
