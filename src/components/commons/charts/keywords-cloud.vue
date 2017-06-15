@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import Chart from '../../../../lib/draw-echarts'
+    import Chart from '../../../../lib/draw-echarts/'
     export default {
         props: ['chartConfig'],
         data () {
@@ -14,7 +14,10 @@
             }
         },
         mounted () {
-            Chart.drawKeyWordsCloud(this.chartConfig.chartId, this.chartConfig.option);
+            if(this.chartConfig.option.data!=undefined){
+                Chart.drawKeyWordsCloud(this.chartConfig.chartId, this.chartConfig.option);
+            }
+
         },
         watch: {
             chartConfig: {

@@ -5,9 +5,9 @@
                 <el-col :span="3">
                     <div class="img"><img :src="logoSrc"></div>
                 </el-col>
-                <el-col :span="18">
-                    <li class="title">{{item.title}}</li>
-                    <li>{{item.content}}</li>
+                <el-col :span="21">
+                    <li class="title" v-html="item.title">{{item.title}}</li>
+                    <li v-html="item.content">{{item.content}}</li>
                 </el-col>
                 <!--<el-col :span="3">-->
                     <!--<span class="cont">73.1</span>-->
@@ -31,6 +31,7 @@
                 var data = {};
                 data.action = "showArticleDetail";
                 data.article = article;
+
                 this.$emit("data", data);
             }
         }

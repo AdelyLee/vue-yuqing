@@ -15,14 +15,19 @@
                 <el-form-item label="排除词" prop="mustNotWord">
                     <el-input v-model="addForm.mustNotWord" placeholder="排除词使用@隔开"></el-input>
                 </el-form-item>
-                <el-form :inline="true" label-width="100px">
-                    <el-form-item label="开始时间" prop="startDate">
-                        <el-date-picker type="date" placeholder="选择专题开始时间" v-model="addForm.startDate"></el-date-picker>
-                    </el-form-item>
-                    <el-form-item label="结束时间" prop="endDate">
-                        <el-date-picker type="date" placeholder="选择专题结束时间" v-model="addForm.endDate"></el-date-picker>
-                    </el-form-item>
-                </el-form>
+                <el-form-item label="专题时间" required>
+                    <el-col :span="11">
+                        <el-form-item prop="startDate">
+                            <el-date-picker type="date" placeholder="选择专题开始时间" v-model="addForm.startDate" style="width: 100%;"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-form-item prop="endDate">
+                            <el-date-picker type="date" placeholder="选择专题结束时间" v-model="addForm.endDate" style="width: 100%;"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
                 <el-form-item label="描述" prop="description">
                     <el-input type="textarea" v-model="addForm.description" placeholder="专题描述"></el-input>
                 </el-form-item>
@@ -60,10 +65,10 @@
                         {required: true, message: '请输入关键词', trigger: 'blur'}
                     ],
                     startDate: [
-                        {type: 'date', required: true, message: '选择专题开始时间', trigger: 'change'}
+                        { type: 'date', required: true, message: '选择专题开始时间', trigger: 'change' }
                     ],
                     endDate: [
-                        {type: 'date', required: true, message: '选择专题结束时间', trigger: 'change'}
+                        { type: 'date', required: true, message: '选择专题结束时间', trigger: 'change' }
                     ]
                 }
             }
@@ -73,19 +78,28 @@
                 this.$refs['addForm'].resetFields();
             },
             estimateSubject: function (subject) {
-                var data = {};
-                data.action = "estimateSubject";
-                data.subject = subject;
+                this.$refs.addForm.validate((valid) => {
+                    debugger;
+                    if (valid) {
+                        var data = {};
+                        data.action = "estimateSubject";
+                        data.subject = subject;
 
-                this.$emit('data', data);
+                        this.$emit('data', data);
+                    }
+                });
             },
             addFormSubmit: function (subject) {
                 console.log("addSubjectSubmit", subject);
-                var data = {};
-                data.action = "addSubjectSubmit";
-                data.subject = subject;
+                this.$refs.addForm.validate((valid) => {
+                    if (valid) {
+                        var data = {};
+                        data.action = "addSubjectSubmit";
+                        data.subject = subject;
 
-                this.$emit('data', data);
+                        this.$emit('data', data);
+                    }
+                });
             }
         },
         watch: {

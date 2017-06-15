@@ -1,21 +1,15 @@
 @charset "utf-8";
 @import "../../../assets/scss/common";
-
 .content{
     width: 100%;
     margin: 0 auto;
     height: auto;
-    /* position: absolute; */
-    /* z-index: 999; */
+     position: absolute;
     .model{
         padding: 20px;
-        /* position: absolute; */
-        float: left;
-        //margin: 5% 0 10% 25%;
-        width: 80%;
-        height: 60%;
-        margin-left: 5%;
-        //box-shadow: 0 0 10px #666;
+        width: 99%;
+        min-height: 690px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
         background-color: #ffffff;
         .close{
             position: absolute;
@@ -25,7 +19,13 @@
             z-index: 10000;
         }
     },
-
+.card-body_20 {
+    width: 100%;
+    height: 100%;
+}
+    .box_card {
+        height: 100% !important;
+    }
 
     .f_l{
        margin: 0 auto;
@@ -34,12 +34,14 @@
         text-align: center;
     }
     .el-textarea__inner {
-        min-height: 100px;
+        min-height: 150px;
+    }
+    @media screen and (min-width:1360px) and (max-width:1366px) {
+        .model{
+            width: 97%;
+        }
     }
 }
-//.m_b50{
-//    //margin-bottom: 50px!important;
-//}
 .pTitle{
     font-size: 18px;
     font-weight: 600;
@@ -52,15 +54,9 @@
     height: 55px;
     background: url('../../../../static/img/dzhyqbj.png') no-repeat;
 }
-.el-card {
-    border: none;
-    border-radius: 0;
-    -webkit-box-shadow:0 0 10px rgba(196, 192, 193, .5);
-    -moz-box-shadow:0 0 10px rgba(196, 192, 193, .5);
-    box-shadow:0 0 10px rgba(196, 192, 193, .5);
-    background-color: #f8f9fb;
-    .card-body {
-        height: auto;
-    }
-
+.m_b50 {
+    margin-right: 170px;
+    margin-left: 140px;
 }
+
+

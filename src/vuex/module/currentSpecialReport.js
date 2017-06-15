@@ -61,9 +61,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'nlp.sentiment.label',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
             articleType:'news@weibo@bar@bbs'
@@ -94,16 +94,29 @@ const actions = {
                             x: 'right',
                             data: lengeds
                         },
-                        color: [
-                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                        ],
                         series: [
                             {
                                 name: '情感类型',
                                 type: 'pie',
                                 radius: ['30%', '55%'],
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            if(params.name == '正面'){
+                                                var color= ['#0092ff'];
+                                                return color
+
+                                            }else if(params.name == '中性'){
+                                                var color= ['#eba954'];
+                                                return color
+                                            }else if(params.name == '负面'){
+                                                var color= ['#d74e67'];
+                                                return color
+
+                                            }
+                                        }
+                                    }
+                                },
                                 label: {
                                     normal: {
                                         show: true,
@@ -133,9 +146,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'type',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         }
@@ -199,9 +212,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'source',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -296,9 +309,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var articleType = 'news@weibo@bbs@bar';
         var param = {
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
             dateType: "day",
@@ -333,6 +346,10 @@ const actions = {
                         }, {
                             type: 'inside'
                         }],
+                        grid: {
+                            bottom: '40',
+                            containLabel: true
+                        },
                         xAxis: {
                             type: 'category',
                             name: '时间',
@@ -443,9 +460,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'title.raw',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -686,9 +703,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'title.raw',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -781,9 +798,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'author',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -870,9 +887,9 @@ const actions = {
         mySearch = searchData.searchParam();
         var param = {
             groupName: 'area',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate
         };
@@ -883,7 +900,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     if(data && data.length>0) {
                         var renderData = {};
                         var maxCount = 0;
@@ -941,9 +957,9 @@ const actions = {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
+            mustWord: mySearch.mustWord,
+            shouldWord: mySearch.shouldWord,
+            mustNotWord: mySearch.mustNotWord,
             s_date: mySearch.startDate,
             e_date: mySearch.endDate,
             limit: 50
@@ -972,32 +988,78 @@ const actions = {
         });
     },
     //网民观点
-    // getNetizenOptions: function () {
-    //     var mySearch = {};
-    //     mySearch = searchData.searchParam();
-    //     var param = {
-    //         "date": {
-    //             "endDate": mySearch.endDate,
-    //             "startDate": mySearch.startDate
-    //         },
-    //         "keyword": {
-    //             "mustNotWord": mySearch.mustNotWord,
-    //             "mustWord": mySearch.mustWord,
-    //             "shouldWord": mySearch.shouldWord
-    //         }
-    //     }
-    //     return new Promise(function (resolve, reject) {
-    //         $.ajax({
-    //             url: common.url.webserviceUrl + '/comments/viewport',
-    //             data: JSON.stringify(param),
-    //             contentType: 'application/json;charset=utf-8',
-    //             type: 'post',
-    //             success: function (data) {
-    //                 resolve(data);
-    //             }
-    //         });
-    //     });
-    // },
+    getNetizenOptions: function () {
+        var mySearch = {};
+        mySearch = searchData.searchParam();
+        var param = {
+            "date": {
+                "endDate": mySearch.endDate,
+                "startDate": mySearch.startDate
+            },
+            "groupBy": "",
+            "keyword": {
+                "mustNotWord": mySearch.mustNotWord,
+                "mustWord": mySearch.mustWord,
+                "shouldWord": mySearch.shouldWord
+            },
+            "type": ""
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/comments/viewport',
+                data: JSON.stringify(param),
+                contentType: 'application/json;charset=utf-8',
+                type: 'post',
+                success: function (data) {
+                    // 拼装 chart option
+                    var seriesData = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        node.name = item.key;
+                        node.value = item.value;
+                        seriesData.push(node);
+                    });
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            show:false,
+                            orient: 'vertical',
+                            x: 'right'
+                        },
+                        color: [
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                        ],
+                        series: [
+                            {
+                                name: '网民观点',
+                                type: 'pie',
+                                radius: [0,'55%'],
+                                // roseType: 'area',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: 20
+                                        },
+                                        formatter:function(param) {
+                                            return param.name.length>5?param.name.substr(0,5)+"...":param.name;
+                                        }
+                                    }
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    };
+                    resolve(option);
+                }
+            });
+        });
+    },
     //信息列表
     getmylist : function (searchParam,pageSize, currentPage) {
         var self = this;
@@ -1050,8 +1112,6 @@ const actions = {
                         node.url = item.url;
                         if(item.content) {
                             node.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
-                            debugger;
-
                             if(searchParam.searchWord != "" && node.content.indexOf(searchParam.searchWord) != -1 && param.filed != "title.cn") {
                                 var fen = node.content.split(searchParam.searchWord);
                                 node.content = fen.join('<span style="color:red;">' + searchParam.searchWord + '</span>')
@@ -1148,8 +1208,8 @@ const actions = {
             })
         })
     },
-    //点击情感分析饼图弹出列表
-    getEmotionList: function (searchKv,pageSize,currentPage) {
+    //点击情感分析饼图,热议网民柱图,网民话题柱图,网站来源饼图,载体类型饼图,弹出列表
+    getArticleList: function (conditions,pageSize,currentPage) {
         var mySearch = {};
         mySearch = searchData.searchParam();
         var param = {
@@ -1171,8 +1231,8 @@ const actions = {
                 }],
                 "page": currentPage
             },
-            "searchKv": searchKv,
-            "type": ["article"]
+            "searchKv": conditions.searchKv,
+            "type": conditions.type
         }
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -1181,7 +1241,6 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    debugger;
                     var renderData = {};
                     renderData.limits = data.size;
                     renderData.pages = data.totalPages;
@@ -1196,6 +1255,7 @@ const actions = {
                             node.title = "暂无数据";
                         }
                         node.site = item.site;
+                        node.author = node.author;
                         node.time = item.dateCreated;
                         node.url = item.url;
                         if(item.content) {
@@ -1212,298 +1272,7 @@ const actions = {
                         node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
                         node.type = item.type;
                         node.id = item.id;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
-                        node.isActive = false;
-                        seriesData.push(node);
-                    });
-                    renderData.seriesData = seriesData;
-                    resolve(renderData);
-                }
-            })
-        })
-    },
-    //点击载体类型饼图弹出列表
-    getTypeList: function (type,pageSize,currentPage) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
-        var param = {
-            "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
-            },
-            "filed": "",
-            "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
-            },
-            "page": {
-                "limit": pageSize,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-                "page": currentPage
-            },
-            "searchKv": [],
-            "type": type
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    var renderData = {};
-                    renderData.limits = data.size;
-                    renderData.pages = data.totalPages;
-                    renderData.total = data.totalElements;
-                    var datas = data.content;
-                    var seriesData = [];
-                    $.each(datas, function (i, item) {
-                        var node = {};
-                        if(item.title) {
-                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
-                        }else {
-                            node.title = "暂无数据";
-                        }
-                        node.time = item.dateCreated;
-                        node.url = item.url;
-                        if(item.content) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
-                        }else {
-                            node.content = "暂无数据";
-                        }
-                        if(item.source && item.source != null) {
-                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
-                        }else {
-                            node.source = "暂无数据";
-                        }
-                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
-                        node.type = item.type;
-                        node.id = item.id;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
-                        node.isActive = false;
-                        seriesData.push(node);
-                    });
-                    renderData.seriesData = seriesData;
-                    resolve(renderData);
-                }
-            })
-        })
-    },
-    //点击热议网民柱图弹出列表
-    getAuthorList: function (searchKv,pageSize,currentPage) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
-        var param = {
-            "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
-            },
-            "filed": "",
-            "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
-            },
-            "page": {
-                "limit": pageSize,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-                "page": currentPage
-            },
-            "searchKv": searchKv,
-            "type": ["article"]
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    debugger;
-                    var renderData = {};
-                    renderData.limits = data.size;
-                    renderData.pages = data.totalPages;
-                    renderData.total = data.totalElements;
-                    var datas = data.content;
-                    var seriesData = [];
-                    $.each(datas, function (i, item) {
-                        var node = {};
-                        if(item.title) {
-                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
-                        }else {
-                            node.title = "暂无数据";
-                        }
-                        node.time = item.dateCreated;
-                        node.url = item.url;
-                        if(item.content) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
-                        }else {
-                            node.content = "暂无数据";
-                        }
-                        if(item.source && item.source != null) {
-                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
-                        }else {
-                            node.source = "暂无数据";
-                        }
-                        node.site = item.site;
-                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
-                        node.type = item.type;
-                        node.id = item.id;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
-                        node.isActive = false;
-                        seriesData.push(node);
-                    });
-                    renderData.seriesData = seriesData;
-                    resolve(renderData);
-                }
-            })
-        })
-    },
-    //点击网民话题柱图弹出列表
-    getTitleList: function (searchKv,pageSize,currentPage) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
-        var param = {
-            "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
-            },
-            "filed": "",
-            "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
-            },
-            "page": {
-                "limit": pageSize,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-                "page": currentPage
-            },
-            "searchKv": searchKv,
-            "type": ["article"]
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    debugger;
-                    var renderData = {};
-                    renderData.limits = data.size;
-                    renderData.pages = data.totalPages;
-                    renderData.total = data.totalElements;
-                    var datas = data.content;
-                    var seriesData = [];
-                    $.each(datas, function (i, item) {
-                        var node = {};
-                        if(item.title) {
-                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
-                        }else {
-                            node.title = "暂无数据";
-                        }
-                        node.time = item.dateCreated;
-                        node.url = item.url;
-                        if(item.content) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
-                        }else {
-                            node.content = "暂无数据";
-                        }
-                        if(item.source && item.source != null) {
-                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
-                        }else {
-                            node.source = "暂无数据";
-                        }
-                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
-                        node.type = item.type;
-                        node.id = item.id;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
-                        node.isActive = false;
-                        seriesData.push(node);
-                    });
-                    renderData.seriesData = seriesData;
-                    resolve(renderData);
-                }
-            })
-        })
-    },
-    //点击网站来源饼图弹出列表
-    getSourceList: function (searchKv,pageSize,currentPage) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
-        var param = {
-            "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
-            },
-            "filed": "",
-            "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
-            },
-            "page": {
-                "limit": pageSize,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-                "page": currentPage
-            },
-            "searchKv": searchKv,
-            "type": ["article"]
-        }
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                    debugger;
-                    var renderData = {};
-                    renderData.limits = data.size;
-                    renderData.pages = data.totalPages;
-                    renderData.total = data.totalElements;
-                    var datas = data.content;
-                    var seriesData = [];
-                    $.each(datas, function (i, item) {
-                        var node = {};
-                        if(item.title) {
-                            node.title = item.title.length>20?item.title.substr(0,20)+"...":item.title;
-                        }else {
-                            node.title = "暂无数据";
-                        }
-                        node.time = item.dateCreated;
-                        node.url = item.url;
-                        if(item.content) {
-                            item.content=item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "").replace(/&quot;/ig,"");
-                            node.content = item.content.length>120?item.content.substr(0,120)+"...":item.content;
-                        }else {
-                            node.content = "暂无数据";
-                        }
-                        if(item.source && item.source != null) {
-                            node.source = item.source.length>6?item.source.substr(0,6)+"...":item.source;
-                        }else {
-                            node.source = "暂无数据";
-                        }
-                        node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
-                        node.type = item.type;
-                        node.id = item.id;
+                        node.commentNum = item.commentNum;
                         node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
                         node.isActive = false;
                         seriesData.push(node);

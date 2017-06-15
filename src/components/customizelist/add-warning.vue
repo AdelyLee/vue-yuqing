@@ -1,7 +1,7 @@
 <template>
     <div class="add-warning">
         <!--添加界面-->
-        <el-dialog title="添加预警" v-model="warningDialog.addFormVisible" :close-on-click-modal="false">
+        <el-dialog title="预警编辑" v-model="warningDialog.addFormVisible" :close-on-click-modal="false">
             <el-form :inline="true" :model="contactForm" :rules="rules" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="联系人" prop="name">
                     <el-input v-model="contactForm.name" placeholder="请输入联系人"></el-input>
@@ -11,7 +11,7 @@
                 </el-form-item>
                 <el-button type="primary" @click.native="addContactSubmit(contactForm)">添加</el-button>
             </el-form>
-            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm">
+            <el-form :model="addForm" ref="addForm" :rules="addFormRules" label-width="100px" class="demo-ruleForm">
                 <el-table ref="multipleTable" :data="warningDialog.contacts.content" border height="150"
                           tooltip-effect="dark"
                           style="width: 80%; margin-left: 10%" @selection-change="handleSelectionChange">
@@ -29,13 +29,22 @@
                 <el-form-item class="pager">
                     <list-page :pager="pager" @data="getPager"></list-page>
                 </el-form-item>
-                <el-form-item label="接收时间">
-                    <el-time-select placeholder="起始时间" v-model="addForm.receiveStartTime"
-                                    :picker-options="{ start: '00:00', step: '01:00', end: '23:00'}">
-                    </el-time-select>
-                    <el-time-select placeholder="结束时间" v-model="addForm.receiveEndTime"
-                                    :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
-                    </el-time-select>
+                <el-form-item label="接收时间" required>
+                    <el-col :span="11">
+                        <el-form-item prop="receiveStartTime">
+                            <el-time-select placeholder="起始时间" v-model="addForm.receiveStartTime"
+                                            :picker-options="{ start: '00:00', step: '01:00', end: '23:00'}">
+                            </el-time-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-form-item prop="receiveEndTime">
+                            <el-time-select placeholder="结束时间" v-model="addForm.receiveEndTime"
+                                            :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
+                            </el-time-select>
+                        </el-form-item>
+                    </el-col>
                 </el-form-item>
                 <el-form-item label="预警间隔">
                     <el-slider v-model="addForm.hours" :min="1" :max="12" :step="1" show-stops></el-slider>
@@ -91,6 +100,10 @@
                         {type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change'}
                     ]
                 },
+                addFormRules: {
+                    receiveStartTime: [{ required: true, message: '请选择时间', trigger: 'change' }],
+                    receiveEndTime: [{ required: true, message: '请选择时间', trigger: 'change' }]
+                },
                 concatSelectedClick: true,
                 multipleSelection: [],
                 pager: {
@@ -120,12 +133,16 @@
         },
         methods: {
             addContactSubmit: function (contact) {
-                console.log("addContactSubmit", contact);
-                var data = {};
-                data.action = "addContactSubmit";
-                data.contact = contact;
+                this.$refs.contactForm.validate((valid) => {
+                    if (valid) {
+                        console.log("addContactSubmit", contact);
+                        var data = {};
+                        data.action = "addContactSubmit";
+                        data.contact = contact;
 
-                this.$emit('data', data);
+                        this.$emit('data', data);
+                    }
+                });
             },
             handleDeleteContact: function (index, row) {
                 console.log("handleDeleteContact", row);
@@ -137,18 +154,22 @@
             },
             addFormSubmit: function (warning) {
                 console.log("addWarningFormSubmit", warning);
-                // 获取选中的联系人，
-                warning.contacts = this.multipleSelection;
-                warning.contacts.forEach(function (item) {
-                    item.type = "EMAIL";
+                this.$refs.addForm.validate((valid) => {
+                    if (valid) {
+                        // 获取选中的联系人，
+                        warning.contacts = this.multipleSelection;
+                        warning.contacts.forEach(function (item) {
+                            item.type = "EMAIL";
+                        });
+                        var data = {};
+                        data.action = "addWarningFormSubmit";
+                        data.subject = this.warningDialog.subject;
+                        data.subject.warning = warning;
+
+                        this.$emit('data', data);
+
+                    }
                 });
-                var data = {};
-                data.action = "addWarningFormSubmit";
-                data.subject = this.warningDialog.subject;
-                data.subject.warning = warning;
-
-                this.$emit('data', data);
-
             },
             toggleSelection(rows) {
                 if (rows) {

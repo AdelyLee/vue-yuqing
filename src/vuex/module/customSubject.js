@@ -88,8 +88,8 @@ const actions = {
     },
 
     createCustomSubject: function (subject) {
-        subject.startDate = subject.startDate.getTime();
-        subject.endDate = subject.endDate.getTime();
+        debugger;
+        subject = util.encodeSubject(subject);
         console.log("createCustomSubject", JSON.stringify(subject));
         return new Promise(function (resolve) {
             $.ajax({

@@ -35,69 +35,6 @@ body {
   .el-card .el-card__header .clearfix {
     text-align: center; }
 
-.box-tablist {
-  padding: 0px 20px;
-  background: -webkit-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
-  background: -moz-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
-  background: -o-linear-gradient(top, #00b7ed 0, #00b8ec 100%);
-  background: linear-gradient(to bottom, #00b7ed 0, #00b8ec 100%);
-  -webkit-filter: blur(10px);
-  /* Chrome, Opera */
-  -moz-filter: blur(10px);
-  -ms-filter: blur(10px);
-  filter: blur(10px);
-  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
-  color: #000000; }
-
-.row-bg {
-  padding: 10px 0; }
-
-.lists {
-  height: 100%; }
-  .lists .list-box .table-top {
-    height: 58px; }
-    .lists .list-box .table-top .news-title {
-      float: left;
-      height: 30px;
-      line-height: 30px;
-      font-size: 24px;
-      background: url("../../../../static/img/lanmu_bj.png") no-repeat;
-      display: inline-block;
-      width: 120px;
-      padding: 13px;
-      text-align: center; }
-  .lists .list-box .table-bottom {
-    height: 45px; }
-    .lists .list-box .table-bottom .news-more {
-      color: #fff;
-      display: inline-block;
-      width: 120px;
-      padding: 13px;
-      text-align: center;
-      float: right;
-      height: 20px;
-      line-height: 20px;
-      font-size: 18px;
-      background: url("../../../../static/img/more_button.png") no-repeat;
-      cursor: pointer; }
-  .lists .list-box .article-list {
-    list-style: none;
-    margin: 0;
-    padding-left: 50px; }
-    .lists .list-box .article-list li {
-      height: 30px;
-      line-height: 30px;
-      margin-top: 10px;
-      padding-left: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      -webkit-box-shadow: 0 0 10px rgba(0, 204, 204, 0.5);
-      -moz-box-shadow: 0 0 10px rgba(0, 204, 204, 0.5);
-      box-shadow: 0 0 2px rgba(0, 204, 204, 0.5); }
-      .lists .list-box .article-list li a div span {
-        cursor: pointer;
-        float: left; }
-
 #accident-report-bar {
   width: 100%;
   height: 400px; }
@@ -136,20 +73,23 @@ body {
 
 #media-report-trend-bar {
   width: 100%;
-  height: 400px; }
+  height: 320px; }
 
 #net-title-bar {
   width: 100%;
   height: 400px; }
 
-#currentSpecial .my-card {
-  border: 1px solid #ccc; }
-  #currentSpecial .my-card .el-card__header {
+#currentSpecial .my-card-box {
+  border: 1px solid #ccc;
+  margin: 15px;
+  margin-top: 70px; }
+  #currentSpecial .my-card-box .el-card__header {
     background: #fff;
     border-bottom: none; }
-    #currentSpecial .my-card .el-card__header .clearfix {
-      text-align: left; }
-  #currentSpecial .my-card .my-title {
+    #currentSpecial .my-card-box .el-card__header .clearfix {
+      text-align: left;
+      line-height: 40px; }
+  #currentSpecial .my-card-box .my-title {
     text-align: center;
     line-height: 58px;
     display: inline-block;

@@ -16,12 +16,12 @@
                             <!--标题-->
                             <el-row :gutter="1" class="list border_1">
                                 <el-col :span="22" class="font_style">
-                                    <div class="title" v-if="detailData.title">{{detailData.title}}</div>
+                                    <div class="title" v-if="detailData.title" ><a :href="detailData.url" class="title_a" target="_blank">{{detailData.title}}</a></div>
                                     <div class="new">
-                                        <el-col :span="8" class="m_t20"><span v-if="detailData.site">文章来源：{{detailData.site}}</span></el-col>
-                                        <el-col :span="8" class="m_t20"><span v-if="detailData.pubTime">发布时间：{{new Date(detailData.pubTime).toLocaleString().substr(0,9)}}</span>
+                                        <el-col :span="8" class="m_t20">文章来源：<span v-if="detailData.site">{{detailData.source}}</span></el-col>
+                                        <el-col :span="8" class="m_t20">发布时间：<span v-if="detailData.pubTime">{{new Date(detailData.pubTime).toLocaleString().substr(0,9)}}</span>
                                         </el-col>
-                                        <el-col :span="8" class="m_t20"><span v-if="detailData.author">作者：{{detailData.author}}</span></el-col>
+                                        <el-col :span="8" class="m_t20">作者：<span v-if="detailData.author">{{detailData.author}}</span></el-col>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -35,9 +35,9 @@
                                     </div>
                                     <div class="panel-footer text-left entity fiex_entity ">
                                         <dt class="dt_entity"> 实体类别图示</dt>
-                                        <dd class="person_name"><b>人名</b></dd>
-                                        <dd class="area"><b>地名</b></dd>
-                                        <dd class="org_name"><b>机构名</b></dd>
+                                        <dd class="person_name_label"><b>人名</b></dd>
+                                        <dd class="area_label"><b>地名</b></dd>
+                                        <dd class="org_name_label"><b>机构名</b></dd>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -102,7 +102,7 @@
                     author: "",
                     nameEntitys: [],
                     title: "",
-                    site: "",
+                    source: "",
                     pubTime: "",
                     nlp: {
                         keywords: [],
@@ -115,7 +115,8 @@
                             lable: "",
                             value: 0,
                         },
-                    }
+                    },
+                    url:"",
                 },
                 emotionSrc: '../../static/img/xinxin.png',
                 hotSrc:'../../static/img/huohuo.png',
@@ -135,13 +136,19 @@
             getNewsCurrentList: function () {
                 var self = this;
                 service.actions.getNewsCurrentList(self.id).then(function (data) {
+                    debugger;
 //                    data.content = data.content.replace(/&nbsp;/ig, "");
                     self.detailData = data;
+                    self.detailData.url=data.url;
                     self.mediaEmotionGauge.option = data.option;
                     self.detailData.nlp.keywords = data.nlp.keywords.join(" ").replace(/&nbsp/ig, "");
                     if (data.author == "" || data.author == undefined) {
                         self.detailData.author = "佚名";
                     }
+                    if (data.source == " " || data.source == undefined || data.source == null) {
+                        self.detailData.source = "未知";
+                    }
+
 
                 }, function (error) {
                     console.error('出错了', error);

@@ -1,16 +1,14 @@
 <template>
     <div id="warningList">
         <common-header></common-header>
-        <el-row :gutter = "15">
+        <el-row :gutter = "5">
             <el-col :span = "3">
                 <common-menu></common-menu>
             </el-col>
-            <el-col :span = "21" :offset = "3">
+            <el-col :span = "21">
                 <el-card class="box-card my-card">
-                    <div>
-                        <warningDetails-list :yujingDetailsList = "warningDetailsList"></warningDetails-list>
-                        <list-page :pager="pager" @data="getPager"></list-page>
-                    </div>
+                    <warningDetails-list :yujingDetailsList = "warningDetailsList"></warningDetails-list>
+                    <list-page :pager="pager" @data="getPager"></list-page>
                 </el-card>
             </el-col>
         </el-row>

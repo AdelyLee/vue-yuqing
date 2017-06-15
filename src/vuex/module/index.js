@@ -16,7 +16,9 @@ const actions = {
     getSentimentTypeChart: function () {
         var data = new Date();
         var endDate = data.getTime();
+        endDate = dateUtil.dateUtil.formatDate(new Date(endDate), 'yyyy-MM-dd');
         var startDate = data.setMonth(data.getMonth() - 1);
+        startDate = dateUtil.dateUtil.formatDate(new Date(startDate), 'yyyy-MM-dd');
         var param = {
             groupName: 'nlp.sentiment.label',
             mustWord: this.config.mustWord,
@@ -32,7 +34,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    // 拼装 chart option
                     var seriesData = [], legend = [];
                     data.forEach(function (item) {
                         var node = {};
@@ -51,42 +52,36 @@ const actions = {
                             y: 'top',
                             data: legend
                         },
-                        color: [
-                            '#d2b356', '#db726c', '#56b6ff', '#E87C25', '#27727B',
-                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                        ],
                         calculable: true,
-                        series: [{
-                            name: '情感类型',
-                            type: 'pie',
-                            radius: [30, 110],
-                            center: ['50%', '50%'],
-                            roseType: 'area',
-                            label: {
-                                normal: {
-                                    show: true,
-                                    textStyle: {
-                                        fontSize: 20
+                        series: [
+                            {
+                                name: '情感类型',
+                                type: 'pie',
+                                radius: ['40%', '55%'],
+                                avoidLabelOverlap: false,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            if (params.name == '正面') {
+                                                var color = ['#0092ff'];
+                                                return color
+
+                                            } else if (params.name == '中性') {
+                                                var color = ['#eba954'];
+                                                return color
+                                            } else if (params.name == '负面') {
+                                                var color = ['#d74e67'];
+                                                return color
+
+                                            }
+                                        }
                                     }
                                 },
-                                emphasis: {
-                                    show: true,
-                                    textStyle: {
-                                        fontSize: '30',
-                                        fontWeight: 'bold'
-                                    }
-                                }
-                            },
-                            labelLine: {
-                                normal: {
-                                    show: true
-                                }
-                            },
-                            data: seriesData
-                        }]
-                    };
+                                data: seriesData
+                            }
+                        ]
 
+                    };
                     resolve(option);
                 }
             });
@@ -181,7 +176,7 @@ const actions = {
                             axisLabel: {
                                 margin: 10,
                                 textStyle: {
-                                    fontSize: 16
+                                    fontSize: 14
                                 }
                             }
                         },
@@ -194,7 +189,7 @@ const actions = {
                             axisLabel: {
                                 margin: 10,
                                 textStyle: {
-                                    fontSize: 16
+                                    fontSize: 14
                                 }
                             }
                         },
@@ -206,7 +201,7 @@ const actions = {
                             data: seriesData.news,
                             itemStyle: {
                                 normal: {
-                                    color: '#fc7f7d'
+                                    color: '#21b6b9'
                                 }
                             },
                             lineStyle: {
@@ -222,7 +217,7 @@ const actions = {
                             data: seriesData.weibo,
                             itemStyle: {
                                 normal: {
-                                    color: '#efee55'
+                                    color: '#eba954'
                                 }
                             },
                             lineStyle: {
@@ -238,7 +233,7 @@ const actions = {
                             data: seriesData.bbs,
                             itemStyle: {
                                 normal: {
-                                    color: '#4fa8e4'
+                                    color: '#0092ff'
                                 }
                             },
                             lineStyle: {
@@ -254,7 +249,7 @@ const actions = {
                             data: seriesData.bar,
                             itemStyle: {
                                 normal: {
-                                    color: '#e679cc'
+                                    color: '#d74e67'
                                 }
                             },
                             lineStyle: {
@@ -322,16 +317,16 @@ const actions = {
                             data: yAxisData,
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 600,
-                                    fontSize: 16
+                                    //fontWeight: 600,
+                                    fontSize: 14
                                 }
                             }
                         },
                         xAxis: {
                             axisLabel: {
                                 textStyle: {
-                                    fontWeight: 600,
-                                    fontSize: 16
+                                    //fontWeight: 600,
+                                    fontSize: 14
                                 }
                             }
                         },
@@ -343,7 +338,7 @@ const actions = {
                             itemStyle: {
                                 normal: {
                                     color: function (params) {
-                                        var colorList = ['#fc7f7d', '#efee55', '#4fa8e4', '#e679cc'];
+                                        var colorList = ['#21b6b9', '#eba954', '#0092ff', '#d74e67'];
                                         return colorList[params.dataIndex % 4]
                                     }
                                 }
@@ -372,7 +367,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    var renderData = {};
                     var seriesData = [];
                     var xAxisData = [];
                     data = data.sort(function (a, b) {
@@ -393,14 +387,13 @@ const actions = {
                             name: '媒体类型',
                             axisLine: {
                                 lineStyle: {
-                                    color: '#4d94e2'
+                                    color: '#000000'
                                 }
                             },
                             axisLabel: {
                                 interval: 0,
                                 rotate: 30,
                                 textStyle: {
-                                    fontWeight: 600,
                                     fontSize: 14
                                 }
                             },
@@ -409,7 +402,7 @@ const actions = {
                             name: '数量',
                             axisLine: {
                                 lineStyle: {
-                                    color: '#4d94e2'
+                                    color: '#000000'
                                 }
                             },
                             axisLabel: {
@@ -429,7 +422,7 @@ const actions = {
                                         color: function (params) {
                                             // build a color map as your need.
                                             var colorList = [
-                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#21b6b9', '#eba954', '#0092ff', '#d74e67', '#27727B',
                                                 '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
                                                 '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                             ];
@@ -453,7 +446,7 @@ const actions = {
                                 }
                             }
                         ]
-                    }
+                    };
                     resolve(option);
 
                 }
@@ -464,69 +457,47 @@ const actions = {
 
     //新闻列表
     getArticleTabList: function (type) {
-            var param = {
-                type: "source",
-                page: 1,
-                size: 5,
-                sortBy: "pubTime",
-                s_date: '',
-                e_date: ''
-            };
-            return new Promise(function (resolve) {
-                $.ajax({
-                    url: common.url.webserviceUrl + "/" + type + '/findPageByMustShouldDateInType.json',
-                    data: param,
-                    type: 'get',
-                    success: function (data) {
-                        data.content.forEach(function (item) {
-                            if (type == 'news') {
-                                if (item.title.length > 17) {
-                                    item.title = item.title.substring(0, 17) + "...";
-                                }
-                            }
-                            item.type = item.type.toLowerCase();
-                            item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
-                        });
-                        resolve(data);
-                    }
-                });
-            });
-    },
-    //论坛列表
-    getArticlebbsTabList: function (type) {
         var self = this;
         var param = {
-            page: 1,
-            size: 5,
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
-            sortBy: "pubTime"
+            "keyword": {
+                "mustNotWord": this.config.mustWord,
+                "mustWord": this.config.shouldWord,
+                "shouldWord": this.config.mustNotWord,
+            },
+            "page": {
+                "limit": 5,
+                "page": 1,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "dateCreated"
+                }],
+            },
+            "type": [type]
         };
         return new Promise(function (resolve) {
             $.ajax({
-                url: common.url.webserviceUrl + "/" + type + '/findPageByMustShouldDateInType.json',
-                data: param,
-                type: 'get',
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
                 success: function (data) {
                     console.log(data);
                     data.content.forEach(function (item) {
-                        if (type == 'bbs') {
-                            if (item.title.length > 17) {
-                                item.title = item.title.substring(0, 17) + "...";
-                            }
-                        }
                         item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
+                        if (item.type == 'bbs') {
+                            item.source = item.author;
+                        }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
-                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
-                        item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
+                        item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
                     });
                     resolve(data);
                 }
             });
         });
     },
-
 
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {
@@ -546,9 +517,9 @@ const actions = {
                     "direction": "DESC",
                     "orderBy": "dateCreated"
                 }],
-                "searchKv": ''
             },
-            "type": [condition.type]
+            "searchKv": condition.searchKv,
+            "type": condition.type
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -557,6 +528,7 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
+                    console.log(data);
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {

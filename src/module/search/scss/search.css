@@ -36,19 +36,6 @@ body {
   .el-card .el-card__header .clearfix {
     text-align: center; }
 
-body {
-  margin: 0 auto;
-  overflow-x: hidden; }
-
-#content {
-  width: 85%;
-  position: absolute;
-  left: 13.7%;
-  top: 75px; }
-
-.el-card {
-  border: 1px solid #ffffff; }
-
 .text {
   background-color: #14529d;
   padding: 2px;
@@ -107,12 +94,14 @@ body {
         margin-top: 10px; }
     #search .content .search-list .article {
       cursor: pointer;
-      background-color: #f4f2e3;
+      border-bottom: 1px solid #CEC9C9;
+      background-color: #fbfdff;
       margin-bottom: 5px;
-      height: 140px; }
+      height: 160px; }
     #search .content .search-list .title {
       font-size: 16px;
-      color: #4b95e2;
+      color: #6395df;
+      padding-top: 10px;
       font-weight: 600; }
     #search .content .search-list .cont {
       float: left;
@@ -121,12 +110,7 @@ body {
       font-size: 36px;
       color: #4b95e2;
       font-weight: 600;
-      padding-top: 10px; }
-    #search .content .search-list span {
-      float: left;
-      width: 100%;
-      text-align: center;
-      padding-top: 10px; }
+      padding-top: 16px; }
     #search .content .search-list li {
       list-style-type: none;
       line-height: 35px;

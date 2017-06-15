@@ -10,26 +10,13 @@
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
                             <el-col :span="12"><news-list :articleData="articleTabData" @data="getData"></news-list></el-col>
-                            <el-col :span="12"><news-list :articleData="articlebbsTabData" @data="getData"></news-list></el-col>
-                            <!--<el-col :span="24" class="lists">-->
-                                <!--<el-tabs v-model="activeArticleTabName" @tab-click="handleClickListTab">-->
-                                    <!--<el-tab-pane label="最新新闻" name="news">-->
-                                        <!--<news-list :articleData="articleTabData" @data="getData"></news-list>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane label="最新微博" name="weibo">-->
-                                        <!--<news-list :articleData="articleTabData" @data="getData"></news-list>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane label="最新论坛" name="bbs">-->
-                                        <!--<news-list :articleData="articleTabData" @data="getData"></news-list>-->
-                                    <!--</el-tab-pane>-->
-                                <!--</el-tabs>-->
-                            <!--</el-col>-->
+                            <el-col :span="12"><news-list :articleData="articleBbsTabData" @data="getData"></news-list></el-col>
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="8">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span style="line-height: 20px;">近30天舆情信息</span>
+                                        <span class="chart-text">近30天舆情信息</span>
                                     </div>
                                     <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
                                 </el-card>
@@ -37,7 +24,7 @@
                             <el-col :span="16">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span style="line-height: 20px;">载体趋势分析</span>
+                                        <span class="chart-text">载体趋势分析</span>
                                     </div>
                                     <el-tabs v-model="activeTrendName" @tab-click="handleClickTrendTab"
                                              id="trend-tab-content">
@@ -76,7 +63,7 @@
                             <el-col :span="16" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span style="line-height: 20px;">主流媒体分布</span>
+                                        <span class="chart-text">主流媒体分布</span>
                                     </div>
                                     <bar-chart :chartConfig="mediaBarChart"></bar-chart>
                                 </el-card>
@@ -84,7 +71,7 @@
                             <el-col :span="8">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span style="line-height: 20px;">载体分布统计</span>
+                                        <span class="chart-text">载体分布统计</span>
                                     </div>
                                     <el-tabs v-model="activeBarName" @tab-click="handleClickBarTab"
                                              id="bar-tab-content">
@@ -120,9 +107,7 @@
                                 </el-card>
                             </el-col>
                         </el-row>
-                        <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
-                                      :articles="articles" :pager="pager"
-                                      @data="getData"></article-list>
+                        <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType" :articles="articles" :pager="pager" @data="getData"></article-list>
                     </div>
                 </el-card>
             </el-col>
@@ -137,6 +122,7 @@
     import LineBarChart from '@/components/commons/charts/line-bar';
     import PieChart from '@/components/commons/charts/pie';
     import ArticleList from '@/components/index/articleList';
+    import typeUtil from '../../vuex/typeUtil';
     import service from '../../vuex/module/index.js';
 
     import $ from 'jquery';
@@ -144,6 +130,7 @@
     export default {
         name: 'index',
         data () {
+            var that = this;
             return {
                 activeTrendName: '近30天',
                 activeBarName: '近30天',
@@ -152,18 +139,21 @@
                     type: '',
                     articles: []
                 },
-                articlebbsTabData: {
+                articleBbsTabData: {
                     type: '',
                     articles: []
                 },
                 tabArticleType: "news",
-                tabbbsArticleType: "bbs",
+                tabBbsArticleType: "bbs",
                 sentimentAnalysis: {
                     chartId: 'sentimentAnalysis',
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            debugger;
+                            var value = typeUtil.typeUtil.encodeSentimentType(param.name);
+                            that.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -172,7 +162,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -181,7 +173,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -190,7 +184,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -199,7 +195,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -208,7 +206,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -217,7 +217,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -226,7 +228,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -235,7 +239,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            console.log(param.name);
+                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
+                            that.articlesCondition.type = value;
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -244,6 +250,9 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var value = param.name;
+                            that.articlesCondition.searchKv = [{"key": "source", "value": value}];
+                            that.getArticleListByCondition(that.articlesCondition);
                         }
                     }
                 },
@@ -255,7 +264,8 @@
                 trendTimesType: 'month',
                 barTimesType: 'month',
                 articlesCondition: {
-                    type: ""
+                    searchKv:[],
+                    type: []
                 }, // 获取文章列表相关条件
                 articleType: "",
                 articles: [],
@@ -275,8 +285,8 @@
             this.getCarrierAnalysisChart(this.trendTimesType);
             this.getCarrierAnalysisBarChart(this.barTimesType);
             this.getMediaBarChart();
-            this.getArticleTabList(this.tabArticleType,this.tabbbsArticleType);
-            this.getArticlebbsTabList(this.tabbbsArticleType);
+            this.getArticleTabList(this.tabArticleType);
+            this.getArticleTabList(this.tabBbsArticleType);
         },
         methods: {
             getSentimentTypeChart: function () {
@@ -345,15 +355,13 @@
             getArticleTabList: function (type) {
                 var self = this;
                 service.actions.getArticleTabList(type).then(function (data) {
-                    self.articleTabData.type = type;
-                    self.articleTabData.articles = data.content;
-                });
-            },
-            getArticlebbsTabList: function (type) {
-                var self = this;
-                service.actions.getArticlebbsTabList(type).then(function (data) {
-                    self.articlebbsTabData.type = type;
-                    self.articlebbsTabData.articles = data.content;
+                    if (type  == 'news') {
+                        self.articleTabData.type = type;
+                        self.articleTabData.articles = data.content;
+                    } else if (type == 'bbs') {
+                        self.articleBbsTabData.type = type;
+                        self.articleBbsTabData.articles = data.content;
+                    }
                 });
             },
             getData (data) {
@@ -364,7 +372,8 @@
                         break;
                     case 'showMoreArticle':
                         self.pager.currentPage = 1;
-                        self.articlesCondition.type = data.data;
+                        self.articlesCondition.type = [data.data];
+                        self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
                         break;
                 }
@@ -417,22 +426,6 @@
                 }
                 this.getCarrierAnalysisBarChart(self.barTimesType);
             },
-
-            handleClickListTab(tab) {
-//                var self = this;
-//                switch (tab.name) {
-//                    case "news":
-//                        self.tabArticleType = "news";
-//                        break;
-//                    case "weibo":
-//                        self.tabArticleType = "weibo";
-//                        break;
-//                    case "bbs":
-//                        self.tabArticleType = "bbs";
-//                        break;
-//                }
-//                this.getArticleTabList(self.tabArticleType);
-            }
         },
         watch: {
             articles: function (val, oldVal) {

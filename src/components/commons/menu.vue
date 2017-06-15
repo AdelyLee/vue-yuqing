@@ -13,7 +13,7 @@
             </li>
             <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-setting"></i> <a
                 href="../module/baseKeywords.html">关键词设置</a></li>
-            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-star-on"></i><a href="../module/contacts.html">联系人设置</a>
+            <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-star-on"></i> <a href="../module/contacts.html">联系人设置</a>
             </li>
             <li><i class="fa fa-power-off fa-lg"></i> <i class="el-icon-document"></i><a
                 href="../module/setReport.html"> 报告设置</a></li>

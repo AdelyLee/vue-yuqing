@@ -1,72 +1,151 @@
-/*
-Error: Invalid CSS after "": expected selector, was ","
-        on line 27 of setReport.scss
+@charset "UTF-8";
+body {
+  background-color: #ffffff; }
 
-22:             right: 10px;
-23:             top: 10px;
-24:             color: #ccc;
-25:             z-index: 10000;
-26:         }
-27:     },
-28: 
-29: 
-30:     .f_l{
-31:         float: left;
-32:     }
+.el-row {
+  margin-bottom: 10px; }
+  .el-row:last-child {
+    margin-bottom: 0; }
 
-Backtrace:
-setReport.scss:27
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1207:in `expected'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1137:in `expected'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/parser.rb:1117:in `expr!'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/scss/static_parser.rb:20:in `parse_selector'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:427:in `visit_rule'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:36:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:160:in `block in visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:79:in `block in with_base'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:115:in `with_frame'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:79:in `with_base'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:160:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:433:in `block (2 levels) in visit_rule'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:433:in `map'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:433:in `block in visit_rule'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:181:in `with_environment'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:431:in `visit_rule'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:36:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:160:in `block in visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:79:in `block in with_base'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:115:in `with_frame'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/stack.rb:79:in `with_base'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:160:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:52:in `map'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:52:in `visit_children'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:169:in `block in visit_children'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:181:in `with_environment'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:168:in `visit_children'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:36:in `block in visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:188:in `visit_root'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/base.rb:36:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:159:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/visitors/perform.rb:8:in `visit'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/root_node.rb:36:in `css_tree'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/tree/root_node.rb:29:in `render_with_sourcemap'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/engine.rb:381:in `_render_with_sourcemap'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/engine.rb:298:in `render_with_sourcemap'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/plugin/compiler.rb:492:in `update_stylesheet'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/plugin/compiler.rb:209:in `each'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/plugin.rb:82:in `update_stylesheets'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/exec/sass_scss.rb:340:in `watch_or_update'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/exec/sass_scss.rb:51:in `process_result'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/exec/base.rb:52:in `parse'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/lib/sass/exec/base.rb:19:in `parse!'
-/var/lib/gems/2.3.0/gems/sass-3.4.23/bin/scss:13:in `<top (required)>'
-/usr/local/bin/scss:23:in `load'
-/usr/local/bin/scss:23:in `<main>'
-*/
-body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "Error: Invalid CSS after \"\": expected selector, was \",\"\A         on line 27 of setReport.scss\A \A 22:             right: 10px;\A 23:             top: 10px;\A 24:             color: #ccc;\A 25:             z-index: 10000;\A 26:         }\A 27:     },\A 28: \A 29: \A 30:     .f_l{\A 31:         float: left;\A 32:     }"; }
+body {
+  margin: 0 auto;
+  overflow-x: hidden; }
+
+#content {
+  width: 85%;
+  position: absolute;
+  left: 13.7%;
+  top: 75px; }
+
+.el-card {
+  border: 1px solid #ffffff;
+  border-radius: 0px;
+  background-color: #ffffff; }
+  .el-card .el-card__header {
+    min-height: 30px;
+    border-bottom: 1px solid #1D90E6;
+    background-color: #1D90E6;
+    color: #000; }
+
+.el-card .panel-height {
+  height: 40px;
+  color: #fff; }
+.el-card .el-card__header {
+  padding: 5px 10px;
+  color: #fff; }
+  .el-card .el-card__header .clearfix {
+    text-align: center; }
+
+.content {
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100%; }
+  .content .list .card-body_20 {
+    padding-left: 99px !important;
+    padding-right: 0px !important;
+    padding-bottom: 0;
+    width: 100%;
+    height: 100%; }
+    .content .list .card-body_20 .list .card-body_20 .box_card {
+      height: 100% !important;
+      margin-right: -3px; }
+      .content .list .card-body_20 .list .card-body_20 .box_card .list .card-body_20 .box_card .box_card {
+        height: 100% !important;
+        margin-right: -3px; }
+  .content .list .model {
+    padding: 20px;
+    width: 90.3%;
+    min-height: 690px;
+    margin-left: 95px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+    background-color: #ffffff; }
+    .content .list .model .form_m_l {
+      padding-left: 50px; }
+    .content .list .model .pTitle {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 40px;
+      font-family: "微软雅黑";
+      color: #ffffff;
+      text-align: center;
+      line-height: 45px;
+      width: 191px;
+      height: 55px;
+      background: url("../../../../static/img/dzhyqbj.png") no-repeat; }
+    .content .list .model .demo-ruleForm .m_r {
+      margin-right: 0 !important;
+      margin-left: 125px; }
+  .content .dialog-footer {
+    text-align: right; }
+  .content .f_l {
+    float: left; }
+  @media screen and (min-width: 1360px) and (max-width: 1366px) {
+    .content .input_item {
+      width: 90%; }
+    .content .teble_item {
+      width: 78% !important;
+      margin-left: 9% !important;
+      margin-top: 30px; }
+    .content .save_button {
+      padding-right: 17.5%;
+      margin-top: 30px; }
+    .content .list .model {
+      width: 91%;
+      margin-left: 5%; } }
+
+.m_b50 {
+  margin-bottom: 50px !important; }
+
+.el-card {
+  border: none;
+  border-radius: 0;
+  -webkit-box-shadow: 0 0 10px rgba(196, 192, 193, 0.5);
+  -moz-box-shadow: 0 0 10px rgba(196, 192, 193, 0.5);
+  box-shadow: 0 0 10px rgba(196, 192, 193, 0.5);
+  background-color: #f8f9fb; }
+  .el-card .card-body {
+    height: 100%; }
+  .el-card .el-select-dropdown__item.selected {
+    color: #000; }
+  .el-card .displayIn {
+    display: inline-block; }
+
+.el-card__body {
+  height: 100%;
+  width: 98%;
+  padding-left: 20px !important;
+  padding-top: 20px !important; }
+
+.form_item {
+  width: 30%; }
+
+.input_item {
+  width: 150%; }
+
+.button_item {
+  width: 80px; }
+
+.teble_item {
+  width: 74% !important;
+  margin-left: 8% !important;
+  margin-top: 30px; }
+
+.input_item2 {
+  width: 90% !important; }
+
+.save_button {
+  padding-right: 19.5%;
+  margin-top: 30px; }
+
+.pager_m_b {
+  margin-bottom: 0 !important; }
+
+.el-pagination[data-v-1a627a14] {
+  margin: 20px 10px !important; }
+
+.el-card {
+  border: 1px solid #ffffff;
+  border-radius: 0px;
+  background-color: #ffffff; }
+
+/*# sourceMappingURL=setReport.css.map */

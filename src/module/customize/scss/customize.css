@@ -73,10 +73,10 @@ body {
     text-align: center; }
     .list .list-header .title {
       color: #ffffff;
-      font-size: 30px;
-      line-height: 78px;
-      width: 371px;
-      height: 78px;
+      font-size: 24px;
+      line-height: 41px;
+      width: 216px;
+      height: 41px;
       margin: auto;
       background-image: url("../../../../static/img/bgbj.png"); }
 
@@ -90,6 +90,13 @@ body {
   float: left;
   margin: 0 0 0 -100px;
   text-align: center; }
+
+.ssjc {
+  border: 1px solid #2b71c3;
+  background: #2b71c3;
+  border-radius: 4px;
+  color: #ffffff;
+  padding: 2px; }
 
 .list-subject {
   margin: 0 auto;

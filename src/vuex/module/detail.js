@@ -7,7 +7,8 @@
 /**
  * Created by topcom on 2017/5/24.
  */
-import $ from 'jquery'
+import jquery from '../api';
+const $ = jquery.jQuery;
 import common from '../common'
 import queryParam from '../utils'
 import dateUtil from '../dateUtil'
@@ -40,17 +41,13 @@ const actions = {
                 url: common.url.webserviceUrl + '/news/findById/'+id,
                 contentType: "application/json; charset=utf-8",
                 type: 'get',
-                async: false,
+                // async: false,
                 success: function (data) {
-                    debugger;
-
                     if(data.nlp.nameEntity.org){
                         data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.org,"","org_name");
-
                     }
                     if(data.nlp.nameEntity.place){
                         data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.place,"","area");
-
                     }
                     if(data.nlp.nameEntity.people){
                         data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.people,"","person_name");
@@ -111,8 +108,6 @@ const actions = {
                      data.option=option;
                     resolve(data);
                 },
-                error: function (error) {
-                }
             });
         });
     },
@@ -146,8 +141,6 @@ const actions = {
                     console.log(renderData);
                     resolve(renderData);
                 },
-                error: function (error) {
-                }
             });
         });
     },

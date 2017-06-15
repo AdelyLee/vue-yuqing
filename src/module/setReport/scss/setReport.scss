@@ -4,21 +4,50 @@
 .content {
     width: 100%;
     margin: 0 auto;
-    height: auto;
-    /* position: absolute; */
-    /* z-index: 999; */
-    .model {
-        padding: 20px;
-        /* position: absolute; */
-        float: left;
-        top: 210px;
-        margin: 5% 0 10% 25%;
-        width: 50%;
-        left: 25%;
-        height: 60%;
-        box-shadow: 0 0 10px #666;
-        background-color: #ffffff;
+    min-height: 100%;
+    .list .card-body_20 {
+        padding-left: 99px !important;
+        padding-right: 0px !important;
+        padding-bottom: 0;
+        width: 100%;
+        height: 100%;
+        .list .card-body_20 .box_card {
+            height: 100% !important;
+            margin-right: -3px;
+            .list .card-body_20 .box_card .box_card {
+                height: 100% !important;
+                margin-right: -3px;
+            }
+        }
     }
+    .list .model {
+        padding: 20px;
+        width: 90.3%;
+        min-height: 690px;
+        margin-left: 95px;
+        box-shadow:  0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
+        background-color: #ffffff;
+        .form_m_l{
+            padding-left: 50px;
+        }
+        .pTitle {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            font-family: "微软雅黑";
+            color: #ffffff;
+            text-align: center;
+            line-height: 45px;
+            width: 191px;
+            height: 55px;
+            background: url('../../../../static/img/dzhyqbj.png') no-repeat;
+        }
+        .demo-ruleForm .m_r {
+            margin-right: 0 !important;
+            margin-left: 125px;
+        }
+    }
+
     .dialog-footer {
         text-align: right;
     }
@@ -26,19 +55,28 @@
     .f_l {
         float: left;
     }
+    @media screen and (min-width:1360px) and (max-width:1366px) {
+        .input_item{
+            width: 90%;
+        }
+        .teble_item {
+            width: 78% !important;
+            margin-left: 9% !important;
+            margin-top: 30px;
+        }
+        .save_button {
+            padding-right: 17.5%;
+            margin-top: 30px;
+        }
+        .list .model{
+            width: 91%;
+            margin-left: 5%;
+        }
+    }
 }
 
 .m_b50 {
     margin-bottom: 50px !important;
-}
-
-.pTitle {
-    font-size: 20px;
-    font-weight: 700;
-    text-align: left;
-    margin-bottom: 60px;
-    font-family: "微软雅黑";
-    color: #5C9FE4;
 }
 
 .el-card {
@@ -49,7 +87,7 @@
     box-shadow: 0 0 10px rgba(196, 192, 193, .5);
     background-color: #f8f9fb;
     .card-body {
-        height: auto;
+        height: 100%;
     }
     .el-select-dropdown__item.selected {
         color: #000;
@@ -57,7 +95,54 @@
     .displayIn {
         display: inline-block;
     }
-    .m_r {
-        margin-right: 0 !important;
-    }
 }
+
+.el-card__body {
+    height: 100%;
+    width: 98%;
+    padding-left: 20px!important;
+    padding-top: 20px!important;
+}
+
+.form_item {
+    width: 30%;
+}
+
+.input_item {
+    width: 150%;
+}
+
+.button_item {
+    width: 80px;
+}
+
+.teble_item {
+    width: 74% !important;
+    margin-left: 8% !important;
+    margin-top: 30px;
+}
+
+.input_item2 {
+    width: 90% !important;
+}
+
+.save_button {
+    padding-right: 19.5%;
+    margin-top: 30px;
+}
+
+.pager_m_b {
+    margin-bottom: 0 !important;
+}
+
+.el-pagination[data-v-1a627a14] {
+    margin: 20px 10px !important;
+}
+.el-card {
+    border: 1px solid #ffffff;
+    border-radius: 0px;
+    background-color: #ffffff;
+}
+
+
+

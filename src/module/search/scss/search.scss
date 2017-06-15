@@ -70,12 +70,10 @@
         .search-list {
             .article {
                 cursor: pointer;
-                border-left: 3px solid #6595df;
+                border-bottom: 1px solid #CEC9C9;
                 background-color: #fbfdff;
                 margin-bottom: 5px;
-                height: 120px;
-                margin-bottom: 5px;
-
+                height: 160px;
             }
             .title {
                 font-size: 16px;
@@ -91,12 +89,6 @@
                 color: #4b95e2;
                 font-weight: 600;
                 padding-top: 16px;
-            }
-            span {
-                float: left;
-                width: 100%;
-                text-align: center;
-                padding-top: 10px;
             }
             li {
                 list-style-type: none;

@@ -3,12 +3,25 @@
  */
 import jquery from '../api';
 const $ = jquery.jQuery;
-
 import common from '../common'
+import dateUtil from '../dateUtil'
+import utils from '../utils'
 
 const actions = {
     getSearchArticles: function (pageSize, currentPage, condition) {
+        var heightLightWords = condition.mustWord + "@" + condition.shouldWord;
+        if (typeof condition.startDate !== 'string') {
+            condition.startDate = dateUtil.dateUtil.formatDate(condition.startDate, 'yyyy-MM-dd');
+        }
+        if (typeof condition.endDate !== 'string') {
+            condition.endDate = dateUtil.dateUtil.formatDate(condition.endDate, 'yyyy-MM-dd');
+        }
         var param = {
+            "date": {
+                "startDate": condition.startDate,
+                "endDate": condition.endDate
+            },
+            "filed": condition.filed,
             "keyword": {
                 "mustNotWord": condition.mustNotWord,
                 "mustWord": condition.mustWord,
@@ -18,12 +31,14 @@ const actions = {
                 "limit": pageSize,
                 "orders": [
                     {
-                        "direction": "DESC",
-                        "orderBy": "dateCreated"
+                        "direction": condition.direction,
+                        "orderBy": "pubTime"
                     }
                 ],
                 "page": currentPage
-            }
+            },
+            "searchKv": condition.searchKv,
+            "type": condition.mediaTypes
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -33,44 +48,17 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
-                        item.title = item.title.replace(new RegExp('<[^>].*?>', 'gi'), '').replace("&nbsp;", "");
-                        item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
-                        item.title = item.title.length > 40 ? item.title.substring(0, 40) + "..." : item.title;
-                        item.content = item.content.length > 100 ? item.content.substring(0, 100) + "..." : item.content;
-                    });
-                    resolve(data);
-                }
-            });
-        });
-    },
+                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', heightLightWords);
+                        item.content = utils.utils.heightLightKeywords(item.content, 140, '...', heightLightWords);
 
-    getSearchArticlesTemp: function (pageSize, currentPage, condition) {
-        var param = {
-            "mustNotWord": condition.mustNotWord,
-            "mustWord": condition.mustWord,
-            "shouldWord": condition.shouldWord,
-            "size": pageSize,
-            "page": currentPage
-        };
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType.json',
-                contentType: "application/json; charset=utf-8",
-                data: param,
-                type: 'get',
-                success: function (data) {
-                    debugger;
-                    data.content.forEach(function (item) {
-                        item.title = item.title.replace(new RegExp('<[^>].*?>', 'gi'), '').replace("&nbsp;", "");
-                        item.content = item.content.replace(new RegExp('<[^>].*?>', 'gi'), '').replace(/&nbsp;/ig, "");
-                        item.title = item.title.length > 40 ? item.title.substring(0, 40) + "..." : item.title;
-                        item.content = item.content.length > 100 ? item.content.substring(0, 100) + "..." : item.content;
+                        item.title = '<span>' + item.title + '</span>';
+                        item.content = '<span>' + item.content + '</span>';
                     });
                     resolve(data);
                 }
             });
         });
-    },
+    }
 };
 
 

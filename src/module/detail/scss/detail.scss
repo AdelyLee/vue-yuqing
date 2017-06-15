@@ -50,18 +50,30 @@
     font-size: 20px;
     opacity: 0.9;
 }
-.person_name {
+.person_name_label{
     background-color: #99CC67;
     color: #fff;
     font-family: "Microsoft Yahei","SimSun";
+}
+.person_name {
+    color: #99CC67;
+    font-family: "Microsoft Yahei","SimSun";
 
 }
-.area {
+.area_label {
     background-color: #488fce;
     color: #fff;
     font-family: "Microsoft Yahei","SimSun";
 }
+.area {
+    color: #488fce;
+    font-family: "Microsoft Yahei","SimSun";
+}
 .org_name {
+    color: rgb(255, 127, 14);
+    font-family: "Microsoft Yahei","SimSun";
+}
+.org_name_label {
     background-color: rgb(255, 127, 14);
     color: #fff;
     font-family: "Microsoft Yahei","SimSun";
@@ -91,6 +103,14 @@ dd {
     color: #000;
     font-family: "微软雅黑";
 }
+.title_a{
+    color: #000!important;
+    line-height: 100px;
+    font-size: 28px!important;
+    text-align: center;
+    font-family: "\5FAE\8F6F\96C5\9ED1";
+    text-decoration: none;
+}
 .main{
     min-height: 200px;
 }
@@ -118,13 +138,13 @@ dd {
     height: 400px;
 }
 .key{
-    height: 100px;
-    margin-top: 30px;
-    line-height: 110px;
-    font-size: 16px;
-    font-family: "微软雅黑";
+    height: auto;
+    line-height: 30px;
+    font-size: 14px;
+    font-family: "\5FAE\8F6F\96C5\9ED1";
     font-weight: 700;
     text-indent: 2em;
+    color:#666;
 }
 .m_t20{
     margin-top:20px;
@@ -152,4 +172,16 @@ dd {
 .p_t{
     padding-top: 80px;
 }
-
+@media screen and (min-width:1361px) and (min-width:1366px) {
+   .key{
+       height: auto;
+       line-height: 30px;
+       font-size: 14px;
+       font-family: "\5FAE\8F6F\96C5\9ED1";
+       font-weight: 700;
+       text-indent: 2em;
+   }
+    .new{
+        height: 43px;
+    }
+}

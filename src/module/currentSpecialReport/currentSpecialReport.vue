@@ -6,9 +6,10 @@
                 <common-menu></common-menu>
             </el-col>
             <el-col :span="21" :offset="3">
-                <el-card class="box-card " style="margin-top:70px;">
-                    <div slot="header" class="clearfix" style="line-height: 40px;text-align: left"><i
-                        class="el-icon-star-off"></i>专题 ：{{subjectName}}
+                <el-card class="box-card my-card-box">
+                    <div slot="header" class="clearfix subject-title">
+                        <el-tag type="primary" style ="font-size:20px;"><i class="el-icon-star-off"></i>专题名称：{{subjectName}}</el-tag>
+                        <el-tag type="primary" style ="font-size:20px;"><i class = "el-icon-time"></i>专题时间 ：{{timeRange}}</el-tag>
                     </div>
                     <el-row :gutter="15" class="list">
                         <el-col :span="24">
@@ -41,9 +42,6 @@
                                 <el-row :gutter="15">
                                     <el-col :span="8">
                                         <el-card class="box-card my-card">
-                                            专题时间 ：{{timeRange}}
-                                        </el-card>
-                                        <el-card class="box-card my-card" style="margin-top:15px;">
                                             <div slot="header" class="clearfix">
                                                 <span class="my-title">情感分析</span>
                                             </div>
@@ -77,34 +75,6 @@
                                         </el-card>
                                     </el-col>
                                 </el-row>
-                                <!--<el-row :gutter="15">-->
-                                    <!--<el-col :span="24">-->
-                                        <!--<el-card class=" my-card" style="margin-top:5px;">-->
-                                            <!--<span class="my-title">舆论热点</span>-->
-                                            <!--<el-tabs type="card">-->
-                                                <!--<el-tab-pane label="新闻观点">-->
-                                                    <!--<el-col :span="24" class="lists">-->
-                                                        <!--<bar-chart :chartConfig="netizenTypeTitleBar"></bar-chart>-->
-                                                        <!--&lt;!&ndash;<news-list :type="newsUrl" :checkedItems="checkedItems"></news-list>&ndash;&gt;-->
-                                                    <!--</el-col>-->
-                                                <!--</el-tab-pane>-->
-                                                <!--<el-tab-pane label="微博观点">-->
-                                                    <!--<el-col :span="24" class="lists">-->
-                                                        <!--<weibo-list :type="weiboUrl"-->
-                                                                    <!--:checkedItems="checkedItems"></weibo-list>-->
-                                                    <!--</el-col>-->
-                                                <!--</el-tab-pane>-->
-                                                <!--<el-tab-pane label="论坛观点">-->
-                                                    <!--<el-col :span="24" class="lists">-->
-                                                        <!--<bbs-list :type="bbsUrl"-->
-                                                                  <!--:checkedItems="checkedItems"></bbs-list>-->
-                                                    <!--</el-col>-->
-                                                <!--</el-tab-pane>-->
-                                            <!--</el-tabs>-->
-                                        <!--</el-card>-->
-                                    <!--</el-col>-->
-                                <!--</el-row>-->
-                                <article-list v-if="getListEmotionData.length > 0" :id="articleListId" :articles ="getListEmotionData" :pager = "articlePager" @data = "getArticleData"></article-list>
                             </div>
                             <div v-if="myIndex==3">
                                 <el-row :gutter="15">
@@ -143,11 +113,23 @@
                                         </el-card>
                                     </el-col>
                                 </el-row>
+                                <el-row :gutter = "15">
+                                    <el-col :span = "12">
+                                        <el-card class="box-card my-card" style="margin-top:5px;">
+                                            <div slot="header" class="clearfix">
+                                                <span class="my-title">网民观点</span>
+                                            </div>
+                                            <pie-chart :chartConfig="netizenOptions"></pie-chart>
+                                        </el-card>
+                                    </el-col>
+                                </el-row>
                             </div>
                             <div v-if="myIndex == 4">
                                 <warning-list :yujingList="warningList"></warning-list>
                                 <yujing-pager :pager="yujignPager" @data="getyujingPager"></yujing-pager>
                             </div>
+                            <div style = "height:15px;"></div>
+                            <article-list v-if="getArticles.length > 0" :id="articleListId" :articles ="getArticles" :pager = "articlePager" @data = "getArticleData"></article-list>
                         </el-col>
                     </el-row>
                 </el-card>
@@ -223,11 +205,12 @@
                 weiboUrl: 'weibo',
                 bbsUrl: 'bbs',
                 checkedItems: [],
-                getListEmotionData: [],
+                conditions: {
+                    searchKv:[],
+                    type:[]
+                },
+                getArticles: [],
                 getListTypeData: [],
-                getListAuthorData: [],
-                getListTitleData: [],
-                getListSourceData: [],
                 activeName: 'first',
                 mediaReportAnalysisPie: {
                     chartId: 'media-report-analysis-pie',
@@ -235,8 +218,9 @@
                     events: {
                         'click': function (param) {
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
-                            var searchKv = [{"key": "nlp.sentiment.label", "value": value}];
-                            that.getEmotionList(searchKv);
+                            that.conditions.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.getArticleList(that.conditions);
                         }
                     }
                 },
@@ -248,7 +232,9 @@
                             var name = typeUtil.typeUtil.encodeArticleType(param.name);
                             var type = [];
                             type.push(name);
-                            that.getTypeList(type);
+                            that.conditions.searchKv = [];
+                            that.conditions.type = type;
+                            that.getArticleList(that.conditions);
                         }
                     }
                 },
@@ -258,8 +244,9 @@
                     events: {
                         'click': function (param) {
                             var value = param.name;
-                            var searchKv = [{"key": "source", "value": value}];
-                            that.getSourceList(searchKv);
+                            that.conditions.searchKv = [{"key": "source", "value": value}];
+                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.getArticleList(that.conditions);
                         }
                     }
                 },
@@ -285,8 +272,9 @@
                     events: {
                         'click': function (param) {
                             var value = param.name;
-                            var searchKv = [{"key": "title.raw", "value": value}];
-                            that.getTitleList(searchKv);
+                            that.conditions.searchKv = [{"key": "title.raw", "value": value}];
+                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.getArticleList(that.conditions);
                         }
                     }
                 },
@@ -296,8 +284,9 @@
                     events: {
                         'click': function (param) {
                             var value = param.name;
-                            var searchKv = [{"key": "author", "value": value}];
-                            that.getAuthorList(searchKv);
+                            that.conditions.searchKv = [{"key": "author", "value": value}];
+                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.getArticleList(that.conditions);
                         }
                     }
                 },
@@ -307,7 +296,12 @@
                         mapType: "china"
                     },
                     events: {
-//                        'click': clickMapChart
+                        'click': function (param) {
+                            var value = param.name;
+                            that.conditions.searchKv = [{"key": "area", "value": value}];
+                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.getArticleList(that.conditions);
+                        }
                     }
                 },
                 keywordsChart: {
@@ -316,7 +310,15 @@
                 },
                 netizenOptions: {
                     chartId: 'netizen-options',
-                    option: {}
+                    option: {},
+                    events: {
+                        'click': function (param) {
+                            var value = param.name;
+                            that.conditions.searchKv = [{"key": "content.raw", "value": value}];
+                            that.conditions.type = ["comments"];
+                            that.getArticleList(that.conditions);
+                        }
+                    }
                 }
             }
         },
@@ -343,47 +345,14 @@
                 switch (data.action) {
                     case 'clickArticleListPager':
                         self.articlePager = data.articleListPager;
-                        break;
                 }
-                self.getEmotionList();
+                self.getArticleList();
             },
-            getEmotionList: function (searchKv) {
+            getArticleList: function () {
                 var self = this;
-                service.actions.getEmotionList(searchKv, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
-                    self.getListEmotionData = renderData.seriesData;
+                service.actions.getArticleList(self.conditions, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
+                    self.getArticles = renderData.seriesData;
                     self.articlePager.totalElements = renderData.total;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-            },
-            getTypeList: function (type) {
-                var self = this;
-                service.actions.getTypeList(type, 10, 1).then(function (renderData) {
-                    self.getListTypeData = renderData.seriesData;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-            },
-            getAuthorList: function (searchKv) {
-                var self = this;
-                service.actions.getAuthorList(searchKv, 10, 1).then(function (renderData) {
-                    self.getListAuthorData = renderData.seriesData;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-            },
-            getTitleList: function (searchKv) {
-                var self = this;
-                service.actions.getTitleList(searchKv, 10, 1).then(function (renderData) {
-                    self.getListTitleData = renderData.seriesData;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
-            },
-            getSourceList: function (searchKv) {
-                var self = this;
-                service.actions.getSourceList(searchKv, 10, 1).then(function (renderData) {
-                    self.getListSourceData = renderData.seriesData;
                 }, function (error) {
                     console.error('出错了', error);
                 })
@@ -393,24 +362,27 @@
                 self.myIndex = index;
                 switch (index) {
                     case 1:
+                        self.getArticles = [];
                         this.getmylist();//信息列表
                         break;
                     case 2:
+                        self.getArticles = [];
                         this.getNewsEmotionPieChart();//情感类型分析饼图
                         this.getArticleTypeChart();   //新闻载体分析饼图
                         this.getMediaBarChart();        //主流媒体
                         this.getMediaReportTrendBar();//媒体报道走势柱图
                         this.getNetionTypeTitleBar();//网民观点
-//                        this.getEmotionList();
                         break;
                     case 3:
+                        self.getArticles = [];
                         this.getNetionTitleBar();//网民舆论热点柱图
                         this.getNetizenConsensusBar();//热议网民柱图
                         this.getNetizenMap();//网民地图分布
                         this.getKeywordsChart();//热点词云
-//                        this.getNetizenOptions();//网民观点饼图
+                        this.getNetizenOptions();//网民观点饼图
                         break;
                     case 4:
+                        self.getArticles = [];
                         this.getWarningListData();
                         break;
                 }
@@ -491,14 +463,14 @@
                 })
 
             },
-//            getNetizenOptions: function () {
-//                var self = this;
-//                service.actions.getNetizenOptions().then(function (renderData) {
-//                    self.netizenOptions.option = renderData.option;
-//                }, function (error) {
-//                    console.error('出错了', error);
-//                })
-//            },
+            getNetizenOptions: function () {
+                var self = this;
+                service.actions.getNetizenOptions().then(function (renderData) {
+                    self.netizenOptions.option = renderData;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
             getmylist: function () {
                 var self = this;
                 service.actions.getmylist(self.mylistSearch, self.myListPagination.pageSize, self.myListPagination.currentPage4).then(function (renderData) {
@@ -534,16 +506,15 @@
             }
         },
         watch: {
-            getListEmotionData: function (val, oldVal) {
+            getArticles: function (val, oldVal) {
                 var self = this;
-                debugger;
                 if (val) {
                     self.$nextTick(function () {
                         // DOM 现在更新了
                         // `this` 绑定到当前实例
                         // 页面滚动到指定位置
                         $('html, body').animate({
-                            scrollTop: $("#article-list").offset().top
+                            scrollTop: $("#article-list").offset().top -60
                         }, 500);
                     })
                 }

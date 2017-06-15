@@ -46,6 +46,8 @@
 <script type="text/ecmascript-6">
     import service from '../../vuex/module/login.js'
 
+    import utils from '../../vuex/utils.js'
+
     export default {
         name: 'login',
         data () {
@@ -72,9 +74,17 @@
             }
         },
         mounted () {
-            this.replaceImg();
+            this.checkBrowserSupport();
         },
         methods: {
+            checkBrowserSupport: function () {
+                // Check browser support
+                if (typeof(Storage) !== "undefined") {
+                    this.replaceImg();
+                } else {
+                    alert("抱歉！您的浏览器不支持当前系统，请更换浏览器．");
+                }
+            },
             replaceImg: function () {
                 var self = this;
                 service.action.getCaptcha().then(function (data) {
@@ -90,18 +100,18 @@
                         self.buttonText = '登录中...';
                         service.action.login(user.username, user.password, user.captcha).then(function (data) {
                             self.buttonText = '登录';
-                            window.location.href  = "../module/index.html";
-                            debugger;
+                            localStorage.setItem("token", data.token);
+                            var config = utils.utils.getUserBaseKeyword();
+                            localStorage.setItem("baseKeywords", config);
+                            window.location.href = "../module/index.html";
                         }).catch(error => {
                             self.buttonText = '登录';
-                            debugger;
                             self.loginMessage = error.responseJSON.message;
                         });
                     }
                 });
             },
             keyUpLogin(ev){
-                debugger;
                 if (ev.keyCode == 13) {
                     this.loginSubmit();
                 }

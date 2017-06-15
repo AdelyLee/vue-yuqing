@@ -21,10 +21,10 @@
                                 </div>
                                 <el-row :gutter="1" class="l_bottom">
                                     <el-col :span="8">
-                                        <span v-if="item.type=='weibo'">
+                                        <span v-if="item.type=='weibo' || item.type=='bbs' || item.type=='bar'">
                                             <span class="sours">作者</span>：{{item.author}}
                                         </span>
-                                        <span v-else="item.type!='weibo'">
+                                        <span v-else-if="item.type=='news'">
                                             <span class="sours">来源</span>：{{item.site}}
                                         </span>
                                     </el-col>

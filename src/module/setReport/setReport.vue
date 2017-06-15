@@ -1,13 +1,13 @@
 <template>
     <div class="content" id="keyWords">
         <common-header></common-header>
-        <el-row :gutter="5" class="list" style="margin-left:auto; margin-right:auto">
+        <el-row :gutter="5" class="list" style="margin-left:auto; margin-right:auto;height: 100%;width:100% ">
             <el-col :span="3">
                 <common-menu></common-menu>
             </el-col>
-            <el-col :span="21" style="margin-left: 12.5%">
-                <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
+            <el-col :span="21"  class="card-body_20">
+                <el-card class="box_card box-card">
+                    <div slot="header" class="panel-height box_card">
                         <span style="line-height: 40px;"><i class="el-icon-document"></i>报告设置</span>
                     </div>
                     <div class="card-body">
@@ -15,17 +15,17 @@
                             <!--<span class="close" @click="close()"><i class="el-icon-circle-cross"></i></span>-->
                             <p class="pTitle">报告设置</p>
                             <el-form :inline="true" :model="contactForm" :rules="rules" label-width="100px"
-                                     class="demo-ruleForm">
-                                <el-form-item label="联系人" prop="name" class="m_r">
-                                    <el-input v-model="contactForm.name" placeholder="请输入联系人"></el-input>
+                                     class="demo-ruleForm form_m_l">
+                                <el-form-item label="联系人" prop="name" class="m_r form_item">
+                                    <el-input v-model="contactForm.name" placeholder="请输入联系人" class="input_item"></el-input>
                                 </el-form-item>
-                                <el-form-item label="邮箱" prop="account">
-                                    <el-input v-model="contactForm.account" placeholder="请输入联系人邮箱"></el-input>
+                                <el-form-item label="邮箱" prop="account" class="form_item">
+                                    <el-input v-model="contactForm.account" placeholder="请输入联系人邮箱" class="input_item"></el-input>
                                 </el-form-item>
-                                <el-button type="primary" @click.native="createUserContacts(contactForm)">添加</el-button>
+                                <el-button type="primary" @click.native="createUserContacts(contactForm)" class="button_item">添加</el-button>
                             </el-form>
-                            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm">
-                                <el-table ref="multipleTable" :data="contacts" border height="150"
+                            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm form_m_l">
+                                <el-table class="teble_item" ref="multipleTable" :data="contacts" border height="250"
                                           tooltip-effect="dark"
                                           style="width: 80%; margin-left: 10%"
                                           @selection-change="handleSelectionChange">
@@ -41,17 +41,17 @@
                                         </template>
                                     </el-table-column>
                                 </el-table>
-                                <el-form-item class="pager">
+                                <el-form-item class="pager pager_m_b">
                                     <list-page :pager="pager"></list-page>
                                 </el-form-item>
-                                <el-form-item label="是否启用">
+                                <el-form-item label="是否启用" class="m_r form_item">
                                     <el-radio-group v-model="addForm.enable" class="displayIn">
                                         <el-radio :label="true">是</el-radio>
                                         <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
-                                <el-form-item label="报告接收日期" class="displayIn">
-                                    <el-select v-model="addForm.day" placeholder="请选择(几号)" :disabled="isDisable">
+                                <el-form-item label="报告接收日期" class="displayIn  m_r form_item">
+                                    <el-select v-model="addForm.day" placeholder="请选择(几号)" class="input_item2">
                                         <el-option
                                             v-for="item in options"
                                             :key="item.value"
@@ -60,14 +60,14 @@
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
-                                <el-form-item label="报告接收成小时" class="displayIn">
-                                    <el-time-select placeholder="报告生成小时" v-model="addForm.hours"
+                                <el-form-item label="报告接收小时" class="displayIn  m_r form_item">
+                                    <el-time-select class="input_item2" placeholder="报告接收小时" v-model="addForm.hours"
                                                     :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
                                     </el-time-select>
                                 </el-form-item>
                             </el-form>
-                            <div slot="footer" class="dialog-footer">
-                                <el-button type="primary" @click.native="addFormSubmit(addForm)">保存</el-button>
+                            <div slot="footer" class="dialog-footer save_button">
+                                <el-button type="primary" @click.native="addFormSubmit(addForm)" class="button_item">保存</el-button>
                             </div>
                         </div>
                     </div>
@@ -89,9 +89,9 @@
     import contactService from '../../vuex/module/customSubject.js'
 
     var optionData = [];
-    optionData.push({value: "first", label: '倒数第一天'});
-    optionData.push({value: "second", label: '倒数第二天'});
-    optionData.push({value: "third", label: '倒数第三天'});
+    optionData.push({value: "-1", label: '倒数第一天'});
+    optionData.push({value: "-2", label: '倒数第二天'});
+    optionData.push({value: "-3", label: '倒数第三天'});
     for (var i = 28; i > 0; i--) {
         var node = {};
         node.value = i;
@@ -128,7 +128,6 @@
                 },
                 contacts: [],// 所有联系人
                 options: optionData,
-                isDisable: false
             };
         },
         mounted () {
@@ -145,19 +144,6 @@
                 var self = this;
                 service.actions.getMonthlyReportInfo().then(function (data) {
                     self.addForm = data;
-                    var rows = [];
-                    self.contacts.forEach(function (obj) {
-                        self.addForm.contacts.forEach(function (item) {
-                            if (item.id == obj.id) {
-                                rows.push(obj);
-                            }
-                        });
-                    });
-                    self.$nextTick(function () {
-                        // DOM 现在更新了
-                        // `this` 绑定到当前实例
-                        self.toggleSelection(rows);
-                    })
                 })
             },
 
@@ -172,7 +158,6 @@
                 contactService.actions.getUserContacts(self.pager.pageSize, self.pager.currentPage).then(function (data) {
                     self.pager.totalElements = data.totalElements;
                     self.contacts = data.content;
-
                 });
             },
 
@@ -203,6 +188,7 @@
             },
             // 保存按钮
             addFormSubmit: function (briefingConfig) {
+                var self = this;
                 // 获取选中的联系人，
                 briefingConfig.contacts = this.multipleSelection;
                 briefingConfig.contacts.forEach(function (item) {
@@ -210,12 +196,32 @@
                 });
 
                 service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
-
+                    self.getMonthlyReportInfo();
                 });
 
             },
-
         },
+        watch: {
+            addForm: {
+                handler: function () {
+                    var self = this;
+                    var rows = [];
+                    self.contacts.forEach(function (obj) {
+                        self.addForm.contacts.forEach(function (item) {
+                            if (item.id == obj.id) {
+                                rows.push(obj);
+                            }
+                        });
+                    });
+                    self.$nextTick(function () {
+                        // DOM 现在更新了
+                        // `this` 绑定到当前实例
+                        self.toggleSelection(rows);
+                    })
+                },
+                deep: true
+            }
+        }
     }
 </script>
 

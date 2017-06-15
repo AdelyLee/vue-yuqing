@@ -4,10 +4,10 @@
             <el-row :gutter="15">
                 <el-col :span="18" :offset="3">
                     <el-input placeholder="请输入内容" v-model="input5" @blur="getSearchWord">
-                        <el-select v-model="select" slot="prepend" placeholder="请选择">
-                            <el-option label="全文" value="1"></el-option>
-                            <!--<el-option label="作者" value="2"></el-option>-->
-                        </el-select>
+                        <!--<el-select v-model="select" slot="prepend" placeholder="请选择">-->
+                            <!--<el-option label="全文" value="1"></el-option>-->
+                            <!--&lt;!&ndash;<el-option label="作者" value="2"></el-option>&ndash;&gt;-->
+                        <!--</el-select>-->
                         <el-button slot="append" icon="search"></el-button>
                     </el-input>
                 </el-col>

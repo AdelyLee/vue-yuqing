@@ -4,15 +4,16 @@
 import jQuery from 'jquery';
 
 jQuery.ajaxSetup({
+    beforeSend: function (request) {
+        request.setRequestHeader("Authorization", localStorage.getItem("token"));
+    },
     error: function (error) {
-        debugger;
         console.log("ajaxSetup error", error);
-        // alert(error.responseJSON.message);
         if (error.status != 500) {
-            // window.location.href = "../module/login.html";
+            window.location.href = "../module/login.html";
         }
     }
 });
 
-export default { jQuery }
+export default {jQuery}
 

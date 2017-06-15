@@ -22,14 +22,19 @@ const actions = {
 
     //保存
     editMonthlyReportSetting: function (briefingConfig) {
-        $.ajax({
-            url: common.url.webserviceUrl + '/briefingTask/' + briefingConfig.id,
-            data: JSON.stringify(briefingConfig),
-            contentType: "application/json; charset=utf-8",
-            type: 'put',
-            success: function (data) {
-                console.log("edit monthly report success");
-            }
+        // 时间修改
+        briefingConfig.hours = parseInt(briefingConfig.hours.split(":")[0]);
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/briefingTask/' + briefingConfig.id,
+                data: JSON.stringify(briefingConfig),
+                contentType: "application/json; charset=utf-8",
+                type: 'put',
+                success: function (data) {
+                    console.log("edit monthly report success");
+                    resolve(data);
+                }
+            });
         });
     }
 };

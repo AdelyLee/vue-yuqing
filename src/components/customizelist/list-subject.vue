@@ -21,7 +21,7 @@
                     <span class="complete">{{subject.state}}</span>
                 </td>
                 <td class="operation-none">
-                    <span @click="showSubject(subject)">实时监测</span>
+                    <span @click="showSubject(subject)" class="ssjc">实时监测</span>
                     <span @click="editSubject(subject)">修改</span>
                     <span @click="updateReport(subject)">更新</span>
                     <span @click="deleteSubject(subject)">删除</span>

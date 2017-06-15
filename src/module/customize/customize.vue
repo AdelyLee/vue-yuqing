@@ -8,9 +8,6 @@
             <el-col :span="21">
                 <div class="card-body" id="content">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <!--<div slot="header" class="panel-height">-->
-                        <!--<span style="line-height: 40px;"><i class="el-icon-document"></i> 定制化與情监测</span>-->
-                    <!--</div>-->
                     <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane class="special" name="monthlyReport" value="专题管理">
                             <span slot="label"><i class="el-icon-menu"></i> 专题管理</span>
@@ -129,19 +126,22 @@
                 });
             },
             createUserContacts: function (contact) {
+                var self = this;
                 service.actions.createUserContacts(contact).then(function () {
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
-                    self.getSubjectList();
+                    self.getUserContacts();
                 })
             },
             deleteUserContacts: function (contact) {
+                var self = this;
                 service.actions.deleteUserContacts(contact).then(function () {
                     self.addWaringContactsPager.currentPage = 1;
                     self.getUserContacts();
                 });
             },
             createSubject: function (subject) {
+                var self = this;
                 service.actions.createCustomSubject(subject).then(function () {
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
@@ -149,6 +149,7 @@
                 });
             },
             deleteSubject: function (subject) {
+                var self = this;
                 service.actions.deleteCustomSubject(subject).then(function () {
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
@@ -156,11 +157,13 @@
                 });
             },
             editSubject: function (subject) {
+                var self = this;
                 service.actions.editCustomSubject(subject).then(function () {
                     self.getSubjectList();
                 });
             },
             updateReport: function (subject) {
+                var self = this;
                 service.actions.updateCustomSubjectReport(subject).then(function () {
                     self.getSubjectList();
                 });
@@ -279,7 +282,10 @@
                         self.createUserContacts(data.contact);
                         break;
                     case 'handleDeleteContact':
-                        self.deleteUserContacts(data.contact);
+                        this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
+                            self.deleteUserContacts(data.contact);
+                        }).catch(() => {
+                        });
                         break;
                     case 'addWarningFormSubmit':
                         data.subject.enableWarning = true;
