@@ -89,7 +89,7 @@
                 checkAllType: true,
                 checkAllEmotion: true,
                 checkEmotion: [],
-                checkedType: ['新闻', '微博'],
+                checkedType: [],
                 types: typeOptions,
                 emotions: emotionOptions,
                 isIndeterminateType: true,

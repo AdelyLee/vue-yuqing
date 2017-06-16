@@ -16,7 +16,8 @@
                             <!--标题-->
                             <el-row :gutter="1" class="list border_1">
                                 <el-col :span="22" class="font_style">
-                                    <div class="title" v-if="detailData.title" ><a :href="detailData.url" class="title_a" target="_blank">{{detailData.title}}</a></div>
+                                    <div class="title" v-if="detailData.title" >{{detailData.title}}</div>
+                                    <a :href="detailData.url" class="title_a" target="_blank">原文链接：{{detailData.url}}</a>
                                     <div class="new">
                                         <el-col :span="8" class="m_t20">文章来源：<span v-if="detailData.site">{{detailData.source}}</span></el-col>
                                         <el-col :span="8" class="m_t20">发布时间：<span v-if="detailData.pubTime">{{new Date(detailData.pubTime).toLocaleString().substr(0,9)}}</span>
@@ -139,9 +140,13 @@
                     debugger;
 //                    data.content = data.content.replace(/&nbsp;/ig, "");
                     self.detailData = data;
-                    self.detailData.url=data.url;
-                    self.mediaEmotionGauge.option = data.option;
-                    self.detailData.nlp.keywords = data.nlp.keywords.join(" ").replace(/&nbsp/ig, "");
+//                    self.detailData.url=data.url;
+                    self.mediaEmotionGauge.option = self.detailData.option;
+                    self.detailData.nlp.keywords.length=10;
+//                    for(var i=0;i<10;i++){
+//                        self.detailData.nlp.keywords.push(data.nlp.keywords[i])
+//                    }
+                    self.detailData.nlp.keywords = self.detailData.nlp.keywords.join(" ").replace(/&nbsp/ig, "");
                     if (data.author == "" || data.author == undefined) {
                         self.detailData.author = "佚名";
                     }

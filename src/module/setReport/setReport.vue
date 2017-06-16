@@ -14,8 +14,8 @@
                         <div class="model">
                             <!--<span class="close" @click="close()"><i class="el-icon-circle-cross"></i></span>-->
                             <p class="pTitle">报告设置</p>
-                            <el-form :inline="true" :model="contactForm" :rules="rules" label-width="100px"
-                                     class="demo-ruleForm form_m_l">
+                            <el-form :inline="true" :model="contactForm" :rules="rules" label-width="80px"
+                                     class="demo-ruleForm">
                                 <el-form-item label="联系人" prop="name" class="m_r form_item">
                                     <el-input v-model="contactForm.name" placeholder="请输入联系人" class="input_item"></el-input>
                                 </el-form-item>
@@ -24,8 +24,8 @@
                                 </el-form-item>
                                 <el-button type="primary" @click.native="createUserContacts(contactForm)" class="button_item">添加</el-button>
                             </el-form>
-                            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm form_m_l">
-                                <el-table class="teble_item" ref="multipleTable" :data="contacts" border height="250"
+                            <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm">
+                                <el-table class="teble_item" ref="multipleTable" :data="contacts" border height="200"
                                           tooltip-effect="dark"
                                           style="width: 80%; margin-left: 10%"
                                           @selection-change="handleSelectionChange">
@@ -173,9 +173,14 @@
             // 删除联系人
             deleteUserContacts: function (index, row) {
                 var self = this;
-                contactService.actions.deleteUserContacts(row).then(function () {
-                    self.pager.currentPage = 1;
-                    self.getUserContacts();
+                this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
+                    // delete the subject and get the new subject list
+                    contactService.actions.deleteUserContacts(row).then(function () {
+                        self.pager.currentPage = 1;
+                        self.getUserContacts();
+                    });
+                }).catch(error => {
+                    this.$confirm('删除记录失败！', '错误', {type: 'error'});
                 });
             },
 

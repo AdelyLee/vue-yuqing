@@ -8,20 +8,20 @@
             <el-col :span="21" :offset="3">
                 <el-card class="box-card my-card-box">
                     <div slot="header" class="clearfix subject-title">
-                        <el-tag type="primary" style ="font-size:20px;"><i class="el-icon-star-off"></i>专题名称：{{subjectName}}</el-tag>
+                        <el-tag type="primary" style ="font-size:20px;margin-top:10px;margin-left:15px;"><i class="el-icon-star-off"></i>专题名称：{{subjectName}}</el-tag>
                         <el-tag type="primary" style ="font-size:20px;"><i class = "el-icon-time"></i>专题时间 ：{{timeRange}}</el-tag>
                     </div>
                     <el-row :gutter="15" class="list">
                         <el-col :span="24">
                             <div style="height:5px;"></div>
-                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal">
-                                <el-menu-item index="1" @click="changeIndex(1)"><i class="el-icon-message"></i>信息列表
+                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+                                <el-menu-item index="1" ><i class="el-icon-message"></i>信息列表
                                 </el-menu-item>
-                                <el-menu-item index="2" @click="changeIndex(2)"><i class="el-icon-menu"></i>舆论分析
+                                <el-menu-item index="2"><i class="el-icon-menu"></i>舆论分析
                                 </el-menu-item>
-                                <el-menu-item index="3" @click="changeIndex(3)"><i class="el-icon-setting"></i>网民分析
+                                <el-menu-item index="3" ><i class="el-icon-setting"></i>网民分析
                                 </el-menu-item>
-                                <el-menu-item index="4" @click="changeIndex(4)"><i class="el-icon-information"></i>历史预警
+                                <el-menu-item index="4"><i class="el-icon-information"></i>历史预警
                                 </el-menu-item>
                             </el-menu>
                             <div style="height:15px;"></div>
@@ -137,9 +137,7 @@
         </el-row>
     </div>
 </template>
-<style scoped>
 
-</style>
 <script>
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
@@ -154,8 +152,8 @@
     import warningListData from '@/components/currentSpecialReport/warningList';
     import yujingPagerData from '@/components/commons/paging';
     import service from '../../vuex/module/currentSpecialReport.js';
-    import dateUtil from '../../vuex/dateUtil'
-    import typeUtil from '../../vuex/typeUtil'
+    import dateUtil from '../../vuex/dateUtil';
+    import typeUtil from '../../vuex/typeUtil';
     import $ from 'jquery';
     export default {
         name: 'presentationList',
@@ -194,7 +192,7 @@
                         "orderBy": "pubTime"
                     }],
                     searchKey: [],
-                    type: ["news", "weibo"]
+                    type: []
                 },
                 limits: 0,
                 pages: 1,
@@ -252,14 +250,6 @@
                 },
                 mediaReportTrendBar: {
                     chartId: 'media-report-trend-bar',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                        }
-                    }
-                },
-                netizenTypeTitleBar: {
-                    chartId: 'net-title-bar',
                     option: {},
                     events: {
                         'click': function (param) {
@@ -351,16 +341,16 @@
             getArticleList: function () {
                 var self = this;
                 service.actions.getArticleList(self.conditions, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
-                    self.getArticles = renderData.seriesData;
-                    self.articlePager.totalElements = renderData.total;
+                    self.getArticles = renderData.content;
+                    self.articlePager.totalElements = renderData.totalElements;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
-            changeIndex: function (index) {
+            handleSelect:function (key, keyPath) {
                 var self = this;
-                self.myIndex = index;
-                switch (index) {
+                self.myIndex = key-0;
+                switch (self.myIndex) {
                     case 1:
                         self.getArticles = [];
                         this.getmylist();//信息列表
@@ -371,7 +361,6 @@
                         this.getArticleTypeChart();   //新闻载体分析饼图
                         this.getMediaBarChart();        //主流媒体
                         this.getMediaReportTrendBar();//媒体报道走势柱图
-                        this.getNetionTypeTitleBar();//网民观点
                         break;
                     case 3:
                         self.getArticles = [];
@@ -421,14 +410,6 @@
                 }, function (error) {
                     console.error('出错了', error);
                 });
-            },
-            getNetionTypeTitleBar: function () {
-                var self = this;
-                service.actions.getNetionTypeTitleBar().then(function (renderData) {
-                    self.netizenTypeTitleBar.option = renderData.option;
-                }, function (error) {
-                    console.error('出错了', error);
-                })
             },
             getNetionTitleBar: function () {
                 var self = this;
@@ -508,13 +489,13 @@
         watch: {
             getArticles: function (val, oldVal) {
                 var self = this;
-                if (val) {
+                if (val && val.length>0) {
                     self.$nextTick(function () {
                         // DOM 现在更新了
                         // `this` 绑定到当前实例
                         // 页面滚动到指定位置
                         $('html, body').animate({
-                            scrollTop: $("#article-list").offset().top -60
+                            scrollTop: $("#article-list").offset().top-60
                         }, 500);
                     })
                 }

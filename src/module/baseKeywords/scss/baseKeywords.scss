@@ -8,7 +8,7 @@
     .model{
         padding: 20px;
         width: 99%;
-        min-height: 690px;
+        //min-height: 690px;
         box-shadow: 0 2px 4px 0 rgba(0,0,0,.12),0 0 6px 0 rgba(0,0,0,.04);
         background-color: #ffffff;
         .close{
@@ -34,7 +34,7 @@
         text-align: center;
     }
     .el-textarea__inner {
-        min-height: 150px;
+        min-height: 100px;
     }
     @media screen and (min-width:1360px) and (max-width:1366px) {
         .model{

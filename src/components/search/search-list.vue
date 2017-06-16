@@ -3,7 +3,11 @@
         <div class="article" v-for="item in searchList" @click="showDetail(item)">
             <el-row :gutter="15">
                 <el-col :span="3">
-                    <div class="img"><img :src="logoSrc"></div>
+                    <img v-if="item.type=='News'" :src="newslogoSrc" width="80" height="67" style="margin-left: 23%;margin-top: 35%;">
+                    <img v-if="item.type=='Weibo'" :src="weibologoSrc" width="80" height="67" style="margin-left: 23%;margin-top: 35%;">
+                    <img v-if="item.type=='Bbs'" :src="bbslogoSrc" width="80" height="67" style="margin-left: 23%;margin-top: 35%;">
+                    <img v-if="item.type=='Bar'" :src="barlogoSrc" width="80" height="67" style="margin-left: 23%;margin-top: 35%;">
+                    <!--<div class="img"><img :src="logoSrc"></div>-->
                 </el-col>
                 <el-col :span="21">
                     <li class="title" v-html="item.title">{{item.title}}</li>
@@ -23,7 +27,11 @@
         props: ['searchList'],
         data () {
             return {
-                logoSrc: '../../../static/img/an_newlogo.png'
+                weibologoSrc: '../../static/img/wb_new.svg',
+                newslogoSrc: '../../static/img/news_new.svg',
+                bbslogoSrc: '../../static/img/bbs_new.svg',
+                barlogoSrc: '../../static/img/bar_new.svg',
+//                logoSrc: '../../../static/img/an_newlogo.png'
             }
         },
         methods: {

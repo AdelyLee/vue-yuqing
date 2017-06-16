@@ -37,7 +37,7 @@
                                                 <span class="text" style="width:15%;">同现词: </span>
                                                 <el-input type="input" v-model="condition.shouldWord" placeholder="同现词之间用@隔开" style="width:65%;margin-left: 1%"></el-input>
                                                 <hr size=1 style="color: #ccc;border-style:dashed;width:100%;">
-                                                <span class="text" style="width:15%;">同现词: </span>
+                                                <span class="text" style="width:15%;">排除词: </span>
                                                 <el-input type="input" v-model="condition.mustNotWord" placeholder="排除词之间用@隔开" style="width:65%;margin-left: 1%"></el-input>
                                         </el-col>
                                         <hr size=1 style="color: #ccc;border-style:dashed;width:100%;">
@@ -192,6 +192,7 @@
 
                 service.actions.getSearchArticles(self.pager.pageSize, self.pager.currentPage, condition).then(function (data) {
                     self.searchList = data.content;
+                    console.log(self.searchList);
                     self.pager.totalElements = data.totalElements;
                 });
             },

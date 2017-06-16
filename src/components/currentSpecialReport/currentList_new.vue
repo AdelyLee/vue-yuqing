@@ -16,8 +16,14 @@
             min-width="300">
             <template scope="scope">
                 <div class = "title-content" title = "点击查看详情" style = "cursor: pointer" @click = "getChange(scope.row.id)">
-                    <img src="../../../static/img/default_avatar_male_50.gif" alt="暂无图片" >
-                    <h3 v-html="scope.row.title"></h3>
+                    <img src="../../../static/img/news_new.svg" alt="暂无图片" v-if= "scope.row.type=='新闻'" style = "height:50px;width:50px;">
+                    <img src="../../../static/img/bar_new.svg" :src="scope.row.photo" alt="暂无图片" v-if= "scope.row.type=='贴吧'" style = "height:50px;width:50px;">
+                    <img src="../../../static/img/wb_new.svg" alt="暂无图片" v-if= "scope.row.type=='微博'" style = "height:50px;width:50px;">
+                    <img src="../../../static/img/bbs_new.svg" alt="暂无图片" v-if= "scope.row.type=='论坛'" style = "height:50px;width:50px;">
+                    <h3 v-html="scope.row.title" v-if= "scope.row.type=='新闻'"></h3>
+                    <h3 v-html="scope.row.title" v-if= "scope.row.type=='贴吧'"></h3>
+                    <h3 v-html="scope.row.title" v-if= "scope.row.type=='论坛'"></h3>
+                    <h3 v-html="scope.row.author" v-if= "scope.row.type=='微博'"></h3>
                     <div class = "p-box" >
                         <p v-html = "scope.row.content" style ="text-align: left;"></p>
                     </div>

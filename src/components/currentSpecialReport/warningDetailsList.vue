@@ -8,21 +8,25 @@
                 <td>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style=" margin:0px;">
                         <tbody>
+                        <tr >
+                            <td style = "font-size: 18px;font-weight:600;border-bottom: 2px dashed #475669;padding:10px;">{{yujingDetailsList.timeChange}},您的预警方案<span style = "color:#20A0FF">[{{yujingDetailsList.subjectName}}]</span>,关键字:{{yujingDetailsList.keyWord}},新增数据<span style = "color:#FF4949">{{yujingDetailsList.totalCount}}</span>条</td>
+                        </tr>
                         <tr>
                             <td>
                                 <a  target="_blank" v-for = "item in yujingDetailsList.items" @click = "getNewPage(item.id)" >
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0"
-                                           class="line" style="padding-bottom:10px; margin-top:10px;text-decoration:none;border-bottom:1px solid #000;cursor: pointer;" title  = "点击查看详情">
+                                           class="line" style="padding-bottom:10px; margin-top:10px;text-decoration:none;border-bottom:1px solid #324057;cursor: pointer;" title  = "点击查看详情">
                                         <tbody>
                                         <tr>
-                                            <td style = "width:50px;">
-                                                <div>
-                                                    <img src="../../../static/img/default_avatar_male_50.gif" alt="暂无图片" style = "border-radius: 50%">
-                                                </div>
+                                            <td >
+                                                <img src="../../../static/img/wb_new.svg" alt="暂无图片" style = "border-radius: 50%;width:50px;height:50px;" v-if = "item.type=='微博'">
+                                                <img src="../../../static/img/bbs_new.svg" alt="暂无图片" style = "border-radius: 50%;width:50px;height:50px;" v-if = "item.type=='论坛'">
+                                                <img src="../../../static/img/news_new.svg" alt="暂无图片" style = "border-radius: 50%;width:50px;height:50px;" v-if = "item.type=='新闻'">
+                                                <img src="../../../static/img/bar_new.svg" :src = "item.photo" alt="暂无图片" style = "border-radius: 50%;width:50px;height:50px;" v-if = "item.type=='贴吧'">
                                             </td>
-                                            <td>
-                                                <h3 class="newsName" style = "color:#1F2D3D;margin-left:10px;">{{item.author}}</h3>
-                                                <p class="newsDate" style = "font-size:14px;color:#475669;"><span style = "margin-left:10px;">{{item.pubTime}}</span><span style = "margin-left:30px;">来自：{{item.source}}</span><span style = "margin-left:30px;">载体：{{item.type}}</span></p>
+                                            <td style = "text-align:left;">
+                                                <h3 class="newsName" style = "display: inline-block;color:#1F2D3D;margin-left:10px;" v-if = "item.type=='微博'">{{item.author}}</h3>
+                                                <p class="newsDate" style = "font-size:14px;color:#475669;display: inline-block;"><span style = "margin-left:10px;">{{item.pubTime}}</span><span style = "margin-left:30px;">来自：{{item.source}}</span><span style = "margin-left:30px;">载体：{{item.type}}</span></p>
                                             </td>
                                             <td style = "width:60px;height:30px;">
                                                 <span v-if="item.emotion=='正面'" style = "display:inline-block;font-weight:600;font-size:16px;text-align:center;line-height:30px;color:#13CE66;border:2px solid #13CE66;border-radius:20px;width:60px;height:30px;">{{item.emotion}}</span>
@@ -31,9 +35,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3" style = "color:#475669;font-weight:600;" v-html = "item.title">
-
-                                            </td>
+                                            <td colspan="3" style = "color:#475669;font-weight:600;" v-html = "item.title" v-if="item.type!='微博'"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="3" style = "color:#475669;background:#F9FAFC;padding:5px;" v-html="item.content">

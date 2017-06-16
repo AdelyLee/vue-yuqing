@@ -79,7 +79,6 @@
             },
             estimateSubject: function (subject) {
                 this.$refs.addForm.validate((valid) => {
-                    debugger;
                     if (valid) {
                         var data = {};
                         data.action = "estimateSubject";

@@ -43,10 +43,6 @@ body {
   width: 100%;
   height: 400px; }
 
-#netizen-option-pie {
-  width: 100%;
-  height: 400px; }
-
 #netizen-map {
   width: 100%;
   height: 400px; }
@@ -75,10 +71,6 @@ body {
   width: 100%;
   height: 320px; }
 
-#net-title-bar {
-  width: 100%;
-  height: 400px; }
-
 #currentSpecial .my-card-box {
   border: 1px solid #ccc;
   margin: 15px;
@@ -87,8 +79,7 @@ body {
     background: #fff;
     border-bottom: none; }
     #currentSpecial .my-card-box .el-card__header .clearfix {
-      text-align: left;
-      line-height: 40px; }
+      text-align: left; }
   #currentSpecial .my-card-box .my-title {
     text-align: center;
     line-height: 58px;

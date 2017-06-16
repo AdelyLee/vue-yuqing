@@ -7,28 +7,28 @@
             </el-col>
             <el-col :span="21">
                 <div class="card-body" id="content">
-                <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
-                        <el-tab-pane class="special" name="monthlyReport" value="专题管理">
-                            <span slot="label"><i class="el-icon-menu"></i> 专题管理</span>
-                            <list-subject :subjectList="subjectList" @data="getData"></list-subject>
-                            <list-page :pager="pager" @data="getPager"></list-page>
-                            <add-subject :addDialog="addDialog" :estimate="estimate" @data="getData"></add-subject>
-                            <edit-subject :editDialog="editDialog" @data="getData"></edit-subject>
-                            <add-warning :warningDialog="warningDialog" @data="getData"></add-warning>
-                        </el-tab-pane>
-                        <el-tab-pane name="specialReport" value="已生成报告">
-                            <span slot="label"><i class="el-icon-document"></i> 已生成报告</span>
-                            <div class="list-header">
-                                <div class="title">{{reportListHeader}}</div>
-                            </div>
-                            <el-row type="flex" class="row-bg" justify="space-around">
-                                <list-presentation :id="specialReport" :reportList="reportList"></list-presentation>
-                            </el-row>
-                            <list-page :pager="specialReportPager" @data="getSpecialReportPager"></list-page>
-                        </el-tab-pane>
-                    </el-tabs>
-                </el-card>
+                    <el-card class="box-card" :body-style="{ padding: '10px' }">
+                        <el-tabs v-model="activeName" @tab-click="handleClick">
+                            <el-tab-pane class="special" name="monthlyReport" value="专题管理">
+                                <span slot="label"><i class="el-icon-menu"></i> 专题管理</span>
+                                <list-subject :subjectList="subjectList" @data="getData"></list-subject>
+                                <list-page :pager="pager" @data="getPager"></list-page>
+                                <add-subject :addDialog="addDialog" :estimate="estimate" @data="getData"></add-subject>
+                                <edit-subject :editDialog="editDialog" @data="getData"></edit-subject>
+                                <add-warning :warningDialog="warningDialog" @data="getData"></add-warning>
+                            </el-tab-pane>
+                            <el-tab-pane name="specialReport" value="已生成报告">
+                                <span slot="label"><i class="el-icon-document"></i> 已生成报告</span>
+                                <div class="list-header">
+                                    <div class="title">{{reportListHeader}}</div>
+                                </div>
+                                <el-row type="flex" class="row-bg" justify="space-around">
+                                    <list-presentation :id="specialReport" :reportList="reportList"></list-presentation>
+                                </el-row>
+                                <list-page :pager="specialReportPager" @data="getSpecialReportPager"></list-page>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </el-card>
                 </div>
             </el-col>
         </el-row>
@@ -138,6 +138,9 @@
                 service.actions.deleteUserContacts(contact).then(function () {
                     self.addWaringContactsPager.currentPage = 1;
                     self.getUserContacts();
+                }).catch(error => {
+                    this.$confirm('删除记录失败！', '错误', {type: 'error'}).then(() => {
+                    });
                 });
             },
             createSubject: function (subject) {
@@ -230,11 +233,11 @@
                         this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
                             // delete the subject and get the new subject list
                             self.deleteSubject(data.subject);
-                        }).catch(() => {
                         });
                         break;
                     case 'addSubjectSubmit':
                         self.addDialog.addFormVisible = false;
+                        self.addDialog.addForm = {};
                         self.createSubject(data.subject);
                         break;
                     case 'estimateSubject':
@@ -284,12 +287,13 @@
                     case 'handleDeleteContact':
                         this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
                             self.deleteUserContacts(data.contact);
-                        }).catch(() => {
+                        }).catch(error => {
+                            this.$confirm('删除记录失败！', '错误', {type: 'error'});
                         });
                         break;
                     case 'addWarningFormSubmit':
                         data.subject.enableWarning = true;
-                        if(data.subject.warning){
+                        if (data.subject.warning) {
                             data.subject.warning.briefingType = 'SPECIAL';
                         }
                         self.editSubject(data.subject);

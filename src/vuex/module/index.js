@@ -460,9 +460,9 @@ const actions = {
         var self = this;
         var param = {
             "keyword": {
-                "mustNotWord": this.config.mustWord,
-                "mustWord": this.config.shouldWord,
-                "shouldWord": this.config.mustNotWord,
+                "mustWord": this.config.mustWord,
+                "shouldWord": this.config.shouldWord,
+                "mustNotWord": this.config.mustNotWord,
             },
             "page": {
                 "limit": 5,
@@ -481,7 +481,6 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    console.log(data);
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
@@ -505,10 +504,14 @@ const actions = {
         pageSize = pageSize == undefined ? 10 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
         var param = {
+            "date": {
+                "startDate": condition.startDate,
+                "endDate": condition.endDate,
+            },
             "keyword": {
-                "mustNotWord": this.config.mustWord,
-                "mustWord": this.config.shouldWord,
-                "shouldWord": this.config.mustNotWord,
+                "mustWord": this.config.mustWord,
+                "shouldWord": this.config.shouldWord,
+                "mustNotWord": this.config.mustNotWord,
             },
             "page": {
                 "limit": pageSize,
@@ -528,12 +531,12 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    console.log(data);
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }
+                        item.nlp.sentiment.label = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
                         item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);

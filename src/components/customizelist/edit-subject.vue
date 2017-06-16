@@ -4,7 +4,7 @@
         <el-dialog title="修改专题" v-model="editDialog.editFormVisible" :close-on-click-modal="false">
             <el-form :model="editForm" :rules="rules" ref="editForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="专题名称" prop="name">
-                    <el-input v-model="editForm.name" placeholder="请输入专题名称"></el-input>
+                    <el-input v-model="editForm.name" placeholder="请输入专题名称" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="关键词" prop="mustWord">
                     <el-input v-model="editForm.mustWord" placeholder="关键词使用@隔开"></el-input>

@@ -9,8 +9,12 @@
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
-                            <el-col :span="12"><news-list :articleData="articleTabData" @data="getData"></news-list></el-col>
-                            <el-col :span="12"><news-list :articleData="articleBbsTabData" @data="getData"></news-list></el-col>
+                            <el-col :span="12">
+                                <news-list :articleData="articleTabData" @data="getData"></news-list>
+                            </el-col>
+                            <el-col :span="12">
+                                <news-list :articleData="articleBbsTabData" @data="getData"></news-list>
+                            </el-col>
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="8">
@@ -107,7 +111,8 @@
                                 </el-card>
                             </el-col>
                         </el-row>
-                        <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType" :articles="articles" :pager="pager" @data="getData"></article-list>
+                        <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
+                                      :articles="articles" :pager="pager" @data="getData"></article-list>
                     </div>
                 </el-card>
             </el-col>
@@ -123,6 +128,7 @@
     import PieChart from '@/components/commons/charts/pie';
     import ArticleList from '@/components/index/articleList';
     import typeUtil from '../../vuex/typeUtil';
+    import dateUtil from '../../vuex/dateUtil';
     import service from '../../vuex/module/index.js';
 
     import $ from 'jquery';
@@ -130,7 +136,7 @@
     export default {
         name: 'index',
         data () {
-            var that = this;
+            var self = this;
             return {
                 activeTrendName: '近30天',
                 activeBarName: '近30天',
@@ -150,10 +156,16 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            debugger;
+                            var data = new Date();
+                            var endDate = data.getTime();
+                            endDate = dateUtil.dateUtil.formatDate(new Date(endDate), 'yyyy-MM-dd');
+                            var startDate = data.setMonth(data.getMonth() - 1);
+                            startDate = dateUtil.dateUtil.formatDate(new Date(startDate), 'yyyy-MM-dd');
+                            self.articlesCondition.startDate = startDate;
+                            self.articlesCondition.endDate = endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
-                            that.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -162,9 +174,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -173,9 +186,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -184,9 +198,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -196,8 +211,8 @@
                     events: {
                         'click': function (param) {
                             var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -206,9 +221,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -217,9 +233,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -228,9 +245,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -239,9 +257,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            that.articlesCondition.type = value;
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.type = [value];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -250,9 +269,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            self.articlesCondition = {};
                             var value = param.name;
-                            that.articlesCondition.searchKv = [{"key": "source", "value": value}];
-                            that.getArticleListByCondition(that.articlesCondition);
+                            self.articlesCondition.searchKv = [{"key": "source", "value": value}];
+                            self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
@@ -264,7 +284,9 @@
                 trendTimesType: 'month',
                 barTimesType: 'month',
                 articlesCondition: {
-                    searchKv:[],
+                    startDate: "",
+                    endDate: "",
+                    searchKv: [],
                     type: []
                 }, // 获取文章列表相关条件
                 articleType: "",
@@ -355,7 +377,7 @@
             getArticleTabList: function (type) {
                 var self = this;
                 service.actions.getArticleTabList(type).then(function (data) {
-                    if (type  == 'news') {
+                    if (type == 'news') {
                         self.articleTabData.type = type;
                         self.articleTabData.articles = data.content;
                     } else if (type == 'bbs') {
@@ -366,6 +388,7 @@
             },
             getData (data) {
                 var self = this;
+                self.articlesCondition = {};
                 switch (data.action) {
                     case 'clickArticleListPager':
                         self.pager = data.articleListPager;
@@ -430,7 +453,7 @@
         watch: {
             articles: function (val, oldVal) {
                 var self = this;
-                if (val) {
+                if (val.length > 0) {
                     self.$nextTick(function () {
                         // DOM 现在更新了
                         // `this` 绑定到当前实例

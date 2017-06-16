@@ -16,6 +16,9 @@ const actions = {
     getWarningDetailsList: function (pageSize,currentPage) {
         var self = this;
         var searchId = queryParam.utils.getQueryVariable('id');
+        var timeChange = queryParam.utils.getQueryVariable('startDate').substr(0,10)+"至"+queryParam.utils.getQueryVariable('endDate').substr(0,10);
+        var keyWord = decodeURI(queryParam.utils.getQueryVariable('keyWord'));
+        var subjectName = decodeURI(queryParam.utils.getQueryVariable('subjectName'));
         var param = {
             id:searchId,
             page: currentPage,
@@ -31,12 +34,15 @@ const actions = {
                     renderData.limits = data.size;
                     renderData.pages = data.totalPages;
                     renderData.total = data.totalElements;
+                    renderData.subjectName = subjectName;
+                    renderData.timeChange = timeChange;
+                    renderData.keyWord = keyWord;
                     var datas = data.content;
                     var seriesData = [];
                     $.each(datas, function (i, item) {
                         var node = {};
                         node.author = item.author;
-                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd hh:mm:ss");
+                        node.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), "yyyy-MM-dd");
                         node.id = item.id;
                         node.type = typeParam.typeUtil.articleType(item.type);
                         node.emotion = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
@@ -44,9 +50,8 @@ const actions = {
                         node.title = utils.utils.heightLightKeywords(item.title, 30, '...', self.heightLightWords);
                         if(item.content && item.content != null) {
                             node.content = utils.utils.heightLightKeywords(item.content, 120, '...', self.heightLightWords);
-                        }else {
-                            node.content = "暂无数据";
                         }
+                        node.photo = item.photo;
                         node.url = item.url;
                         node.site = item.site;
                         seriesData.push(node);

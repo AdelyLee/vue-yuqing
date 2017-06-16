@@ -5,8 +5,9 @@
             <el-col :span = "3">
                 <common-menu></common-menu>
             </el-col>
-            <el-col :span = "21">
+            <el-col :span = "21" :offset = "3">
                 <el-card class="box-card my-card">
+
                     <warningDetails-list :yujingDetailsList = "warningDetailsList"></warningDetails-list>
                     <list-page :pager="pager" @data="getPager"></list-page>
                 </el-card>
@@ -27,7 +28,11 @@
             return {
                 warningDetailsList:{
                     items: [],
-                    loading2: false
+                    loading2: false,
+                    totalCount:0,
+                    timeChange:"",
+                    keyWord:"",
+                    subjectName:""
                 },
                 pager: {
                     pageSize: 10,
@@ -51,6 +56,10 @@
                 service.actions.getWarningDetailsList(self.pager.pageSize, self.pager.currentPage).then(function (renderData) {
                     self.warningDetailsList.items = renderData.seriesData;
                     self.pager.totalElements = renderData.total;
+                    self.warningDetailsList.timeChange = renderData.timeChange;
+                    self.warningDetailsList.keyWord = renderData.keyWord;
+                    self.warningDetailsList.totalCount = renderData.total;
+                    self.warningDetailsList.subjectName = renderData.subjectName;
                 }, function (error) {
                     console.error('出错了', error);
                 })

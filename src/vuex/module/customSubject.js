@@ -88,7 +88,6 @@ const actions = {
     },
 
     createCustomSubject: function (subject) {
-        debugger;
         subject = util.encodeSubject(subject);
         console.log("createCustomSubject", JSON.stringify(subject));
         return new Promise(function (resolve) {
