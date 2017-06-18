@@ -32,6 +32,9 @@ const actions = {
                     });
                     data.content = subjectLst;
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -52,6 +55,9 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -59,7 +65,7 @@ const actions = {
 
     createUserContacts: function (contact) {
         console.log("addUserContacts", JSON.stringify(contact));
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/contact/',
                 contentType: "application/json; charset=utf-8",
@@ -68,13 +74,16 @@ const actions = {
                 success: function (data) {
                     console.log("create contact success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
     },
 
     deleteUserContacts: function (contact) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/contact/' + contact.id,
                 contentType: "application/json; charset=utf-8",
@@ -82,6 +91,9 @@ const actions = {
                 success: function (data) {
                     console.log("delete contact success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -90,7 +102,7 @@ const actions = {
     createCustomSubject: function (subject) {
         subject = util.encodeSubject(subject);
         console.log("createCustomSubject", JSON.stringify(subject));
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/',
                 contentType: "application/json; charset=utf-8",
@@ -99,13 +111,16 @@ const actions = {
                 success: function (data) {
                     console.log("create custom subject success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
     },
 
     deleteCustomSubject: function (subject) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/' + subject.id,
                 contentType: "application/json; charset=utf-8",
@@ -113,6 +128,9 @@ const actions = {
                 success: function (data) {
                     console.log("delete custom subject success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -121,7 +139,7 @@ const actions = {
     editCustomSubject: function (subject) {
         subject = util.encodeSubject(subject);
         console.log("editCustomSubject", JSON.stringify(subject));
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/' + subject.id,
                 contentType: "application/json; charset=utf-8",
@@ -130,13 +148,16 @@ const actions = {
                 success: function (data) {
                     console.log("edit custom subject success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
     },
 
     updateCustomSubjectReport: function (subject) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/customSubject/updateReport/' + subject.id,
                 contentType: "application/json; charset=utf-8",
@@ -144,6 +165,9 @@ const actions = {
                 success: function (data) {
                     console.log("update custom subject report success");
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -176,6 +200,9 @@ const actions = {
                         estimateCount = data[0].value;
                     }
                     resolve(estimateCount);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -196,7 +223,7 @@ const actions = {
             "type": "SPECIAL"
         };
         console.log("getSpecialReportList", JSON.stringify(param));
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/briefing/searchByUser/',
                 contentType: "application/json; charset=utf-8",
@@ -207,6 +234,9 @@ const actions = {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });
@@ -234,6 +264,9 @@ const actions = {
                         item.createTime = dateUtil.dateUtil.formatDate(new Date(item.dateCreated), 'yyyy/MM/dd');
                     });
                     resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
                 }
             });
         });

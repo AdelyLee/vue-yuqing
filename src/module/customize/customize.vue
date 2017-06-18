@@ -45,6 +45,7 @@
     import PresentationList from '@/components/presentationList/list-presentation';
 
     import service from '../../vuex/module/customSubject.js'
+    import utils from '../../vuex/utils.js'
 
     export default {
         name: 'presentationList',
@@ -117,12 +118,18 @@
                 service.actions.getCustomSubjectList(self.pager.pageSize, self.pager.currentPage).then(function (data) {
                     self.pager.totalElements = data.totalElements;
                     self.subjectList = data.content;
+                }).catch(error => {
+                    error.message = "获取专题列表失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             getUserContacts: function () {
                 var self = this;
                 service.actions.getUserContacts(self.addWaringContactsPager.pageSize, self.addWaringContactsPager.currentPage).then(function (data) {
                     self.warningDialog.contacts = data;
+                }).catch(error => {
+                    error.message = "获取用户联系人失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             createUserContacts: function (contact) {
@@ -131,7 +138,10 @@
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
                     self.getUserContacts();
-                })
+                }).catch(error => {
+                    error.message = "添加联系人失败！";
+                    utils.utils.handleError(error, self);
+                });
             },
             deleteUserContacts: function (contact) {
                 var self = this;
@@ -139,8 +149,8 @@
                     self.addWaringContactsPager.currentPage = 1;
                     self.getUserContacts();
                 }).catch(error => {
-                    this.$confirm('删除记录失败！', '错误', {type: 'error'}).then(() => {
-                    });
+                    error.message = "删除联系人失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             createSubject: function (subject) {
@@ -149,6 +159,9 @@
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
                     self.getSubjectList();
+                }).catch(error => {
+                    error.message = "添加专题失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             deleteSubject: function (subject) {
@@ -157,18 +170,27 @@
                     // 重新渲染专题列表，展示第一页数据
                     self.pager.currentPage = 1;
                     self.getSubjectList();
+                }).catch(error => {
+                    error.message = "删除专题失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             editSubject: function (subject) {
                 var self = this;
                 service.actions.editCustomSubject(subject).then(function () {
                     self.getSubjectList();
+                }).catch(error => {
+                    error.message = "编辑专题失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             updateReport: function (subject) {
                 var self = this;
                 service.actions.updateCustomSubjectReport(subject).then(function () {
                     self.getSubjectList();
+                }).catch(error => {
+                    error.message = "更新报告失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             getSpecialReportList: function () {
@@ -176,6 +198,9 @@
                 service.actions.getSpecialReportList(self.specialReportPager.pageSize, self.specialReportPager.currentPage).then(function (data) {
                     self.reportList = data.content;
                     self.specialReportPager.totalElements = data.totalElements;
+                }).catch(error => {
+                    error.message = "获取专题报告列表失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             getSpecialReport: function (subject) {
@@ -183,6 +208,9 @@
                 service.actions.getSpecialReport(self.specialReportPager.pageSize, self.specialReportPager.currentPage, subject).then(function (data) {
                     self.reportList = data.content;
                     self.specialReportPager.totalElements = data.totalElements;
+                }).catch(error => {
+                    error.message = "获取专题报告列表失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             getSubjectEstimate: function (subject) {
@@ -192,6 +220,9 @@
                     self.editDialog.editForm = {};
                     self.editDialog.editForm = subject;
                     self.estimate = data;
+                }).catch(error => {
+                    error.message = "获取专题信息预估量失败！";
+                    utils.utils.handleError(error, self);
                 });
             },
             handleClick(tab, event) {
@@ -287,8 +318,6 @@
                     case 'handleDeleteContact':
                         this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
                             self.deleteUserContacts(data.contact);
-                        }).catch(error => {
-                            this.$confirm('删除记录失败！', '错误', {type: 'error'});
                         });
                         break;
                     case 'addWarningFormSubmit':

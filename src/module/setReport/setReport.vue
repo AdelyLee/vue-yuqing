@@ -5,7 +5,7 @@
             <el-col :span="3">
                 <common-menu></common-menu>
             </el-col>
-            <el-col :span="21"  class="card-body_20">
+            <el-col :span="21" class="card-body_20">
                 <el-card class="box_card box-card">
                     <div slot="header" class="panel-height box_card">
                         <span style="line-height: 40px;"><i class="el-icon-document"></i>报告设置</span>
@@ -17,15 +17,19 @@
                             <el-form :inline="true" :model="contactForm" :rules="rules" label-width="80px"
                                      class="demo-ruleForm">
                                 <el-form-item label="联系人" prop="name" class="m_r form_item">
-                                    <el-input v-model="contactForm.name" placeholder="请输入联系人" class="input_item"></el-input>
+                                    <el-input v-model="contactForm.name" placeholder="请输入联系人"
+                                              class="input_item"></el-input>
                                 </el-form-item>
                                 <el-form-item label="邮箱" prop="account" class="form_item">
-                                    <el-input v-model="contactForm.account" placeholder="请输入联系人邮箱" class="input_item"></el-input>
+                                    <el-input v-model="contactForm.account" placeholder="请输入联系人邮箱"
+                                              class="input_item"></el-input>
                                 </el-form-item>
-                                <el-button type="primary" @click.native="createUserContacts(contactForm)" class="button_item">添加</el-button>
+                                <el-button type="primary" @click.native="createUserContacts(contactForm)"
+                                           class="button_item">添加
+                                </el-button>
                             </el-form>
                             <el-form :model="addForm" ref="addForm" label-width="100px" class="demo-ruleForm">
-                                <el-table class="teble_item" ref="multipleTable" :data="contacts" border height="200"
+                                <el-table class="table_item" ref="multipleTable" :data="contacts" border height="200"
                                           tooltip-effect="dark"
                                           style="width: 80%; margin-left: 10%"
                                           @selection-change="handleSelectionChange">
@@ -67,7 +71,9 @@
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer save_button">
-                                <el-button type="primary" @click.native="addFormSubmit(addForm)" class="button_item">保存</el-button>
+                                <el-button type="primary" @click.native="addFormSubmit(addForm)" class="button_item">
+                                    保存
+                                </el-button>
                             </div>
                         </div>
                     </div>
@@ -131,8 +137,8 @@
             };
         },
         mounted () {
-            this.getUserContacts();  //获取联系人
             this.getMonthlyReportInfo();  //获取默认参数
+            this.getUserContacts();  //获取联系人
         },
         components: {
             'common-header': Header,
@@ -200,9 +206,21 @@
                     item.type = "EMAIL";
                 });
 
-                service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
-                    self.getMonthlyReportInfo();
-                });
+                if (briefingConfig.id) {
+                    service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
+                        self.getMonthlyReportInfo();
+                    }).catch(error => {
+                        this.$confirm('修改记录失败！', '错误', {type: 'error'});
+                    });
+                } else {
+                    briefingConfig.briefingType = "MONTHLY";
+                    service.actions.createMonthlyReportSetting(briefingConfig).then(function () {
+                        self.getMonthlyReportInfo();
+                    }).catch(error => {
+                        this.$confirm('创建记录失败！', '错误', {type: 'error'});
+                    });
+                }
+
 
             },
         },
@@ -225,6 +243,22 @@
                     })
                 },
                 deep: true
+            },
+            contacts: function () {
+                var self = this;
+                var rows = [];
+                self.contacts.forEach(function (obj) {
+                    self.addForm.contacts.forEach(function (item) {
+                        if (item.id == obj.id) {
+                            rows.push(obj);
+                        }
+                    });
+                });
+                self.$nextTick(function () {
+                    // DOM 现在更新了
+                    // `this` 绑定到当前实例
+                    self.toggleSelection(rows);
+                })
             }
         }
     }

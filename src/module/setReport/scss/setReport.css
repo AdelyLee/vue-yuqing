@@ -80,7 +80,7 @@ body {
   @media screen and (min-width: 1360px) and (max-width: 1366px) {
     .content .input_item {
       width: 95%; }
-    .content .teble_item {
+    .content .table_item {
       width: 71% !important;
       margin-left: 125px !important;
       margin-top: 19px; }
@@ -136,7 +136,7 @@ body {
 .button_item {
   width: 80px; }
 
-.teble_item {
+.table_item {
   width: 74% !important;
   margin-left: 8% !important;
   margin-top: 30px; }

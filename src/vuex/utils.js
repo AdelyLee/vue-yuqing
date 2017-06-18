@@ -115,6 +115,14 @@ const utils = {
             }
         }
         return temp;
+    },
+
+    handleError: function(error, vue){
+        if (error.status == 500) {
+            vue.$confirm(error.message, '错误', {type: 'error'});
+        } else if (error.status == "400") {
+            vue.$confirm('删除记录失败！', '错误', {type: 'error'});
+        }
     }
 
 };

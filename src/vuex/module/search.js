@@ -5,6 +5,7 @@ import jquery from '../api';
 const $ = jquery.jQuery;
 import common from '../common'
 import dateUtil from '../dateUtil'
+import typeUtil from '../typeUtil'
 import utils from '../utils'
 
 const actions = {
@@ -48,6 +49,11 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
+                        item.nlp.sentiment.label = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
                         item.title = utils.utils.heightLightKeywords(item.title, 50, '...', heightLightWords);
                         item.content = utils.utils.heightLightKeywords(item.content, 140, '...', heightLightWords);
 

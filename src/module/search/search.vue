@@ -111,7 +111,7 @@
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
-                            <el-col :span="18" :offset="3">
+                            <el-col :span="22" :offset="1">
                                 <div class="article-list">
                                     <search-list :searchList="searchList" @data="getArticle"></search-list>
                                     <el-row>
@@ -186,7 +186,6 @@
                 this.getSearchArticles(self.condition);
             },
             getSearchArticles: function (condition) {
-                debugger;
                 var self = this;
                 self.pager.pageSize = self.condition.pageSize;
 

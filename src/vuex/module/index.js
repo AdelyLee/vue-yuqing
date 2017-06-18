@@ -14,11 +14,9 @@ const actions = {
 
     //近30天舆情
     getSentimentTypeChart: function () {
-        var data = new Date();
-        var endDate = data.getTime();
-        endDate = dateUtil.dateUtil.formatDate(new Date(endDate), 'yyyy-MM-dd');
-        var startDate = data.setMonth(data.getMonth() - 1);
-        startDate = dateUtil.dateUtil.formatDate(new Date(startDate), 'yyyy-MM-dd');
+        var date = new Date();
+        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var param = {
             groupName: 'nlp.sentiment.label',
             mustWord: this.config.mustWord,
@@ -26,7 +24,7 @@ const actions = {
             mustNotWord: this.config.mustNotWord,
             s_date: startDate,
             e_date: endDate,
-            articleType: ''
+            // articleType: ''
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -266,36 +264,15 @@ const actions = {
         });
     },
 
-    getCarrierAnalysisBarChart: function (timesType) {
-        var date = new Date();
-        var s_date = '', e_date = '', articleType = 'news@weibo@bbs@bar';
-        switch (timesType) {
-            case "day":
-                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-                s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
-                break;
-            case 'yesterday':
-                e_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
-                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -1), "yyyy-MM-dd");
-                break;
-            case 'nearlydays':
-                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
-                break;
-            case 'month':
-                e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-                s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
-                break;
-            default:
-                break;
-        }
+    getCarrierAnalysisBarChart: function (condition) {
+        var articleType = 'news@weibo@bbs@bar';
         var param = {
             groupName: 'type',
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            s_date: s_date,
-            e_date: e_date,
+            s_date: condition.startDate,
+            e_date: condition.endDate,
             articleType: articleType
         };
         return new Promise(function (resolve) {
@@ -353,13 +330,16 @@ const actions = {
 
     //主流媒体
     getMediaBarChart: function () {
+        var date = new Date();
+        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var param = {
             groupName: 'source',
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            s_date: "",
-            e_date: ""
+            s_date: startDate,
+            e_date: endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -452,7 +432,6 @@ const actions = {
                 }
             });
         });
-
     },
 
     //新闻列表

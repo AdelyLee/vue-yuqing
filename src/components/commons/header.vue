@@ -29,7 +29,7 @@
         name: 'header',
         data () {
             return {
-                headerText: '安全生产與情分析平台'
+                headerText: '安徽煤监局與情系统'
             }
         }
     }

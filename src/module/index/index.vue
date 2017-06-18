@@ -67,7 +67,7 @@
                             <el-col :span="16" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">主流媒体分布</span>
+                                        <span class="chart-text">近30天主流媒体分布</span>
                                     </div>
                                     <bar-chart :chartConfig="mediaBarChart"></bar-chart>
                                 </el-card>
@@ -156,15 +156,15 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            var data = new Date();
-                            var endDate = data.getTime();
-                            endDate = dateUtil.dateUtil.formatDate(new Date(endDate), 'yyyy-MM-dd');
-                            var startDate = data.setMonth(data.getMonth() - 1);
-                            startDate = dateUtil.dateUtil.formatDate(new Date(startDate), 'yyyy-MM-dd');
+                            self.articlesCondition = {};
+                            var date = new Date();
+                            var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
                             self.articlesCondition.startDate = startDate;
                             self.articlesCondition.endDate = endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            debugger;
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -174,9 +174,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeTrendChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -186,9 +184,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeTrendChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -198,9 +194,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeTrendChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -210,8 +204,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeTrendChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -221,9 +214,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeBarChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -233,9 +224,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeBarChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -245,9 +234,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeBarChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -257,9 +244,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
-                            self.articlesCondition = {};
-                            var value = typeUtil.typeUtil.encodeArticleType(param.name);
-                            self.articlesCondition.type = [value];
+                            self.getMediaTypeBarChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -270,6 +255,11 @@
                     events: {
                         'click': function (param) {
                             self.articlesCondition = {};
+                            var date = new Date();
+                            var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                            self.articlesCondition.startDate = startDate;
+                            self.articlesCondition.endDate = endDate;
                             var value = param.name;
                             self.articlesCondition.searchKv = [{"key": "source", "value": value}];
                             self.getArticleListByCondition(self.articlesCondition);
@@ -348,7 +338,8 @@
                 var self = this;
                 var width = document.getElementById('bar-tab-content').offsetWidth;
                 var chartWidth = width - 50 + "px";
-                service.actions.getCarrierAnalysisBarChart(type).then(function (option) {
+                var conditionDate = self.getConditionDate(type);
+                service.actions.getCarrierAnalysisBarChart(conditionDate).then(function (option) {
                     if (type == 'day') {
                         document.getElementById("carrierAnalysisType").style.width = chartWidth;
                         self.carrierAnalysisType.option = option;
@@ -395,6 +386,11 @@
                         break;
                     case 'showMoreArticle':
                         self.pager.currentPage = 1;
+                        var date = new Date();
+                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                        self.articlesCondition.startDate = startDate;
+                        self.articlesCondition.endDate = endDate;
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
@@ -449,6 +445,57 @@
                 }
                 this.getCarrierAnalysisBarChart(self.barTimesType);
             },
+
+            getMediaTypeTrendChartCondition: function (param) {
+                var self = this;
+                self.articlesCondition = {};
+                var dateStr = param.name;
+                var date = dateUtil.dateUtil.parseDate(dateStr);
+                var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
+                var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                self.articlesCondition.startDate = startDate;
+                self.articlesCondition.endDate = endDate;
+                var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
+                self.articlesCondition.type = [value];
+            },
+
+            getMediaTypeBarChartCondition: function (param) {
+                var self = this;
+                self.articlesCondition = {};
+                self.articlesCondition.startDate = self.getConditionDate(self.barTimesType).startDate;
+                self.articlesCondition.endDate = self.getConditionDate(self.barTimesType).endDate;
+                var value = typeUtil.typeUtil.encodeArticleType(param.name);
+                self.articlesCondition.type = [value];
+            },
+
+            getConditionDate: function (timeType) {
+                var conditionDate = {}, s_date = "", e_date = "";
+                var date = new Date();
+                switch (timeType) {
+                    case "day":
+                        e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                        s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
+                        break;
+                    case 'yesterday':
+                        e_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
+                        s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -1), "yyyy-MM-dd");
+                        break;
+                    case 'nearlydays':
+                        e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                        s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
+                        break;
+                    case 'month':
+                        e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+                        s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+                        break;
+                    default:
+                        break;
+                }
+                conditionDate.startDate = s_date;
+                conditionDate.endDate = e_date;
+
+                return conditionDate;
+            }
         },
         watch: {
             articles: function (val, oldVal) {

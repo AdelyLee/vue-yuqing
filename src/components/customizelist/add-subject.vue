@@ -65,10 +65,10 @@
                         {required: true, message: '请输入关键词', trigger: 'blur'}
                     ],
                     startDate: [
-                        { type: 'date', required: true, message: '选择专题开始时间', trigger: 'change' }
+                        { required: true, message: '选择专题开始时间', trigger: 'change' }
                     ],
                     endDate: [
-                        { type: 'date', required: true, message: '选择专题结束时间', trigger: 'change' }
+                        { required: true, message: '选择专题结束时间', trigger: 'change' }
                     ]
                 }
             }

@@ -73,7 +73,8 @@ const dateUtil = {
             case 'm' :
                 return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
             case 'M' :
-                return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, 1, 0, 0, 0);
+                // return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, 1, 0, 0, 0);
+                return new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + Number, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
             case 'y' :
                 return new Date((dtTmp.getFullYear() + Number), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
         }

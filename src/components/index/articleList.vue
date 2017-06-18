@@ -14,11 +14,11 @@
                                             <img v-if="item.type=='bbs'" :src="bbslogoSrc">
                                             <img v-if="item.type=='bar'" :src="barlogoSrc">
                                             -->
-                                            <img v-if="item.type=='news'" :src="newslogoSrc" width="30" height="27">
-                                            <img v-if="item.type=='weibo'" :src="weibologoSrc" width="30" height="27">
-                                            <img v-if="item.type=='bbs'" :src="bbslogoSrc" width="30" height="27">
-                                            <img v-if="item.type=='bar'" :src="barlogoSrc" width="30" height="27">
-                                            <img v-if="item.type=='comments'" :src="pllogoSrc" width="30" height="27">
+                                            <img v-if="item.type=='news'" :src="newslogoSrc" width="60" height="60">
+                                            <img v-if="item.type=='weibo'" :src="weibologoSrc" width="60" height="60">
+                                            <img v-if="item.type=='bbs'" :src="bbslogoSrc" width="60" height="60">
+                                            <img v-if="item.type=='bar'" :src="barlogoSrc" width="60" height="60">
+                                            <img v-if="item.type=='comments'" :src="pllogoSrc" width="60" height="60">
                                         </el-col>
                                         <el-col :span="20">
                                             <a class="a_font"><span v-html="item.title">{{item.title}}</span></a>
@@ -98,7 +98,7 @@
             },
             showDetail: function (id) {
                 window.open('../../module/detail.html?id=' + id)
-            },
+            }
         }
     }
 
