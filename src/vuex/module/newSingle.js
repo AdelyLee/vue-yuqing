@@ -22,9 +22,9 @@ const actions = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            // s_date: startDate,
-            // e_date: endDate,
-            // articleType: ''
+            s_date: startDate,
+            e_date: endDate,
+            articleType: 'news'
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -192,69 +192,7 @@ const actions = {
         });
     },
 
-    getCarrierAnalysisBarChart: function (condition) {
-        var articleType = 'news@weibo@bbs@bar';
-        var param = {
-            groupName: 'type',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
-            s_date: condition.startDate,
-            e_date: condition.endDate,
-            articleType: articleType
-        };
-        return new Promise(function (resolve) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
-                data: param,
-                type: 'get',
-                success: function (data) {
-                    var yAxisData = [], seriesData = [];
-                    if (data.length > 0) {
-                        data.reverse();
-                        data.forEach(function (item) {
-                            yAxisData.push(typeUtil.typeUtil.articleType(item.key));
-                            seriesData.push(item.value);
-                        });
-                    }
-                    var myOption = {
-                        yAxis: {
-                            data: yAxisData,
-                            axisLabel: {
-                                textStyle: {
-                                    //fontWeight: 600,
-                                    fontSize: 14
-                                }
-                            }
-                        },
-                        xAxis: {
-                            axisLabel: {
-                                textStyle: {
-                                    //fontWeight: 600,
-                                    fontSize: 14
-                                }
-                            }
-                        },
-                        series: [{
-                            name: '文章数目',
-                            type: 'bar',
-                            data: seriesData,
-                            barMaxWidth: 45,
-                            itemStyle: {
-                                normal: {
-                                    color: function (params) {
-                                        var colorList = ['#21b6b9', '#eba954', '#0092ff', '#d74e67'];
-                                        return colorList[params.dataIndex % 4]
-                                    }
-                                }
-                            }
-                        }]
-                    };
-                    resolve(myOption);
-                }
-            });
-        });
-    },
+
 
     //主流媒体
     getMediaBarChart: function () {
@@ -266,12 +204,13 @@ const actions = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            // s_date: startDate,
-            // e_date: endDate
+            s_date: startDate,
+            e_date: endDate,
+            articleType:"bbs"
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
@@ -365,15 +304,22 @@ const actions = {
 
     //新闻列表
     getArticleTabList: function (type) {
+        var date = new Date();
         var self = this;
+        var e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+        var s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
         var param = {
+          "date":{
+              "startDate":s_date,
+              "endDate":e_date
+          },
             "keyword": {
                 "mustWord": this.config.mustWord,
                 "shouldWord": this.config.shouldWord,
                 "mustNotWord": this.config.mustNotWord,
             },
             "page": {
-                "limit": 5,
+                "limit": 10,
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
@@ -413,7 +359,7 @@ const actions = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            limit:50
+            limit:30
         };
         return new Promise(function (resolve, reject) {
             $.ajax({

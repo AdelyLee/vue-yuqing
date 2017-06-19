@@ -30,12 +30,10 @@ const actions = {
             },
             "page": {
                 "limit": pageSize,
-                "orders": [
-                    {
-                        "direction": condition.direction,
-                        "orderBy": "pubTime"
-                    }
-                ],
+                "orders": [{
+                    "direction": condition.direction,
+                    "orderBy": "pubTime"
+                }],
                 "page": currentPage
             },
             "searchKv": condition.searchKv,

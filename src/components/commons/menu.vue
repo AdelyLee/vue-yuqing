@@ -71,7 +71,7 @@
                         isActive: false,
                         iconCls: 'el-icon-menu', // 图标样式class
                         children: [
-                            {path: '/module/index.html', name: '舆情分析', leaf:true, isActive: true,　menuShow: true},
+                            {path: '/module/index.html', name: '舆情分析', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/focusNews.html', name: '焦点报道', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/newSingle.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/bbsSingle.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},

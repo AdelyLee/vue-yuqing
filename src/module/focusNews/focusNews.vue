@@ -9,6 +9,23 @@
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
+                            <el-form :model="addForm" :rules="rules" ref="addForm" label-width="100px" class="demo-ruleForm">
+                            <el-form-item label="时间" required>
+                                <el-col :span="5">
+                                    <el-form-item prop="startDate">
+                                        <el-date-picker type="date" placeholder="选择开始时间" v-model="addForm.startDate" @change="setTime" style="width: 100%;"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col class="line" :span="1">-</el-col>
+                                <el-col :span="5">
+                                    <el-form-item prop="endDate">
+                                        <el-date-picker type="date" placeholder="选择结束时间" v-model="addForm.endDate" @change="setEndTime" style="width: 100%;"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                            </el-form-item>
+                            </el-form>
+                        </el-row>
+                        <el-row :gutter="15">
                             <el-col :span="24">
                                 <focus-list :articleData="articleTabData" @data="getData"></focus-list>
                             </el-col>
@@ -115,6 +132,18 @@
                 articleListId: 'article-list',
                 articleTabData:{
                     articles:[]
+                },
+                addForm: {
+                    startDate: '',
+                    endDate: ''
+                },
+                rules: {
+                    startDate: [
+                        {type: "date", required: true, message: '选择专题开始时间', trigger: 'change' }
+                    ],
+                    endDate: [
+                        {type: "date", required: true, message: '选择专题结束时间', trigger: 'change' }
+                    ]
                 }
             }
         },
@@ -128,21 +157,48 @@
             'focus-list': News
         },
         mounted () {
+            this.getTime();
             this.getArticleTabList();
             this.getSentimentTypeChart();
             this.getCarrierAnalysisChart();
             this.getHotWordCloudChart();
         },
         methods: {
+            getTime: function () {
+                var self = this;
+                var date = new Date();
+                self.addForm.startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+                self.addForm.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+            },
+            setTime: function (item) {
+                var self = this;
+                self.addForm.startDate = item;
+                self.setTimes(item,endTime)
+            },
+            setEndTime: function (item) {
+                var self = this;
+                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate);
+                self.getSentimentTypeChart(self.addForm.startDate,self.addForm.endDate);
+                self.getCarrierAnalysisChart(self.addForm.startDate,self.addForm.endDate);
+                self.getHotWordCloudChart(self.addForm.startDate,self.addForm.endDate);
+
+            },
+//            setTimes: function (item,endTime) {
+//                debugger;
+//                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate);
+//                self.getSentimentTypeChart(self.addForm.startDate,self.addForm.endDate);
+//                self.getCarrierAnalysisChart(self.addForm.startDate,self.addForm.endDate);
+//                self.getHotWordCloudChart(self.addForm.startDate,self.addForm.endDate);
+//            },
             getArticleTabList: function () {
                 var self = this;
-                service.actions.getArticleTabList().then(function (data) {
+                service.actions.getArticleTabList(self.addForm.startDate,self.addForm.endDate).then(function (data) {
                         self.articleTabData.articles = data.content;
                 });
             },
             getSentimentTypeChart: function () {
                 var self = this;
-                service.actions.getSentimentTypeChart().then(function (option) {
+                service.actions.getSentimentTypeChart(self.addForm.startDate,self.addForm.endDate).then(function (option) {
                     self.sentimentAnalysis.option = option;
                 }, function (error) {
                     console.error('出错了', error);
@@ -151,7 +207,7 @@
             },
             getHotWordCloudChart: function () {
                 var self = this;
-                service.actions.getHotWordCloudChart().then(function (renderData) {
+                service.actions.getHotWordCloudChart(self.addForm.startDate,self.addForm.endDate).then(function (renderData) {
                     self.hotWordCloud.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);
@@ -160,7 +216,7 @@
             },
             getCarrierAnalysisChart: function () {
                 var self = this;
-                service.actions.getCarrierAnalysisChart().then(function (option) {
+                service.actions.getCarrierAnalysisChart(self.addForm.startDate,self.addForm.endDate).then(function (option) {
                     self.allcarrierAnalysisMonth.option = option;
                 });
 
@@ -211,9 +267,6 @@
                 var self = this;
                 if (val.length > 0) {
                     self.$nextTick(function () {
-                        // DOM 现在更新了
-                        // `this` 绑定到当前实例
-                        // 页面滚动到指定位置
                         $('html, body').animate({
                             scrollTop: $("#article-list").offset().top
                         }, 500);

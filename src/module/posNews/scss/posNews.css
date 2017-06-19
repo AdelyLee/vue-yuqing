@@ -54,16 +54,16 @@ body {
   width: 100%;
   height: 400px; }
 
-#negNews .my-card-box {
+#posNews .my-card-box {
   border: 1px solid #ccc;
   margin: 15px;
   margin-top: 70px; }
-  #negNews .my-card-box .el-card__header {
+  #posNews .my-card-box .el-card__header {
     background: #fff;
     border-bottom: none; }
-    #negNews .my-card-box .el-card__header .clearfix {
+    #posNews .my-card-box .el-card__header .clearfix {
       text-align: left; }
-  #negNews .my-card-box .my-title {
+  #posNews .my-card-box .my-title {
     text-align: center;
     line-height: 58px;
     display: inline-block;
@@ -72,4 +72,4 @@ body {
     font-size: 20px;
     color: #000; }
 
-/*# sourceMappingURL=negNews.css.map */
+/*# sourceMappingURL=posNews.css.map */

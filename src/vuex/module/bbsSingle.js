@@ -20,14 +20,15 @@ const actions = {
         var date = new Date();
         var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
         var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+
         var param = {
             groupName: 'nlp.sentiment.label',
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            // s_date: startDate,
-            // e_date: endDate,
-            // articleType: ''
+            s_date: startDate,
+            e_date: endDate,
+            articleType: 'bbs'
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -35,6 +36,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     var seriesData = [], legend = [];
                     data.forEach(function (item) {
                         var node = {};
@@ -92,7 +94,7 @@ const actions = {
     // 载体趋势图
     getCarrierAnalysisChart: function () {
         var date = new Date();
-        var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'news';
+        var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'bbs';
         e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
         s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
         dateType = 'day';
@@ -118,7 +120,7 @@ const actions = {
                     var dataZoomStart = s_date;
                     var xAxis = [];
                     var seriesData = [];
-                    data.news.forEach(function (item) {
+                    data.bbs.forEach(function (item) {
                         var node = {};
                         node.name = item.key;
                         node.value = item.value;
@@ -132,7 +134,7 @@ const actions = {
                             trigger: 'axis'
                         },
                         legend: {
-                            data: ["新闻"]
+                            data: ["论坛"]
                         },
                         dataZoom: [{
                             startValue: dataZoomStart
@@ -172,7 +174,7 @@ const actions = {
                             }
                         },
                         series: [{
-                            name: '新闻',
+                            name: '论坛',
                             type: 'line',
                             smooth: true,
                             show: true,
@@ -195,90 +197,28 @@ const actions = {
         });
     },
 
-    getCarrierAnalysisBarChart: function (condition) {
-        var articleType = 'news@weibo@bbs@bar';
-        var param = {
-            groupName: 'type',
-            mustWord: this.config.mustWord,
-            shouldWord: this.config.shouldWord,
-            mustNotWord: this.config.mustNotWord,
-            s_date: condition.startDate,
-            e_date: condition.endDate,
-            articleType: articleType
-        };
-        return new Promise(function (resolve) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
-                data: param,
-                type: 'get',
-                success: function (data) {
-                    var yAxisData = [], seriesData = [];
-                    if (data.length > 0) {
-                        data.reverse();
-                        data.forEach(function (item) {
-                            yAxisData.push(typeUtil.typeUtil.articleType(item.key));
-                            seriesData.push(item.value);
-                        });
-                    }
-                    var myOption = {
-                        yAxis: {
-                            data: yAxisData,
-                            axisLabel: {
-                                textStyle: {
-                                    //fontWeight: 600,
-                                    fontSize: 14
-                                }
-                            }
-                        },
-                        xAxis: {
-                            axisLabel: {
-                                textStyle: {
-                                    //fontWeight: 600,
-                                    fontSize: 14
-                                }
-                            }
-                        },
-                        series: [{
-                            name: '文章数目',
-                            type: 'bar',
-                            data: seriesData,
-                            barMaxWidth: 45,
-                            itemStyle: {
-                                normal: {
-                                    color: function (params) {
-                                        var colorList = ['#21b6b9', '#eba954', '#0092ff', '#d74e67'];
-                                        return colorList[params.dataIndex % 4]
-                                    }
-                                }
-                            }
-                        }]
-                    };
-                    resolve(myOption);
-                }
-            });
-        });
-    },
 
-    //主流媒体
+    //网民观点
     getMediaBarChart: function () {
         var date = new Date();
         var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
         var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var param = {
-            groupName: 'site',
+            groupName: 'author',
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            // s_date: startDate,
-            // e_date: endDate
+            s_date: startDate,
+            e_date: endDate,
+            articleType:"bbs"
+
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/news/filterAndGroupBy.json',
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     var seriesData = [];
                     var xAxisData = [];
                     data = data.sort(function (a, b) {
@@ -296,7 +236,7 @@ const actions = {
                         },
                         xAxis: {
                             data: xAxisData,
-                            name: '媒体类型',
+                            name: '网民名称',
                             axisLine: {
                                 lineStyle: {
                                     color: '#000000'
@@ -326,7 +266,7 @@ const actions = {
                         }],
                         series: [
                             {
-                                name: '媒体名称',
+                                name: '网民名称',
                                 type: 'bar',
                                 data: seriesData,
                                 itemStyle: {
@@ -343,7 +283,7 @@ const actions = {
                                     }
                                 }
                             }, {
-                                name: '媒体名称',
+                                name: '网民名称',
                                 type: 'line',
                                 data: seriesData,
                                 itemStyle: {
@@ -376,7 +316,7 @@ const actions = {
                 "mustNotWord": this.config.mustNotWord,
             },
             "page": {
-                "limit": 5,
+                "limit":10,
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
@@ -399,6 +339,7 @@ const actions = {
                         }
                         if (item.type == 'bbs') {
                             item.source = item.author;
+                            item.title = item.content.slice(6,item.content.length);
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -420,11 +361,10 @@ const actions = {
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl +'/news/hotWords.json',
+                url: common.url.webserviceUrl +'/bbs/hotWords.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     data.sort(function (a, b) {
                         return b.score - a.score
                     });

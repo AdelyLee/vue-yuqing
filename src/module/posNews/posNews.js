@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
-import negNews from './negNews.vue'
+import posNews from './posNews.vue'
 import VueResource from 'vue-resource'
 import 'element-ui/lib/theme-default/index.css'   // 默认主题
 import '../index/scss/index.scss'
-import './scss/negNews.scss'
+import './scss/posNews.scss'
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
@@ -18,17 +18,17 @@ const router = new VueRouter({
     // base: baseUrl,
     routes: [
         {
-            path: '/negNews',
-            component: negNews
+            path: '/posNews',
+            component: posNews
         }
     ]
 })
 
 new Vue({
-    el: '#negNews',
+    el: '#posNews',
     router: router,
     template: '<home-presentation></home-presentation>',
     components: {
-        'home-presentation': negNews
+        'home-presentation': posNews
     }
 })

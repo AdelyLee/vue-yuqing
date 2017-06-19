@@ -1,5 +1,5 @@
 <template>
-    <div id="negNews">
+    <div id="posNews">
         <common-header></common-header>
         <el-row :gutter="5">
             <el-col :span="3">
@@ -61,7 +61,7 @@
     import LineBarChart from '@/components/commons/charts/line-bar';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
     import timeChange from '@/components/index/timeChange';
-    import service from '../../vuex/module/negNews.js';
+    import service from '../../vuex/module/posNews.js';
     import $ from 'jquery';
     export default {
         name: 'presentationList',
@@ -70,7 +70,7 @@
             return {
                 articleType: "",
                 articles: [],
-                Kv:["nlp.sentiment.label","NEG"],
+                Kv:["nlp.sentiment.label","POS"],
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -84,7 +84,7 @@
                 tabArticleType: "news",
                 searchKv: [{
                     "key": "nlp.sentiment.label",
-                    "value": "NEG"
+                    "value": "POS"
                 }],
                 articleTabData: {
                     type: '',
@@ -104,7 +104,7 @@
                     events: {
                         'click': function (param) {
                             var value = param.name;
-                            that.conditions.searchKv = [{"key": "source", "value": value},{"key":"nlp.sentiment.label","value":"NEG"}];
+                            that.conditions.searchKv = [{"key": "source", "value": value},{"key":"nlp.sentiment.label","value":"POS"}];
                             that.conditions.type = ["news"];
                             that.getArticleListByCondition(that.conditions);
                         }

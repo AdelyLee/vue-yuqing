@@ -20,7 +20,7 @@
                             <el-col :span="8">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">近30天舆情信息</span>
+                                        <span class="chart-text">舆情信息</span>
                                     </div>
                                     <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
                                 </el-card>
@@ -28,38 +28,9 @@
                             <el-col :span="16">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">载体趋势分析</span>
+                                        <span class="chart-text">新闻趋势分析</span>
                                     </div>
                                     <bar-chart :chartConfig="carrierAnalysisMonth"></bar-chart>
-                                    <!--<el-tabs v-model="activeTrendName" @tab-click="handleClickTrendTab"-->
-                                             <!--id="trend-tab-content">-->
-                                        <!--<el-tab-pane name="今天">-->
-                                            <!--<span slot="label"><i class="el-icon-date"></i> 今天</span>-->
-                                            <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                                <!--<bar-chart :chartConfig="carrierAnalysis"></bar-chart>-->
-                                            <!--</el-row>-->
-                                        <!--</el-tab-pane>-->
-                                        <!--<el-tab-pane name="昨天">-->
-                                            <!--<span slot="label"><i class="el-icon-date"></i> 昨天</span>-->
-                                            <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                                <!--<bar-chart v-if="activeTrendName == '昨天'"-->
-                                                           <!--:chartConfig="carrierAnalysisYesterday"></bar-chart>-->
-                                            <!--</el-row>-->
-                                        <!--</el-tab-pane>-->
-                                        <!--<el-tab-pane name="近7天">-->
-                                            <!--<span slot="label"><i class="el-icon-date"></i> 近7天</span>-->
-                                            <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                                <!--<bar-chart v-if="activeTrendName == '近7天'"-->
-                                                           <!--:chartConfig="carrierAnalysisNearlyDays"></bar-chart>-->
-                                            <!--</el-row>-->
-                                        <!--</el-tab-pane>-->
-                                        <!--<el-tab-pane name="近30天">-->
-                                            <!--<span slot="label"><i class="el-icon-date"></i> 近30天</span>-->
-                                            <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                              <!---->
-                                            <!--</el-row>-->
-                                        <!--</el-tab-pane>-->
-                                    <!--</el-tabs>-->
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -70,45 +41,12 @@
                                         <span class="chart-text">热点词云</span>
                                     </div>
                                     <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
-
-                                    <!--<el-tabs v-model="activeBarName" @tab-click="handleClickBarTab"-->
-                                    <!--id="bar-tab-content">-->
-                                    <!--<el-tab-pane name="今天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 今天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '今天'"-->
-                                    <!--:chartConfig="carrierAnalysisType"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="昨天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 昨天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '昨天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeYesterday"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近7天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近7天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '近7天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeNearlyDays"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近30天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近30天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '近30天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeMonth"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--</el-tabs>-->
-                                    <!---->
                                 </el-card>
                             </el-col>
                             <el-col :span="16" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">近30天主流媒体分布</span>
+                                        <span class="chart-text">主流媒体分布</span>
                                     </div>
                                     <bar-chart :chartConfig="mediaBarChart"></bar-chart>
                                 </el-card>
@@ -169,6 +107,7 @@
                             self.articlesCondition.endDate = endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            self.articlesCondition.type = ["news"];
                             debugger;
                             self.getArticleListByCondition(self.articlesCondition);
                         }
@@ -246,6 +185,7 @@
                             self.articlesCondition.endDate = endDate;
                             var value = param.name;
                             self.articlesCondition.searchKv = [{"key": "source", "value": value}];
+                            self.articlesCondition.type = ["news"];
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -280,7 +220,6 @@
         mounted () {
             this.getSentimentTypeChart();
             this.getCarrierAnalysisChart();
-//            this.getCarrierAnalysisBarChart(this.barTimesType);
             this.getMediaBarChart();
             this.getCommentHotKeywordsChart()
             this.getArticleTabList(this.tabArticleType);
@@ -304,31 +243,6 @@
                     console.error('出错了', error);
                 })
             },
-//            getCarrierAnalysisBarChart: function (type) {
-//                var self = this;
-//                var width = document.getElementById('bar-tab-content').offsetWidth;
-//                var chartWidth = width - 50 + "px";
-//                var conditionDate = self.getConditionDate(type);
-//                service.actions.getCarrierAnalysisBarChart(conditionDate).then(function (option) {
-//                    if (type == 'day') {
-//                        document.getElementById("carrierAnalysisType").style.width = chartWidth;
-//                        self.carrierAnalysisType.option = option;
-//                    }
-//                    if (type == 'yesterday') {
-//                        document.getElementById("carrierAnalysisTypeYesterday").style.width = chartWidth;
-//                        self.carrierAnalysisTypeYesterday.option = option;
-//                    }
-//                    if (type == 'nearlydays') {
-//                        document.getElementById("carrierAnalysisTypeNearlyDays").style.width = chartWidth;
-//                        self.carrierAnalysisTypeNearlyDays.option = option;
-//                    }
-//                    if (type == 'month') {
-//                        document.getElementById("carrierAnalysisTypeMonth").style.width = chartWidth;
-//                        self.carrierAnalysisTypeMonth.option = option;
-//                    }
-//                });
-//            },
-
             getMediaBarChart: function () {
                 var self = this;
                 service.actions.getMediaBarChart().then(function (option) {

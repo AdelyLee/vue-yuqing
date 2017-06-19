@@ -15,9 +15,14 @@ const actions = {
     // 获取高亮的词
     heightLightWords: utils.utils.getFocusHeightLightKeywords(),
     //焦点报道
-    getArticleTabList: function () {
+    getArticleTabList: function (startDate,endDate) {
+        debugger;
         var self = this;
         var param = {
+            "date": {
+                "startDate":startDate,
+                "endDate": endDate,
+            },
             "keyword": {
                 "mustWord": this.config.mustWord,
                 "shouldWord": this.config.shouldWord,
@@ -50,7 +55,7 @@ const actions = {
                             item.source = item.author;
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
-                        item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
+                        item.title = utils.utils.heightLightKeywords(item.content, 25, '...', self.heightLightWords);
                     });
                     resolve(data);
                 }
@@ -58,10 +63,10 @@ const actions = {
         });
     },
     //近30天舆情
-    getSentimentTypeChart: function () {
-        var date = new Date();
-        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+    getSentimentTypeChart: function (startDate,endDate) {
+        //var date = new Date();
+        //var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        //var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var param = {
             groupName: 'nlp.sentiment.label',
             mustWord: this.config.mustWord,
@@ -132,11 +137,11 @@ const actions = {
     },
 
     // 载体趋势图
-    getCarrierAnalysisChart: function () {
+    getCarrierAnalysisChart: function (startDate,endDate) {
         var date = new Date();
         var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'news@weibo@bbs@bar';
-            e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-            s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+            //e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+            //s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
             dateType = 'day';
             gap = '1';
 
@@ -144,8 +149,8 @@ const actions = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            s_date: s_date,
-            e_date: e_date,
+            s_date: startDate,
+            e_date: endDate,
             dateType: dateType,
             gap: gap,
             articleType: articleType
@@ -286,17 +291,17 @@ const actions = {
         });
     },
     ////关键词云
-    getHotWordCloudChart: function () {
-        var date = new Date();
-        var s_date = '', e_date = '';
-            e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-            s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+    getHotWordCloudChart: function (startDate,endDate) {
+        //var date = new Date();
+        //var s_date = '', e_date = '';
+        //    e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+        //    s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
         var param = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
-            s_date: s_date,
-            e_date: e_date,
+            s_date: startDate,
+            e_date: endDate,
             limit: 50
         };
         return new Promise(function (resolve, reject) {

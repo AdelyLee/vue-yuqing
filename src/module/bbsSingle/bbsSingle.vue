@@ -10,17 +10,14 @@
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
                             <el-col :span="24">
-                                <news-list :articleData="articleTabData" @data="getData"></news-list>
+                                <news-list :articleData="articleBbsTabData" @data="getData"></news-list>
                             </el-col>
-                            <!--<el-col :span="12">-->
-                            <!--<news-list :articleData="articleBbsTabData" @data="getData"></news-list>-->
-                            <!--</el-col>-->
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="8">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">近30天舆情信息</span>
+                                        <span class="chart-text">舆情信息</span>
                                     </div>
                                     <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
                                 </el-card>
@@ -28,38 +25,9 @@
                             <el-col :span="16">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">载体趋势分析</span>
+                                        <span class="chart-text">论坛趋势分析</span>
                                     </div>
                                     <bar-chart :chartConfig="carrierAnalysisMonth"></bar-chart>
-                                    <!--<el-tabs v-model="activeTrendName" @tab-click="handleClickTrendTab"-->
-                                    <!--id="trend-tab-content">-->
-                                    <!--<el-tab-pane name="今天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 今天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart :chartConfig="carrierAnalysis"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="昨天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 昨天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeTrendName == '昨天'"-->
-                                    <!--:chartConfig="carrierAnalysisYesterday"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近7天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近7天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeTrendName == '近7天'"-->
-                                    <!--:chartConfig="carrierAnalysisNearlyDays"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近30天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近30天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!---->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--</el-tabs>-->
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -70,50 +38,16 @@
                                         <span class="chart-text">热点词云</span>
                                     </div>
                                     <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
-
-                                    <!--<el-tabs v-model="activeBarName" @tab-click="handleClickBarTab"-->
-                                    <!--id="bar-tab-content">-->
-                                    <!--<el-tab-pane name="今天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 今天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '今天'"-->
-                                    <!--:chartConfig="carrierAnalysisType"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="昨天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 昨天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '昨天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeYesterday"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近7天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近7天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '近7天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeNearlyDays"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--<el-tab-pane name="近30天">-->
-                                    <!--<span slot="label"><i class="el-icon-date"></i> 近30天</span>-->
-                                    <!--<el-row type="flex" class="row-bg" justify="space-around">-->
-                                    <!--<bar-chart v-if="activeBarName == '近30天'"-->
-                                    <!--:chartConfig="carrierAnalysisTypeMonth"></bar-chart>-->
-                                    <!--</el-row>-->
-                                    <!--</el-tab-pane>-->
-                                    <!--</el-tabs>-->
-                                    <!---->
                                 </el-card>
                             </el-col>
                             <el-col :span="16" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">近30天主流媒体分布</span>
+                                        <span class="chart-text">热议网民</span>
                                     </div>
                                     <bar-chart :chartConfig="mediaBarChart"></bar-chart>
                                 </el-card>
                             </el-col>
-
                         </el-row>
                         <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
                                       :articles="articles" :pager="pager" @data="getData"></article-list>
@@ -123,7 +57,6 @@
         </el-row>
     </div>
 </template>
-
 <script>
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
@@ -145,16 +78,14 @@
             return {
                 activeTrendName: '近30天',
                 activeBarName: '近30天',
-                activeArticleTabName: 'news',
-                articleTabData: {
-                    type: '',
-                    articles: []
-                },
+//                articleTabData: {
+//                    type: '',
+//                    articles: []
+//                },
                 articleBbsTabData: {
                     type: '',
                     articles: []
                 },
-                tabArticleType: "news",
                 tabBbsArticleType: "bbs",
                 sentimentAnalysis: {
                     chartId: 'sentimentAnalysis',
@@ -169,6 +100,7 @@
                             self.articlesCondition.endDate = endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
+                            self.articlesCondition.type=["bbs"];
                             debugger;
                             self.getArticleListByCondition(self.articlesCondition);
                         }
@@ -246,6 +178,7 @@
                             self.articlesCondition.endDate = endDate;
                             var value = param.name;
                             self.articlesCondition.searchKv = [{"key": "source", "value": value}];
+                            self.articlesCondition.type=["bbs"];
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
@@ -283,7 +216,7 @@
 //            this.getCarrierAnalysisBarChart(this.barTimesType);
             this.getMediaBarChart();
             this.getCommentHotKeywordsChart()
-            this.getArticleTabList(this.tabArticleType);
+//            this.getArticleTabList(this.tabArticleType);
             this.getArticleTabList(this.tabBbsArticleType);
         },
         methods: {
@@ -338,6 +271,7 @@
             getArticleTabList: function (type) {
                 var self = this;
                 service.actions.getArticleTabList(type).then(function (data) {
+                    debugger;
                     if (type == 'news') {
                         self.articleTabData.type = type;
                         self.articleTabData.articles = data.content;
