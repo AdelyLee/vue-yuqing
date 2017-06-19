@@ -82,8 +82,6 @@
             }
         },
         mounted () {
-            debugger;
-            console.log(this.dialogFormVisible)
         },
         methods:{
             turnPassword:function(){
