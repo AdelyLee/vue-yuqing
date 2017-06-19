@@ -53,7 +53,7 @@
         },
         methods: {
             searchWarningId:function(a,b){
-               window.open('../module/warningList.html?id='+b.id+'&subjectName='+b.subjectName+'&keyWord='+b.keyWord+'&startDate='+b.startDate+'&endDate='+b.endDate)
+               window.open('../module/warningList.html?id='+b.id)
             }
         }
     }

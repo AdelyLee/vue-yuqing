@@ -28,23 +28,23 @@ const searchData = {
         return search;
     }
 }
-const actions = {
-    // 获取关键词
-    config: utils.utils.getUserBaseKeyword(),
 
+const actions = {
     // 获取高亮的词
     heightLightWords: utils.utils.getCustomSubjectHeightLightKeywords(),
+
+    //获取专题关键词和时间
+    getCustomSubjectConfig:utils.utils.getCustomSubjectConfig(),
     //情感分析饼图
     getNewsEmotionPieChart: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'nlp.sentiment.label',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate,
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate,
             articleType:'news@weibo@bar@bbs'
         };
         return new Promise(function (resolve, reject) {
@@ -53,85 +53,82 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        // 拼装 chart option
-                        var seriesData = [];
-                        var lengeds = [];
-                        $.each(data, function (i, item) {
-                            var node = {};
-                            node.name = typeParam.typeUtil.sentimentType(item.key);
-                            node.value = item.value;
-                            seriesData.push(node);
-                            lengeds.push(node.name)
-                        })
-                        var option = {
-                            tooltip: {
-                                trigger: 'item',
-                                formatter: "{a} <br/>{b}: {c} ({d}%)"
-                            },
-                            legend: {
-                                orient: 'vertical',
-                                x: 'right',
-                                data: lengeds
-                            },
-                            series: [
-                                {
-                                    name: '情感类型',
-                                    type: 'pie',
-                                    radius: ['30%', '55%'],
-                                    itemStyle: {
-                                        normal: {
-                                            color: function(params) {
-                                                if(params.name == '正面'){
-                                                    var color= ['#0092ff'];
-                                                    return color
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var lengeds = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        node.name = typeParam.typeUtil.sentimentType(item.key);
+                        node.value = item.value;
+                        seriesData.push(node);
+                        lengeds.push(node.name)
+                    })
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            x: 'right',
+                            data: lengeds
+                        },
+                        series: [
+                            {
+                                name: '情感类型',
+                                type: 'pie',
+                                radius: ['30%', '55%'],
+                                itemStyle: {
+                                    normal: {
+                                        color: function(params) {
+                                            if(params.name == '正面'){
+                                                var color= ['#0092ff'];
+                                                return color
 
-                                                }else if(params.name == '中性'){
-                                                    var color= ['#eba954'];
-                                                    return color
-                                                }else if(params.name == '负面'){
-                                                    var color= ['#d74e67'];
-                                                    return color
+                                            }else if(params.name == '中性'){
+                                                var color= ['#eba954'];
+                                                return color
+                                            }else if(params.name == '负面'){
+                                                var color= ['#d74e67'];
+                                                return color
 
-                                                }
                                             }
                                         }
-                                    },
-                                    label: {
-                                        normal: {
-                                            show: true,
-                                            // position: 'center',
-                                            textStyle: {
-                                                fontSize: 20
-                                            }
+                                    }
+                                },
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        // position: 'center',
+                                        textStyle: {
+                                            fontSize: 20
                                         }
-                                    },
-                                    labelLine: {
-                                        normal: {
-                                            show: true
-                                        }
-                                    },
-                                    data: seriesData
-                                }
-                            ]
-                        };
-                        resolve(option);
-                    }
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: true
+                                    }
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    };
+                    resolve(option);
                 }
             });
         });
     },
     //载体分析饼图
     getArticleTypeChart: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'type',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate
         }
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -139,67 +136,64 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        // 拼装 chart option
-                        var seriesData = [];
-                        var legendData = [];
-                        $.each(data, function (i, item) {
-                            var node = {};
-                            node.name = typeParam.typeUtil.articleType(item.key);
-                            node.value = item.value;
-                            seriesData.push(node);
-                            legendData.push(node.name);
-                        });
-                        var option = {
-                            tooltip: {
-                                trigger: 'item',
-                                formatter: "{a} <br/>{b}: {c} ({d}%)"
-                            },
-                            legend: {
-                                orient: 'vertical',
-                                x: 'right',
-                                data:legendData
-                            },
-                            color: [
-                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                            ],
-                            series: [
-                                {
-                                    name: '媒体类型',
-                                    type: 'pie',
-                                    radius: [0,'55%'],
-                                    // roseType: 'area',
-                                    label: {
-                                        normal: {
-                                            show: true,
-                                            textStyle: {
-                                                fontSize: 20
-                                            }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var legendData = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        node.name = typeParam.typeUtil.articleType(item.key);
+                        node.value = item.value;
+                        seriesData.push(node);
+                        legendData.push(node.name);
+                    });
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            x: 'right',
+                            data:legendData
+                        },
+                        color: [
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                        ],
+                        series: [
+                            {
+                                name: '媒体类型',
+                                type: 'pie',
+                                radius: [0,'55%'],
+                                // roseType: 'area',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: 20
                                         }
-                                    },
-                                    data: seriesData
-                                }
-                            ]
-                        };
-                        resolve(option);
-                    }
+                                    }
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    };
+                    resolve(option);
                 }
             });
         });
     },
     //主流媒体柱图
     getMediaBarChart: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'source',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -207,82 +201,80 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        var renderData = {};
-                        var seriesData = [];
-                        var xAxisData = [];
-                        data = data.sort(function (a, b) {
-                            return b.value - a.value;
-                        });
-                        $.each(data, function (i, item) {
-                            seriesData.push(item.value);
-                            xAxisData.push(item.key.slice(0, 10));
-                        });
-                        var option = {
-                            legend: {},
-                            grid: {
-                                top: 20,
-                                bottom: 100,
-                                left: 100
-                            },
-                            yAxis: {
-                                axisLabel: {
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 14
-                                    }
+                    var renderData = {};
+                    var seriesData = [];
+                    var xAxisData = [];
+                    data = data.sort(function (a, b) {
+                        return b.value - a.value;
+                    });
+                    $.each(data, function (i, item) {
+                        seriesData.push(item.value);
+                        xAxisData.push(item.key.slice(0, 10));
+                    });
+                    var option = {
+                        legend: {},
+                        grid: {
+                            top: 20,
+                            bottom: 100,
+                            left: 100
+                        },
+                        yAxis: {
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 }
+                            }
 
-                            },
-                            barMaxWidth:30,
-                            xAxis: {
-                                data: xAxisData,
-                                axisLabel: {
-                                    interval: 0,
-                                    rotate: 30,
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 14
-                                    }
+                        },
+                        barMaxWidth:30,
+                        xAxis: {
+                            data: xAxisData,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 30,
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
                                 }
-                            },
-                            series: [
-                                {
-                                    name: '媒体名称',
-                                    type: 'bar',
-                                    data: seriesData,
-                                    itemStyle: {
-                                        normal: {
-                                            color: function (params) {
-                                                // build a color map as your need.
-                                                var colorList = [
-                                                    '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                                                ];
-                                                return colorList[params.dataIndex % 15]
-                                            }
-                                        }
-                                    }
-                                }, {
-                                    name: '媒体名称',
-                                    type: 'line',
-                                    data: seriesData,
-                                    itemStyle: {
-                                        normal: {
-                                            color: '#C1232B'
-                                        }
-                                    },
-                                    lineStyle: {
-                                        normal: {
-                                            color: '#C1232B'
+                            }
+                        },
+                        series: [
+                            {
+                                name: '媒体名称',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
                                         }
                                     }
                                 }
-                            ]
-                        }
-                        resolve(option);
+                            }, {
+                                name: '媒体名称',
+                                type: 'line',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                }
+                            }
+                        ]
                     }
+                    resolve(option);
                 }
             });
         });
@@ -290,15 +282,14 @@ const actions = {
     },
     //趋势图
     getMediaReportTrendBar: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var articleType = 'news@weibo@bbs@bar';
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate,
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate,
             dateType: "day",
             articleType: articleType
         };
@@ -308,149 +299,146 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        var xAxis = [];
-                        var seriesData = {news: [], weibo: [], bbs: [], bar: []};
-                        var articleTypeArray = articleType.split("@");
-                        articleTypeArray.forEach(function (type) {
-                            data[type].forEach(function (item) {
-                                if (type == 'news') {
-                                    xAxis.push(item.key);
-                                }
-                                seriesData[type].push(item.value);
-                            });
+                    var xAxis = [];
+                    var seriesData = {news: [], weibo: [], bbs: [], bar: []};
+                    var articleTypeArray = articleType.split("@");
+                    articleTypeArray.forEach(function (type) {
+                        data[type].forEach(function (item) {
+                            if (type == 'news') {
+                                xAxis.push(item.key);
+                            }
+                            seriesData[type].push(item.value);
                         });
-                        var myOption = {
-                            tooltip: {
-                                trigger: 'axis'
-                            },
-                            legend: {
-                                data: ["新闻", "微博", "论坛", "贴吧"]
-                            },
-                            dataZoom: [{
-                                startValue: mySearch.startDate
-                            }, {
-                                type: 'inside'
-                            }],
-                            grid: {
-                                bottom: '40',
-                                containLabel: true
-                            },
-                            xAxis: {
-                                type: 'category',
-                                name: '时间',
-                                data: xAxis,
-                                boundaryGap: false,
-                                splitLine: {
-                                    show: true,
-                                    interval: 'auto',
-                                },
-                                axisTick: {
-                                    show: false
-                                },
-                                axisLabel: {
-                                    // margin: 10,
-                                    textStyle: {
-                                        fontSize: 16
-                                    }
-                                }
-                            },
-                            yAxis: {
-                                type: 'value',
-                                name: '数量',
-                                axisTick: {
-                                    show: false
-                                },
-                                axisLabel: {
-                                    margin: 10,
-                                    textStyle: {
-                                        fontSize: 16
-                                    }
-                                }
-                            },
-                            series: [{
-                                name: '新闻',
-                                type: 'line',
-                                smooth: true,
+                    });
+                    var myOption = {
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ["新闻", "微博", "论坛", "贴吧"]
+                        },
+                        dataZoom: [{
+                            startValue: self.getCustomSubjectConfig.startDate
+                        }, {
+                            type: 'inside'
+                        }],
+                        grid: {
+                            bottom: '40',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            name: '时间',
+                            data: xAxis,
+                            boundaryGap: false,
+                            splitLine: {
                                 show: true,
-                                data: seriesData.news,
-                                itemStyle: {
-                                    normal: {
-                                        color: '#fc7f7d'
-                                    }
-                                },
-                                lineStyle: {
-                                    normal: {
-                                        width: 3
-                                    }
+                                interval: 'auto',
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                // margin: 10,
+                                textStyle: {
+                                    fontSize: 16
                                 }
-                            }, {
-                                name: '微博',
-                                type: 'line',
-                                smooth: true,
-                                symbolSize: 6,
-                                data: seriesData.weibo,
-                                itemStyle: {
-                                    normal: {
-                                        color: '#efee55'
-                                    }
-                                },
-                                lineStyle: {
-                                    normal: {
-                                        width: 3
-                                    }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '数量',
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                margin: 10,
+                                textStyle: {
+                                    fontSize: 16
                                 }
-                            }, {
-                                name: '论坛',
-                                type: 'line',
-                                smooth: true,
-                                symbolSize: 6,
-                                data: seriesData.bbs,
-                                itemStyle: {
-                                    normal: {
-                                        color: '#4fa8e4'
-                                    }
-                                },
-                                lineStyle: {
-                                    normal: {
-                                        width: 3
-                                    }
+                            }
+                        },
+                        series: [{
+                            name: '新闻',
+                            type: 'line',
+                            smooth: true,
+                            show: true,
+                            data: seriesData.news,
+                            itemStyle: {
+                                normal: {
+                                    color: '#fc7f7d'
                                 }
-                            }, {
-                                name: '贴吧',
-                                type: 'line',
-                                smooth: true,
-                                symbolSize: 6,
-                                data: seriesData.bar,
-                                itemStyle: {
-                                    normal: {
-                                        color: '#e679cc'
-                                    }
-                                },
-                                lineStyle: {
-                                    normal: {
-                                        width: 3
-                                    }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
                                 }
-                            }]
-                        };
-                        resolve(myOption);
-                    }
+                            }
+                        }, {
+                            name: '微博',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.weibo,
+                            itemStyle: {
+                                normal: {
+                                    color: '#efee55'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '论坛',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bbs,
+                            itemStyle: {
+                                normal: {
+                                    color: '#4fa8e4'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }, {
+                            name: '贴吧',
+                            type: 'line',
+                            smooth: true,
+                            symbolSize: 6,
+                            data: seriesData.bar,
+                            itemStyle: {
+                                normal: {
+                                    color: '#e679cc'
+                                }
+                            },
+                            lineStyle: {
+                                normal: {
+                                    width: 3
+                                }
+                            }
+                        }]
+                    };
+                    resolve(myOption);
                 }
             });
         });
     },
     //网民话题柱图
     getNetionTitleBar: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'title.raw',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -459,95 +447,92 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        var renderData = {};
-                        data.sort(function (a, b) {
-                            return a.value - b.value;
-                        });
-                        var new_data = [];
-                        if (data.length > 6) {
-                            new_data = data.slice(0, 6);
-                        } else {
-                            new_data = data;
-                        }
-                        // 拼装 chart option
-                        var seriesData = [];
-                        var yAxisData = [];
-                        $.each(new_data, function (i, item) {
-                            seriesData.push(item.value);
-                            yAxisData.push(item.key);
-                        });
-                        var option = {
-                            legend: {},
-                            yAxis: {
-                                type: 'category',
-                                data: yAxisData,
-                                axisLabel: {
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 14
-                                    },
-                                    formatter: function (value, index) {
-                                        return value.length > 10 ? value.substr(0, 10) + "..." : value;
-                                    }
+                    var renderData = {};
+                    data.sort(function (a, b) {
+                        return a.value - b.value;
+                    });
+                    var new_data = [];
+                    if (data.length > 6) {
+                        new_data = data.slice(0, 6);
+                    } else {
+                        new_data = data;
+                    }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    var yAxisData = [];
+                    $.each(new_data, function (i, item) {
+                        seriesData.push(item.value);
+                        yAxisData.push(item.key);
+                    });
+                    var option = {
+                        legend: {},
+                        yAxis: {
+                            type: 'category',
+                            data: yAxisData,
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
+                                },
+                                formatter: function (value, index) {
+                                    return value.length > 10 ? value.substr(0, 10) + "..." : value;
                                 }
-                            },
-                            grid: {
-                                top:'10',
-                                left:'10',
-                                right:'10',
-                                bottom: '50',
-                                containLabel: true
-                            },
-                            xAxis: {
-                                type: 'value',
-                                axisLabel: {
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 16
-                                    }
+                            }
+                        },
+                        grid: {
+                            top:'10',
+                            left:'10',
+                            right:'10',
+                            bottom: '50',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 16
                                 }
-                            },
-                            barMaxWidth:30,
-                            series: [
-                                {
-                                    name: '网民话题',
-                                    type: 'bar',
-                                    data: seriesData,
-                                    itemStyle: {
-                                        normal: {
-                                            color: function (params) {
-                                                // build a color map as your need.
-                                                var colorList = [
-                                                    '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                                                ];
-                                                return colorList[params.dataIndex % 15]
-                                            }
+                            }
+                        },
+                        barMaxWidth:30,
+                        series: [
+                            {
+                                name: '网民话题',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
                                         }
                                     }
                                 }
-                            ]
-                        };
-                        renderData.option = option;
-                        resolve(renderData);
-                    }
+                            }
+                        ]
+                    };
+                    renderData.option = option;
+                    resolve(renderData);
                 }
             });
         });
     },
     //热议网民柱图
     getNetizenConsensusBar: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'author',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -555,90 +540,88 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        var renderData = {};
-                        var seriesData = [];
-                        var xAxisData = [];
-                        data = data.sort(function (a, b) {
-                            return b.value - a.value;
-                        });
-                        $.each(data, function (i, item) {
-                            if (item.key != "") {
-                                seriesData.push(item.value);
-                                xAxisData.push(item.key);
+                    debugger;
+                    var renderData = {};
+                    var seriesData = [];
+                    var xAxisData = [];
+                    data = data.sort(function (a, b) {
+                        return b.value - a.value;
+                    });
+                    $.each(data, function (i, item) {
+                        if (item.key != "") {
+                            seriesData.push(item.value);
+                            xAxisData.push(item.key);
+                        }
+                    });
+                    var option = {
+                        legend: {},
+                        grid: {
+                            top:10,
+                            left: 80,
+                            right:60,
+                            bottom: 100
+                        },
+                        yAxis: {
+                            axisLabel: {
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
+                                }
                             }
-                        });
-                        var option = {
-                            legend: {},
-                            grid: {
-                                top:10,
-                                left: 80,
-                                right:60,
-                                bottom: 100
-                            },
-                            yAxis: {
-                                axisLabel: {
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 14
-                                    }
-                                }
 
-                            },
-                            barMaxWidth:30,
-                            xAxis: {
-                                data: xAxisData,
-                                axisLabel: {
-                                    interval: 0,
-                                    rotate: 35,
-                                    textStyle: {
-                                        fontWeight: 600,
-                                        fontSize: 14
-                                    },
-                                    formatter: function (value, index) {
-                                        return value.length > 6 ? value.substr(0, 6) + "..." : value;
-                                    }
+                        },
+                        barMaxWidth:30,
+                        xAxis: {
+                            data: xAxisData,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 35,
+                                textStyle: {
+                                    fontWeight: 600,
+                                    fontSize: 14
+                                },
+                                formatter: function (value, index) {
+                                    return value.length > 6 ? value.substr(0, 6) + "..." : value;
                                 }
-                            },
-                            series: [
-                                {
-                                    name: '热议网民',
-                                    type: 'bar',
-                                    data: seriesData,
-                                    itemStyle: {
-                                        normal: {
-                                            color: function (params) {
-                                                // build a color map as your need.
-                                                var colorList = [
-                                                    '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                                                ];
-                                                return colorList[params.dataIndex % 15]
-                                            }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '热议网民',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
                                         }
                                     }
                                 }
-                            ]
-                        };
-                        renderData.option = option;
-                        resolve(renderData);
-                    }
+                            }
+                        ]
+                    };
+                    renderData.option = option;
+                    resolve(renderData);
                 }
             });
         });
     },
     //网民地图分布
     getNetizenMap: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             groupName: 'area',
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate
         };
         debugger;
         return new Promise(function (resolve, reject) {
@@ -702,14 +685,13 @@ const actions = {
     },
     //关键词云
     getKeywordsChart: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
-            mustWord: mySearch.mustWord,
-            shouldWord: mySearch.shouldWord,
-            mustNotWord: mySearch.mustNotWord,
-            s_date: mySearch.startDate,
-            e_date: mySearch.endDate,
+            mustWord: self.getCustomSubjectConfig.mustWord,
+            shouldWord: self.getCustomSubjectConfig.shouldWord,
+            mustNotWord: self.getCustomSubjectConfig.mustNotWord,
+            s_date: self.getCustomSubjectConfig.startDate,
+            e_date: self.getCustomSubjectConfig.endDate,
             limit: 50
         };
         return new Promise(function (resolve, reject) {
@@ -718,39 +700,36 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        data.sort(function (a, b) {
-                            return b.value - a.value
-                        });
-                        var renderData = {};
-                        var seriesData = [];
-                        $.each(data, function (i, item) {
-                            var node = {};
-                            node.keyword = item.key;
-                            node.score = item.value;
-                            seriesData.push(node);
-                        });
-                        renderData.option = {"data": seriesData};
-                        resolve(renderData);
-                    }
+                    data.sort(function (a, b) {
+                        return b.value - a.value
+                    });
+                    var renderData = {};
+                    var seriesData = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        node.keyword = item.key;
+                        node.score = item.value;
+                        seriesData.push(node);
+                    });
+                    renderData.option = {"data": seriesData};
+                    resolve(renderData);
                 }
             });
         });
     },
     //网民观点饼图
     getNetizenOptions: function () {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
+                "endDate": self.getCustomSubjectConfig.endDate,
+                "startDate": self.getCustomSubjectConfig.startDate
             },
             "groupBy": "",
             "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
+                "mustNotWord": self.getCustomSubjectConfig.mustNotWord,
+                "mustWord": self.getCustomSubjectConfig.mustWord,
+                "shouldWord": self.getCustomSubjectConfig.shouldWord
             },
             "type": ""
         }
@@ -761,53 +740,51 @@ const actions = {
                 contentType: 'application/json;charset=utf-8',
                 type: 'post',
                 success: function (data) {
-                    if(data && data.length > 0) {
-                        // 拼装 chart option
-                        var seriesData = [];
-                        $.each(data, function (i, item) {
-                            var node = {};
-                            node.name = item.key;
-                            node.value = item.value;
-                            seriesData.push(node);
-                        });
-                        var option = {
-                            tooltip: {
-                                trigger: 'item',
-                                formatter: "{a} <br/>{b}: {c} ({d}%)"
-                            },
-                            legend: {
-                                show:false,
-                                orient: 'vertical',
-                                x: 'right'
-                            },
-                            color: [
-                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
-                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
-                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                            ],
-                            series: [
-                                {
-                                    name: '网民观点',
-                                    type: 'pie',
-                                    radius: [0,'55%'],
-                                    // roseType: 'area',
-                                    label: {
-                                        normal: {
-                                            show: true,
-                                            textStyle: {
-                                                fontSize: 20
-                                            },
-                                            formatter:function(param) {
-                                                return param.name.length>5?param.name.substr(0,5)+"...":param.name;
-                                            }
+                    // 拼装 chart option
+                    var seriesData = [];
+                    $.each(data, function (i, item) {
+                        var node = {};
+                        node.name = item.key;
+                        node.value = item.value;
+                        seriesData.push(node);
+                    });
+                    var option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            show:false,
+                            orient: 'vertical',
+                            x: 'right'
+                        },
+                        color: [
+                            '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                            '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                            '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                        ],
+                        series: [
+                            {
+                                name: '网民观点',
+                                type: 'pie',
+                                radius: [0,'55%'],
+                                // roseType: 'area',
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: 20
+                                        },
+                                        formatter:function(param) {
+                                            return param.name.length>5?param.name.substr(0,5)+"...":param.name;
                                         }
-                                    },
-                                    data: seriesData
-                                }
-                            ]
-                        };
-                        resolve(option);
-                    }
+                                    }
+                                },
+                                data: seriesData
+                            }
+                        ]
+                    };
+                    resolve(option);
                 }
             });
         });
@@ -815,8 +792,6 @@ const actions = {
     //信息列表
     getmylist : function (searchParam,pageSize, currentPage) {
         var self = this;
-        var mySearch = {};
-        mySearch = searchData.searchParam();
         var param = {
             "date": {
                 "endDate": searchParam.endDate,
@@ -824,9 +799,9 @@ const actions = {
             },
             "filed": searchParam.filed,
             "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord+"@"+searchParam.searchWord,
-                "shouldWord": mySearch.shouldWord
+                "mustNotWord": self.getCustomSubjectConfig.mustNotWord,
+                "mustWord": self.getCustomSubjectConfig.mustWord+"@"+searchParam.searchWord,
+                "shouldWord": self.getCustomSubjectConfig.shouldWord
             },
             "page": {
                 "limit": pageSize,
@@ -964,18 +939,17 @@ const actions = {
     },
     //点击情感分析饼图,热议网民柱图,网民话题柱图,网站来源饼图,载体类型饼图,弹出列表
     getArticleList: function (conditions,pageSize,currentPage) {
-        var mySearch = {};
-        mySearch = searchData.searchParam();
+        var self = this;
         var param = {
             "date": {
-                "endDate": mySearch.endDate,
-                "startDate": mySearch.startDate
+                "endDate": self.getCustomSubjectConfig.endDate,
+                "startDate": self.getCustomSubjectConfig.startDate
             },
             "filed": "",
             "keyword": {
-                "mustNotWord": mySearch.mustNotWord,
-                "mustWord": mySearch.mustWord,
-                "shouldWord": mySearch.shouldWord
+                "mustNotWord": self.getCustomSubjectConfig.mustNotWord,
+                "mustWord": self.getCustomSubjectConfig.mustWord,
+                "shouldWord": self.getCustomSubjectConfig.shouldWord
             },
             "page": {
                 "limit": pageSize,
@@ -988,6 +962,7 @@ const actions = {
             "searchKv": conditions.searchKv,
             "type": conditions.type
         }
+        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
@@ -995,6 +970,7 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
+                    debugger;
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {

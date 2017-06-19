@@ -87,11 +87,11 @@ const actions = {
     },
 
     // 载体趋势图
-    getCarrierAnalysisChart: function (timesType) {
+    getMediaTypeTrendChart: function (timesType) {
         var date = new Date();
         var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'news@weibo@bbs@bar';
         switch (timesType) {
-            case "day":
+            case "today":
                 e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                 s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
                 dateType = 'hour';
@@ -103,13 +103,13 @@ const actions = {
                 dateType = 'hour';
                 gap = 5;
                 break;
-            case 'nearlydays':
+            case 'nearly':
                 e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                 s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
                 dateType = 'day';
                 gap = '1';
                 break;
-            case 'month':
+            case 'monthly':
                 e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                 s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
                 dateType = 'day';
@@ -264,7 +264,7 @@ const actions = {
         });
     },
 
-    getCarrierAnalysisBarChart: function (condition) {
+    getMediaTypeBarChart: function (condition) {
         var articleType = 'news@weibo@bbs@bar';
         var param = {
             groupName: 'type',

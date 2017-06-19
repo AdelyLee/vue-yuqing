@@ -47,7 +47,7 @@ const utils = {
     getUserBaseKeyword: function () {
         var config = {};
         $.ajax({
-            url: common.url.webserviceUrl + '/keywords/findByUser/',
+            url: common.url.webserviceUrl + '/keywords/findByType/?type=BASIC',
             type: 'get',
             async: false,
             success: function (data) {
@@ -57,14 +57,31 @@ const utils = {
 
         return config;
     },
+    //获取报道关键词
+    getfocusKeyword: function () {
+        var focusConfig = {};
+        $.ajax({
+            url: common.url.webserviceUrl + '/keywords/findByType/?type=FOCUS',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                focusConfig = data;
+            }
+        });
 
+        return focusConfig;
+    },
     getBaseHeightLightKeywords: function () {
         var config = this.getUserBaseKeyword();
 
         return config.mustWord + "@" + config.shouldWord;
     },
+    getFocusHeightLightKeywords: function () {
+        var focusConfig = this.getfocusKeyword();
 
-    getCustomSubjectHeightLightKeywords: function(){
+        return focusConfig.mustWord + "@" + focusConfig.shouldWord;
+    },
+    getCustomSubjectHeightLightKeywords: function () {
         var config = this.getCustomSubjectConfig();
 
         return config.mustWord + "@" + config.shouldWord;
@@ -117,13 +134,30 @@ const utils = {
         return temp;
     },
 
-    handleError: function(error, vue){
+    handleError: function (error, vue) {
         if (error.status == 500) {
             vue.$confirm(error.message, '错误', {type: 'error'});
         } else if (error.status == "400") {
             vue.$confirm('删除记录失败！', '错误', {type: 'error'});
         }
+    },
+
+    preSubjectValidateDate: function (subject) {
+        var date = {};
+        if (typeof subject.startDate === "string") {
+            date.startDate = dateUtil.dateUtil.parseDate(subject.startDate);
+        } else {
+            date.startDate = subject.startDate;
+        }
+        if (typeof subject.endDate === "string") {
+            date.endDate = dateUtil.dateUtil.parseDate(subject.endDate);
+        } else {
+            date.endDate = subject.endDate;
+        }
+
+        return date;
     }
+
 
 };
 

@@ -152,7 +152,6 @@
     import warningListData from '@/components/currentSpecialReport/warningList';
     import yujingPagerData from '@/components/commons/paging';
     import service from '../../vuex/module/currentSpecialReport.js';
-    import dateUtil from '../../vuex/dateUtil';
     import typeUtil from '../../vuex/typeUtil';
     import $ from 'jquery';
     export default {
@@ -328,6 +327,16 @@
         },
         mounted () {
             this.getmylist();
+//            this.getNewsEmotionPieChart();//情感类型分析饼图
+//            this.getArticleTypeChart();   //新闻载体分析饼图
+//            this.getMediaBarChart();        //主流媒体
+//            this.getMediaReportTrendBar();//媒体报道走势柱图
+//            this.getNetionTitleBar();//网民舆论热点柱图
+//            this.getNetizenConsensusBar();//热议网民柱图
+//            this.getNetizenMap();//网民地图分布
+//            this.getKeywordsChart();//热点词云
+//            this.getNetizenOptions();//网民观点饼图
+//            this.getWarningListData();
         },
         methods: {
             getArticleData: function (data) {

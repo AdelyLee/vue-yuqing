@@ -13,7 +13,7 @@
                     <div class="card-body">
                         <div class="model">
                             <!--<span class="close" @click="close()"><i class="el-icon-circle-cross"></i></span>-->
-                            <p class="pTitle">报告设置</p>
+                            <p class="pTitle">周报设置</p>
                             <el-form :inline="true" :model="contactForm" :rules="rules" label-width="80px"
                                      class="demo-ruleForm">
                                 <el-form-item label="联系人" prop="name" class="m_r form_item">
@@ -46,7 +46,7 @@
                                     </el-table-column>
                                 </el-table>
                                 <el-form-item class="pager pager_m_b">
-                                    <list-page :pager="pager"></list-page>
+                                    <list-page :pager="pager" style="margin-right: 200px;"></list-page>
                                 </el-form-item>
                                 <el-form-item label="是否启用" class="m_r form_item">
                                     <el-radio-group v-model="addForm.enable" class="displayIn">
@@ -54,8 +54,8 @@
                                         <el-radio :label="false">否</el-radio>
                                     </el-radio-group>
                                 </el-form-item>
-                                <el-form-item label="报告接收日期" class="displayIn  m_r form_item">
-                                    <el-select v-model="addForm.day" placeholder="请选择(几号)" class="input_item2">
+                                <el-form-item label="报告接收星期" class="displayIn  m_r form_item">
+                                    <el-select v-model="addForm.cronExpression.week" placeholder="请选择(星期几)" class="input_item2">
                                         <el-option
                                             v-for="item in options"
                                             :key="item.value"
@@ -65,7 +65,7 @@
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="报告接收小时" class="displayIn  m_r form_item">
-                                    <el-time-select class="input_item2" placeholder="报告接收小时" v-model="addForm.hours"
+                                    <el-time-select class="input_item2" placeholder="报告接收小时" v-model="addForm.cronExpression.hour"
                                                     :picker-options="{start: '00:00', step: '01:00',end: '23:00',minTime: startTime}">
                                     </el-time-select>
                                 </el-form-item>
@@ -93,17 +93,16 @@
     import Header from '@/components/commons/header';
     import service from '../../vuex/module/setReport.js'
     import contactService from '../../vuex/module/customSubject.js'
+    import utils from '../../vuex/utils.js'
 
     var optionData = [];
-    optionData.push({value: "-1", label: '倒数第一天'});
-    optionData.push({value: "-2", label: '倒数第二天'});
-    optionData.push({value: "-3", label: '倒数第三天'});
-    for (var i = 28; i > 0; i--) {
-        var node = {};
-        node.value = i;
-        node.label = i;
-        optionData.push(node);
-    }
+    optionData.push({value: "2", label: '星期一'});
+    optionData.push({value: "3", label: '星期二'});
+    optionData.push({value: "4", label: '星期三'});
+    optionData.push({value: "5", label: '星期四'});
+    optionData.push({value: "6", label: '星期五'});
+    optionData.push({value: "7", label: '星期六'});
+    optionData.push({value: "1", label: '星期日'});
     export default {
         data () {
             return {
@@ -129,26 +128,29 @@
                     enable: false,
                     briefingType: "",
                     contacts: [],
-                    hours: '',
-                    day: ''
+                    cronExpression: {
+                        hour: '',
+                        week: ''
+                    }
                 },
                 contacts: [],// 所有联系人
-                options: optionData,
+                options: optionData
             };
         },
         mounted () {
-            this.getMonthlyReportInfo();  //获取默认参数
+            this.getWeeklyReportInfo();  //获取默认参数
             this.getUserContacts();  //获取联系人
         },
         components: {
             'common-header': Header,
             'list-page': Paging,
-            'common-menu': CommonMenu,
+            'common-menu': CommonMenu
         },
         methods: {
-            getMonthlyReportInfo: function () {
+            getWeeklyReportInfo: function () {
                 var self = this;
-                service.actions.getMonthlyReportInfo().then(function (data) {
+                service.actions.getReportInfo('WEEKLY').then(function (data) {
+                    debugger;
                     self.addForm = data;
                 })
             },
@@ -184,9 +186,10 @@
                     contactService.actions.deleteUserContacts(row).then(function () {
                         self.pager.currentPage = 1;
                         self.getUserContacts();
+                    }).catch(error => {
+                        error.message = '删除记录失败！';
+                        utils.utils.handleError(error, this);
                     });
-                }).catch(error => {
-                    this.$confirm('删除记录失败！', '错误', {type: 'error'});
                 });
             },
 
@@ -206,21 +209,12 @@
                     item.type = "EMAIL";
                 });
 
-                if (briefingConfig.id) {
-                    service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
-                        self.getMonthlyReportInfo();
-                    }).catch(error => {
-                        this.$confirm('修改记录失败！', '错误', {type: 'error'});
-                    });
-                } else {
-                    briefingConfig.briefingType = "MONTHLY";
-                    service.actions.createMonthlyReportSetting(briefingConfig).then(function () {
-                        self.getMonthlyReportInfo();
-                    }).catch(error => {
-                        this.$confirm('创建记录失败！', '错误', {type: 'error'});
-                    });
-                }
-
+                service.actions.editMonthlyReportSetting(briefingConfig).then(function () {
+                    self.getWeeklyReportInfo();
+                }).catch(error => {
+                    error.message = '修改记录失败！';
+                    utils.utils.handleError(error, this);
+                });
 
             },
         },

@@ -66,23 +66,29 @@
                         path: '/module/index.html',
                         name: '全景舆情',
                         redirect: '/module/index.html',
-                        leaf: true, // 只有一个节点
+//                        leaf: true, // 只有一个节点
                         menuShow: true,
                         isActive: false,
                         iconCls: 'el-icon-menu', // 图标样式class
                         children: [
-                            {path: '/module/index.html', name: '全景舆情', menuShow: true}
+                            {path: '/module/index.html', name: '舆情分析', leaf:true, isActive: true,　menuShow: true},
+                            {path: '/module/focusNews.html', name: '焦点报道', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/newSingle.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/bbsSingle.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/latestWeibo.html', name: '最新微博', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/posNews.html', name: '正面新闻', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/negNews.html', name: '负面新闻', leaf:true, isActive: false,　menuShow: true}
                         ]
                     },
                     {
                         path: '/module/customize.html',
-                        name: '定制化舆情监测',
+                        name: '专题分析',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-share', // 图标样式class
                         children: [
-                            {path: '/module/customize.html', name: '定制化舆情监测', menuShow: true}
+                            {path: '/module/customize.html', name: '专题分析', menuShow: true}
                         ]
                     },
                     {
@@ -98,13 +104,13 @@
                     },
                     {
                         path: '/module/presentationList.html',
-                        name: '决策报告',
+                        name: '舆情报告',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-document',
                         children: [
-                            {path: '/module/presentationList.html', name: '决策报告', menuShow: true}
+                            {path: '/module/presentationList.html', name: '舆情报告', menuShow: true}
                         ]
                     },
                     {
@@ -126,8 +132,10 @@
                         iconCls: 'el-icon-setting',
                         children: [
                             {path: '/module/baseKeywords.html', name: '关键词设置', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/focusKeywords.html', name: '焦点关键词设置', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/contacts.html', name: '联系人设置', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/setReport.html', name: '报告设置', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/monthlyReportConfig.html', name: '月报设置', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/weeklyReportConfig.html', name: '周报设置', leaf:true, isActive: false,　menuShow: true},
                         ]
                     }
                 ]
@@ -172,17 +180,19 @@
 </script>
 <style>
     .el-menu-item:hover{
-        background-color: #14529d;
+        background-color: #6eb4fc;
     }
     .el-submenu .el-submenu__title {
+        font-size: 16px;
+        font-weight: 600;
         color: #ffffff;
     }
     .el-submenu .el-submenu__title:hover {
-        background-color: #14529d;
+        background-color: #6eb4fc;
     }
 
     #menu aside .active {
-        background-color: #14529d;
+        background-color: #6eb4fc;
     }
 </style>
 <style scoped>
@@ -203,22 +213,23 @@
     .el-menu {
         background-color: #4d637b;
     }
-
     .el-submenu__title {
         color: #fff !important;
+        font-size: 16px;
+        font-weight: 600;
     }
     .el-submenu__title:hover {
-        background-color: #14529d;
+        background-color: #6eb4fc;
     }
     .el-submenu .el-menu-item {
         background-color: #4d637b
     }
     .el-submenu .el-menu-item:hover {
-        background-color: #4d637b
+        background-color: #6eb4fc
     }
     .el-submenu .el-menu-item.is-active, .el-menu-item.is-active,
     .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
-        background-color: #14529d;
+        background-color: #6eb4fc;
         color: #fff;
     }
 
@@ -244,13 +255,13 @@
 
     ul > li {
         color: #fff !important;
-        border-bottom: 0.1em solid #6c7481;
+        border-bottom: 0.15em solid #6c7481;
         cursor: pointer;
         transition: 0.4s all;
     }
 
     li:hover {
-        background: #14529d;
+        background: #6eb4fc;
     }
 
     @media screen and (min-width: 1360px) and (max-width: 1366px) {

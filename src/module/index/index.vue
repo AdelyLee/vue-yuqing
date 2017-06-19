@@ -30,36 +30,31 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">载体趋势分析</span>
                                     </div>
-                                    <el-tabs v-model="activeTrendName" @tab-click="handleClickTrendTab"
-                                             id="trend-tab-content">
-                                        <el-tab-pane name="今天">
-                                            <span slot="label"><i class="el-icon-date"></i> 今天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart :chartConfig="carrierAnalysis"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="昨天">
-                                            <span slot="label"><i class="el-icon-date"></i> 昨天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeTrendName == '昨天'"
-                                                           :chartConfig="carrierAnalysisYesterday"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="近7天">
-                                            <span slot="label"><i class="el-icon-date"></i> 近7天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeTrendName == '近7天'"
-                                                           :chartConfig="carrierAnalysisNearlyDays"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="近30天">
-                                            <span slot="label"><i class="el-icon-date"></i> 近30天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeTrendName == '近30天'"
-                                                           :chartConfig="carrierAnalysisMonth"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                    </el-tabs>
+                                    <div class="buttons mediaTypeTrendChart">
+                                        <div class="el-tabs__header">
+                                            <div class="el-tabs__nav-wrap">
+                                                <div class="el-tabs__nav-scroll">
+                                                    <div class="el-tabs__nav">
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickTrendButton('today', $event)"><span>
+                                                            <i class="el-icon-date"></i> 今天</span></div>
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickTrendButton('yesterday', $event)"><span>
+                                                            <i class="el-icon-date"></i> 昨天</span></div>
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickTrendButton('nearly', $event)"><span>
+                                                            <i class="el-icon-date"></i> 近7天</span></div>
+                                                        <div class="el-tabs__item is-active"
+                                                             @click="handleClickTrendButton('monthly', $event)"><span>
+                                                            <i class="el-icon-date"></i> 近30天</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart">
+                                        <bar-chart :chartConfig="mediaTypeTrendAnalysis"></bar-chart>
+                                    </div>
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -77,37 +72,31 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">载体分布统计</span>
                                     </div>
-                                    <el-tabs v-model="activeBarName" @tab-click="handleClickBarTab"
-                                             id="bar-tab-content">
-                                        <el-tab-pane name="今天">
-                                            <span slot="label"><i class="el-icon-date"></i> 今天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeBarName == '今天'"
-                                                           :chartConfig="carrierAnalysisType"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="昨天">
-                                            <span slot="label"><i class="el-icon-date"></i> 昨天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeBarName == '昨天'"
-                                                           :chartConfig="carrierAnalysisTypeYesterday"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="近7天">
-                                            <span slot="label"><i class="el-icon-date"></i> 近7天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeBarName == '近7天'"
-                                                           :chartConfig="carrierAnalysisTypeNearlyDays"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                        <el-tab-pane name="近30天">
-                                            <span slot="label"><i class="el-icon-date"></i> 近30天</span>
-                                            <el-row type="flex" class="row-bg" justify="space-around">
-                                                <bar-chart v-if="activeBarName == '近30天'"
-                                                           :chartConfig="carrierAnalysisTypeMonth"></bar-chart>
-                                            </el-row>
-                                        </el-tab-pane>
-                                    </el-tabs>
+                                    <div class="buttons mediaTypeBarChart">
+                                        <div class="el-tabs__header">
+                                            <div class="el-tabs__nav-wrap">
+                                                <div class="el-tabs__nav-scroll">
+                                                    <div class="el-tabs__nav">
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickBarButton('today', $event)"><span>
+                                                            <i class="el-icon-date"></i> 今天</span></div>
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickBarButton('yesterday', $event)"><span>
+                                                            <i class="el-icon-date"></i> 昨天</span></div>
+                                                        <div class="el-tabs__item"
+                                                             @click="handleClickBarButton('nearly', $event)"><span>
+                                                            <i class="el-icon-date"></i> 近7天</span></div>
+                                                        <div class="el-tabs__item is-active"
+                                                             @click="handleClickBarButton('monthly', $event)"><span>
+                                                            <i class="el-icon-date"></i> 近30天</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart">
+                                        <bar-chart :chartConfig="mediaTypeBarAnalysis"></bar-chart>
+                                    </div>
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -138,7 +127,6 @@
         data () {
             var self = this;
             return {
-                activeTrendName: '近30天',
                 activeBarName: '近30天',
                 activeArticleTabName: 'news',
                 articleTabData: {
@@ -164,13 +152,12 @@
                             self.articlesCondition.endDate = endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
-                            debugger;
                             self.getArticleListByCondition(self.articlesCondition);
                         }
                     }
                 },
-                carrierAnalysis: {
-                    chartId: 'carrierAnalysis',
+                mediaTypeTrendAnalysis: {
+                    chartId: 'mediaTypeTrendAnalysis',
                     option: {},
                     events: {
                         'click': function (param) {
@@ -179,68 +166,8 @@
                         }
                     }
                 },
-                carrierAnalysisYesterday: {
-                    chartId: 'carrierAnalysisYesterday',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeTrendChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisNearlyDays: {
-                    chartId: 'carrierAnalysisNearlyDays',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeTrendChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisMonth: {
-                    chartId: 'carrierAnalysisMonth',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeTrendChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisType: {
-                    chartId: 'carrierAnalysisType',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisTypeYesterday: {
-                    chartId: 'carrierAnalysisTypeYesterday',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisTypeNearlyDays: {
-                    chartId: 'carrierAnalysisTypeNearlyDays',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisTypeMonth: {
-                    chartId: 'carrierAnalysisTypeMonth',
+                mediaTypeBarAnalysis: {
+                    chartId: 'mediaTypeBarAnalysis',
                     option: {},
                     events: {
                         'click': function (param) {
@@ -271,8 +198,8 @@
                     currentPage: 1,
                     totalElements: 1
                 },
-                trendTimesType: 'month',
-                barTimesType: 'month',
+                trendTimesType: 'monthly',
+                barTimesType: 'monthly',
                 articlesCondition: {
                     startDate: "",
                     endDate: "",
@@ -294,8 +221,8 @@
         },
         mounted () {
             this.getSentimentTypeChart();
-            this.getCarrierAnalysisChart(this.trendTimesType);
-            this.getCarrierAnalysisBarChart(this.barTimesType);
+            this.getMediaTypeTrendChart(this.trendTimesType);
+            this.getMediaTypeBarChart(this.barTimesType);
             this.getMediaBarChart();
             this.getArticleTabList(this.tabArticleType);
             this.getArticleTabList(this.tabBbsArticleType);
@@ -310,52 +237,18 @@
                 })
 
             },
-            getCarrierAnalysisChart: function (type) {
+            getMediaTypeTrendChart: function (type) {
                 var self = this;
-                var width = document.getElementById('trend-tab-content').offsetWidth;
-                var chartWidth = width - 50 + "px";
-                service.actions.getCarrierAnalysisChart(type).then(function (option) {
-                    if (type == 'day') {
-                        document.getElementById("carrierAnalysis").style.width = chartWidth;
-                        self.carrierAnalysis.option = option;
-                    }
-                    if (type == 'yesterday') {
-                        document.getElementById("carrierAnalysisYesterday").style.width = chartWidth;
-                        self.carrierAnalysisYesterday.option = option;
-                    }
-                    if (type == 'nearlydays') {
-                        document.getElementById("carrierAnalysisNearlyDays").style.width = chartWidth;
-                        self.carrierAnalysisNearlyDays.option = option;
-                    }
-                    if (type == 'month') {
-                        document.getElementById("carrierAnalysisMonth").style.width = chartWidth;
-                        self.carrierAnalysisMonth.option = option;
-                    }
+                service.actions.getMediaTypeTrendChart(type).then(function (option) {
+                    self.mediaTypeTrendAnalysis.option = option;
                 });
 
             },
-            getCarrierAnalysisBarChart: function (type) {
+            getMediaTypeBarChart: function (type) {
                 var self = this;
-                var width = document.getElementById('bar-tab-content').offsetWidth;
-                var chartWidth = width - 50 + "px";
                 var conditionDate = self.getConditionDate(type);
-                service.actions.getCarrierAnalysisBarChart(conditionDate).then(function (option) {
-                    if (type == 'day') {
-                        document.getElementById("carrierAnalysisType").style.width = chartWidth;
-                        self.carrierAnalysisType.option = option;
-                    }
-                    if (type == 'yesterday') {
-                        document.getElementById("carrierAnalysisTypeYesterday").style.width = chartWidth;
-                        self.carrierAnalysisTypeYesterday.option = option;
-                    }
-                    if (type == 'nearlydays') {
-                        document.getElementById("carrierAnalysisTypeNearlyDays").style.width = chartWidth;
-                        self.carrierAnalysisTypeNearlyDays.option = option;
-                    }
-                    if (type == 'month') {
-                        document.getElementById("carrierAnalysisTypeMonth").style.width = chartWidth;
-                        self.carrierAnalysisTypeMonth.option = option;
-                    }
+                service.actions.getMediaTypeBarChart(conditionDate).then(function (option) {
+                    self.mediaTypeBarAnalysis.option = option;
                 });
             },
 
@@ -407,43 +300,20 @@
                 })
             },
 
-            handleClickTrendTab(tab, event) {
-                console.log(tab, event);
+            handleClickTrendButton: function (trendTimesType, item) {
                 var self = this;
-                switch (tab.name) {
-                    case "今天":
-                        self.trendTimesType = "day";
-                        break;
-                    case "昨天":
-                        self.trendTimesType = "yesterday";
-                        break;
-                    case "近7天":
-                        self.trendTimesType = "nearlydays";
-                        break;
-                    case "近30天":
-                        self.trendTimesType = "month";
-                        break;
-                }
-                this.getCarrierAnalysisChart(self.trendTimesType);
+                $(".buttons.mediaTypeTrendChart").find(".el-tabs__item").removeClass('is-active');
+                $(item.currentTarget).addClass('is-active');
+                self.trendTimesType = trendTimesType;
+                self.getMediaTypeTrendChart(self.trendTimesType);
             },
 
-            handleClickBarTab(tab) {
+            handleClickBarButton: function (barTimesType, item) {
                 var self = this;
-                switch (tab.name) {
-                    case "今天":
-                        self.barTimesType = "day";
-                        break;
-                    case "昨天":
-                        self.barTimesType = "yesterday";
-                        break;
-                    case "近7天":
-                        self.barTimesType = "nearlydays";
-                        break;
-                    case "近30天":
-                        self.barTimesType = "month";
-                        break;
-                }
-                this.getCarrierAnalysisBarChart(self.barTimesType);
+                $(".buttons.mediaTypeBarChart").find(".el-tabs__item").removeClass('is-active');
+                $(item.currentTarget).addClass('is-active');
+                self.barTimesType = barTimesType;
+                self.getMediaTypeBarChart(self.barTimesType);
             },
 
             getMediaTypeTrendChartCondition: function (param) {
@@ -472,7 +342,7 @@
                 var conditionDate = {}, s_date = "", e_date = "";
                 var date = new Date();
                 switch (timeType) {
-                    case "day":
+                    case "today":
                         e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                         s_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
                         break;
@@ -480,11 +350,11 @@
                         e_date = dateUtil.dateUtil.formatDate(date, "yyyy-MM-dd");
                         s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -1), "yyyy-MM-dd");
                         break;
-                    case 'nearlydays':
+                    case 'nearly':
                         e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                         s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', -7), "yyyy-MM-dd");
                         break;
-                    case 'month':
+                    case 'monthly':
                         e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
                         s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
                         break;

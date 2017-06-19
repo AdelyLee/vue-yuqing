@@ -4,12 +4,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
-import SetReport from './setReport.vue'
 import VueResource from 'vue-resource'
+
+import WeeklyReport from './weeklyReportConfig.vue'
 
 import 'element-ui/lib/theme-default/index.css'   // 默认主题
 import '../customize/scss/customize.scss'
-import './scss/setReport.scss'
+import './scss/weeklyReportConfig.scss'
 
 Vue.use(VueRouter)
 Vue.use(ElementUI)
@@ -22,17 +23,17 @@ const router = new VueRouter({
 // base: baseUrl,
     routes: [
         {
-            path: '/setReport',
-            component: SetReport
+            path: '/weeklyReportConfig',
+            component: WeeklyReport
         }
     ]
 })
 
 new Vue({
-    el: '#setReport',
+    el: '#weeklyReport',
     router: router,
-    template: '<set-report></set-report>',
+    template: '<weekly-report></weekly-report>',
     components: {
-        'set-report': SetReport
+        'weekly-report': WeeklyReport
     }
 })

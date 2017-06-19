@@ -8,6 +8,21 @@ import dateUtil from '../dateUtil';
 import queryParam from '../utils';
 import typeParam from '../typeUtil';
 import utils from '../utils'
+const subjectInfo = {
+    subjectiInfo: function () {
+        var searchId = queryParam.utils.getQueryVariable('id');
+        var searchInfo = {};
+        $.ajax({
+            url: common.url.webserviceUrl + '/warningLog/' + searchId,
+            type:'get',
+            async: false,
+            success: function (data) {
+                searchInfo = data;
+            }
+        })
+        return searchInfo;
+    }
+}
 const actions = {
     // 获取关键词
     config: utils.utils.getUserBaseKeyword(),
@@ -16,9 +31,10 @@ const actions = {
     getWarningDetailsList: function (pageSize,currentPage) {
         var self = this;
         var searchId = queryParam.utils.getQueryVariable('id');
-        var timeChange = queryParam.utils.getQueryVariable('startDate').substr(0,10)+"至"+queryParam.utils.getQueryVariable('endDate').substr(0,10);
-        var keyWord = decodeURI(queryParam.utils.getQueryVariable('keyWord'));
-        var subjectName = decodeURI(queryParam.utils.getQueryVariable('subjectName'));
+        var searchInfo = subjectInfo.subjectiInfo();
+        var timeChange = searchInfo.startDate+"至"+searchInfo.endDate;
+        var keyWord = searchInfo.mustWord;
+        var subjectName = searchInfo.subjectName;
         var param = {
             id:searchId,
             page: currentPage,

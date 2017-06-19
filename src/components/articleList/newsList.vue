@@ -42,10 +42,10 @@
     export default {
         data () {
             return {
-                realTime: '实时监测',
-                modify: '修改',
-                update: '更新',
-                deletes: '删除',
+//                realTime: '实时监测',
+//                modify: '修改',
+//                update: '更新',
+//                deletes: '删除',
                 value3: '100',
                 items: [],
                 limits: 10,

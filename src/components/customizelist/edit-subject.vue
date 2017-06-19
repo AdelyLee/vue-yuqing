@@ -43,6 +43,9 @@
 </template>
 
 <script>
+    import dateUtil from '../../vuex/dateUtil.js'
+    import utils from '../../vuex/utils.js'
+
     export default {
         props: ['editDialog'],
         data: function () {
@@ -65,16 +68,18 @@
                         {required: true, message: '请输入关键词', trigger: 'blur'}
                     ],
                     startDate: [
-                        {required: true, message: '选择专题开始时间', trigger: 'change' }
+                        { type: "date", required: true, message: '选择专题开始时间', trigger: 'change' }
                     ],
                     endDate: [
-                        {required: true, message: '选择专题结束时间', trigger: 'change' }
+                        { type: "date", required: true, message: '选择专题结束时间', trigger: 'change' }
                     ]
                 }
             }
         },
         methods: {
             estimateSubject: function (subject) {
+                subject.startDate = utils.utils.preSubjectValidateDate(subject).startDate;
+                subject.endDate = utils.utils.preSubjectValidateDate(subject).endDate;
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         console.log("estimateSubject", subject);
@@ -87,6 +92,8 @@
                 });
             },
             editFormSubmit: function (subject) {
+                subject.startDate = utils.utils.preSubjectValidateDate(subject).startDate;
+                subject.endDate = utils.utils.preSubjectValidateDate(subject).endDate;
                 this.$refs.editForm.validate((valid) => {
                     if (valid) {
                         console.log("editSubjectSubmit", subject);

@@ -13,12 +13,6 @@
             return {
             }
         },
-        mounted () {
-            if(this.chartConfig.option.data!=undefined){
-                Chart.drawKeyWordsCloud(this.chartConfig.chartId, this.chartConfig.option);
-            }
-
-        },
         watch: {
             chartConfig: {
                 handler: function (val, oldVal) {
