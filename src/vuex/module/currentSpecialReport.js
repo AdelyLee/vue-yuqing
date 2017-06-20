@@ -57,11 +57,13 @@ const actions = {
                     var seriesData = [];
                     var lengeds = [];
                     $.each(data, function (i, item) {
-                        var node = {};
-                        node.name = typeParam.typeUtil.sentimentType(item.key);
-                        node.value = item.value;
-                        seriesData.push(node);
-                        lengeds.push(node.name)
+                        if(item.key != "") {
+                            var node = {};
+                            node.name = typeParam.typeUtil.sentimentType(item.key);
+                            node.value = item.value;
+                            seriesData.push(node);
+                            lengeds.push(node.name)
+                        }
                     })
                     var option = {
                         tooltip: {
@@ -136,15 +138,18 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     // 拼装 chart option
                     var seriesData = [];
                     var legendData = [];
                     $.each(data, function (i, item) {
-                        var node = {};
-                        node.name = typeParam.typeUtil.articleType(item.key);
-                        node.value = item.value;
-                        seriesData.push(node);
-                        legendData.push(node.name);
+                        if(item.key != "" && item.key != 'blog') {
+                            var node = {};
+                            node.name = typeParam.typeUtil.articleType(item.key);
+                            node.value = item.value;
+                            seriesData.push(node);
+                            legendData.push(node.name);
+                        }
                     });
                     var option = {
                         tooltip: {
@@ -208,8 +213,10 @@ const actions = {
                         return b.value - a.value;
                     });
                     $.each(data, function (i, item) {
-                        seriesData.push(item.value);
-                        xAxisData.push(item.key.slice(0, 10));
+                        if(item.key != "") {
+                            seriesData.push(item.value);
+                            xAxisData.push(item.key.slice(0, 10));
+                        }
                     });
                     var option = {
                         legend: {},
@@ -447,6 +454,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     var renderData = {};
                     data.sort(function (a, b) {
                         return a.value - b.value;
@@ -461,8 +469,10 @@ const actions = {
                     var seriesData = [];
                     var yAxisData = [];
                     $.each(new_data, function (i, item) {
-                        seriesData.push(item.value);
-                        yAxisData.push(item.key);
+                        if(item.key != "") {
+                            seriesData.push(item.value);
+                            yAxisData.push(item.key);
+                        }
                     });
                     var option = {
                         legend: {},
@@ -540,7 +550,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     var renderData = {};
                     var seriesData = [];
                     var xAxisData = [];
@@ -623,7 +632,6 @@ const actions = {
             s_date: self.getCustomSubjectConfig.startDate,
             e_date: self.getCustomSubjectConfig.endDate
         };
-        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
@@ -743,10 +751,12 @@ const actions = {
                     // 拼装 chart option
                     var seriesData = [];
                     $.each(data, function (i, item) {
-                        var node = {};
-                        node.name = item.key;
-                        node.value = item.value;
-                        seriesData.push(node);
+                        if(item.key != "") {
+                            var node = {};
+                            node.name = item.key;
+                            node.value = item.value;
+                            seriesData.push(node);
+                        }
                     });
                     var option = {
                         tooltip: {
@@ -960,9 +970,8 @@ const actions = {
                 "page": currentPage
             },
             "searchKv": conditions.searchKv,
-            "type": conditions.type
+             "type": conditions.type
         }
-        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
@@ -986,6 +995,53 @@ const actions = {
             })
         })
     },
+    //点击网民观点弹出列表
+    getOptionsList: function (conditions,pageSize,currentPage) {
+        var self = this;
+        var param = {
+            "date": {
+                "endDate": self.getCustomSubjectConfig.endDate,
+                "startDate": self.getCustomSubjectConfig.startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": self.getCustomSubjectConfig.mustNotWord,
+                "mustWord": self.getCustomSubjectConfig.mustWord,
+                "shouldWord": self.getCustomSubjectConfig.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": conditions.searchKv
+        }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/comments/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    data.content.forEach(function (item) {
+                        item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
+                        item.author.lenght>10?item.author.substr(0,10)+'...':item.author;
+                        item.nlp.sentiment.label = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
+                        item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
+                    });
+                    resolve(data);
+                }
+            })
+        })
+    }
 }
 export default {
     actions, searchData

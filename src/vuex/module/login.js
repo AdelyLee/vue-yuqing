@@ -33,6 +33,27 @@ const action = {
                 }
             });
         });
+    },
+    confirm:function(form){
+        debugger;
+        var param = {
+            oldPwd:form.oldpassword,
+            newPwd:form.password,
+        };
+        return new Promise(function (resolve,reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/admin/user/modifyPassword',
+                type: 'post',
+                data:param,
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+
     }
 };
 

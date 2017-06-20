@@ -10,17 +10,19 @@
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
                             <el-form :model="addForm" :rules="rules" ref="addForm" label-width="100px" class="demo-ruleForm">
-                            <el-form-item label="时间" required>
-                                <el-col :span="5">
+                            <el-form-item label="时间:">
+                                <el-col :span="4">
                                     <el-form-item prop="startDate">
-                                        <el-date-picker type="date" placeholder="选择开始时间" v-model="addForm.startDate" @change="setTime" style="width: 100%;"></el-date-picker>
+                                        <el-date-picker type="date" placeholder="选择开始时间" v-model="addForm.startDate"style="width: 100%;"></el-date-picker>
                                     </el-form-item>
                                 </el-col>
-                                <el-col class="line" :span="1">-</el-col>
-                                <el-col :span="5">
+                                <el-col :span="4">
                                     <el-form-item prop="endDate">
-                                        <el-date-picker type="date" placeholder="选择结束时间" v-model="addForm.endDate" @change="setEndTime" style="width: 100%;"></el-date-picker>
+                                        <el-date-picker type="date" placeholder="选择结束时间" v-model="addForm.endDate" style="width: 100%;"></el-date-picker>
                                     </el-form-item>
+                                </el-col>
+                                <el-col :span="3">
+                                <el-button type="primary" @click.native="addFormSubmit(addForm)">查询</el-button>
                                 </el-col>
                             </el-form-item>
                             </el-form>
@@ -168,28 +170,17 @@
                 var self = this;
                 var date = new Date();
                 self.addForm.startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-                self.addForm.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                self.addForm.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 0), 'yyyy-MM-dd');
             },
-            setTime: function (item) {
+            addFormSubmit: function (subject) {
                 var self = this;
-                self.addForm.startDate = item;
-                self.setTimes(item,endTime)
+                subject.startDate =dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(subject.startDate, 'M', 0), 'yyyy-MM-dd');
+                subject.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate( subject.endDate, 'd', 0), 'yyyy-MM-dd');
+                self.getArticleTabList(subject.startDate,subject.endDate);
+                self.getSentimentTypeChart(subject.startDate,subject.endDate);
+                self.getCarrierAnalysisChart(subject.startDate,subject.endDate);
+                self.getHotWordCloudChart(subject.startDate,subject.endDate);
             },
-            setEndTime: function (item) {
-                var self = this;
-                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate);
-                self.getSentimentTypeChart(self.addForm.startDate,self.addForm.endDate);
-                self.getCarrierAnalysisChart(self.addForm.startDate,self.addForm.endDate);
-                self.getHotWordCloudChart(self.addForm.startDate,self.addForm.endDate);
-
-            },
-//            setTimes: function (item,endTime) {
-//                debugger;
-//                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate);
-//                self.getSentimentTypeChart(self.addForm.startDate,self.addForm.endDate);
-//                self.getCarrierAnalysisChart(self.addForm.startDate,self.addForm.endDate);
-//                self.getHotWordCloudChart(self.addForm.startDate,self.addForm.endDate);
-//            },
             getArticleTabList: function () {
                 var self = this;
                 service.actions.getArticleTabList(self.addForm.startDate,self.addForm.endDate).then(function (data) {

@@ -186,7 +186,6 @@
                 this.getSearchArticles(self.condition);
             },
             getSearchArticles: function (condition) {
-                debugger;
                 var self = this;
                 self.pager.pageSize = self.condition.pageSize;
 

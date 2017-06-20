@@ -23,7 +23,6 @@ const actions = {
     //保存
     editMonthlyReportSetting: function (briefingConfig) {
         // 时间修改
-        debugger;
         briefingConfig.cronExpression.hour = parseInt(briefingConfig.cronExpression.hour.split(":")[0]);
         return new Promise(function (resolve, reject) {
             $.ajax({

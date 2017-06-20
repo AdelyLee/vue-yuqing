@@ -6,7 +6,7 @@
                     <el-row class="content" id="list">
                         <ul class="ul_p">
                             <li class="l_style" v-for="item in articles" :id="item.id">
-                                <div @click="showDetail(item.id)">
+                                <div @click="showDetail(item.id,itme.type)">
                                     <el-row :gutter="1">
                                         <el-col :span="2">
                                             <!--<img v-if="item.type=='news'" :src="newslogoSrc">
@@ -96,8 +96,10 @@
 
                 this.$emit("data", data);
             },
-            showDetail: function (id) {
-                window.open('../../module/detail.html?id=' + id)
+            showDetail: function (id,type) {
+              if(type != "comments") {
+                  window.open('../../module/detail.html?id=' + id)
+              }
             }
         }
     }

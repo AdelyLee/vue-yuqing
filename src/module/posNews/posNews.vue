@@ -18,16 +18,8 @@
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="10">
-                            <el-card class="box-card my-card">
-                                <div slot="header" class="clearfix">
-                                    <span class="my-title">主流媒体</span>
-                                </div>
-                                <bar-chart :chartConfig="mediaBarChart"></bar-chart>
-                            </el-card>
-                        </el-col>
-                        <el-col :span="14">
-                            <el-card class="box-card my-card">
+                        <el-col :span="24">
+                            <el-card class="box-card my-card" style="margin-top:5px;">
                                 <div slot="header" class="clearfix">
                                     <span class="my-title">话题趋势</span>
                                 </div>
@@ -36,6 +28,14 @@
                         </el-col>
                     </el-row>
                     <el-row>
+                        <el-col :span="12">
+                            <el-card class="box-card my-card" style="margin-top:5px;">
+                                <div slot="header" class="clearfix">
+                                    <span class="my-title">主流媒体</span>
+                                </div>
+                                <bar-chart :chartConfig="mediaBarChart"></bar-chart>
+                            </el-card>
+                        </el-col>
                         <el-col :span="12">
                             <el-card class="box-card my-card" style="margin-top:5px;">
                                 <div slot="header" class="clearfix">
@@ -56,7 +56,7 @@
 <script>
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
-    import News from '@/components/index/news';
+    import News from '@/components/index/negNews';
     import ArticleList from '@/components/index/articleList';
     import LineBarChart from '@/components/commons/charts/line-bar';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
@@ -70,11 +70,11 @@
             return {
                 articleType: "",
                 articles: [],
-                Kv:["nlp.sentiment.label","POS"],
+                kv:"nlp.sentiment.label,POS",
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
-                    totalElements: 1
+                    totalElements: 10
                 },
                 articleListId: 'article-list',
                 timeChange: {
@@ -88,7 +88,8 @@
                 }],
                 articleTabData: {
                     type: '',
-                    articles: []
+                    articles: [],
+                    emotion:''
                 },
                 keywordsChart: {
                     chartId: 'keywords-chart',
@@ -103,10 +104,11 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.pager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "source", "value": value},{"key":"nlp.sentiment.label","value":"POS"}];
                             that.conditions.type = ["news"];
-                            that.getArticleListByCondition(that.conditions);
+                            that.getArticleListByCondition(that.conditions,that.timeChange,that.pager.pageSize, that.pager.currentPage);
                         }
                     }
                 },
@@ -142,24 +144,19 @@
                 switch (data.action) {
                     case 'clickArticleListPager':
                         self.pager = data.articleListPager;
+                        self.getArticleListByCondition();
                         break;
                     case 'showMoreArticle':
-                        self.pager.currentPage = 1;
-                        var date = new Date();
-                        var startDate = self.timeChange.startDate;
-                        var endDate = self.timeChange.endDate;
-                        self.articlesCondition.startDate = startDate;
-                        self.articlesCondition.endDate = endDate;
-                        self.articlesCondition.type = [data.data];
-                        self.articlesCondition.searchKv = [];
-                        self.articleType = data.data;
-                        self.getArticleListByCondition();
+                        self.conditions.searchKv = self.searchKv;
+                        self.conditions.type = ["news"];
+                        self.getArticleListByCondition(self.conditions);
                         break;
                 }
             },
             getArticleListByCondition: function () {
                 var self = this;
                 service.actions.getArticleListByCondition(self.conditions,self.timeChange,self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                  debugger;
                     self.articles = data.content;
                     self.pager.totalElements = data.totalElements;
                 })
@@ -167,7 +164,7 @@
 
             getMediaReportTrendBar: function () {
                 var self = this;
-                service.actions.getMediaReportTrendBar(self.timeChange,self.Kv).then(function (renderData) {
+                service.actions.getMediaReportTrendBar(self.timeChange,self.kv).then(function (renderData) {
                     self.mediaReportTrendBar.option = renderData;
                 }, function (error) {
                     console.error('出错了', error);
@@ -178,11 +175,12 @@
                 service.actions.getArticleTabList(self.tabArticleType, self.searchKv, self.timeChange).then(function (data) {
                     self.articleTabData.type = self.tabArticleType;
                     self.articleTabData.articles = data.content;
+                    self.articleTabData.emotion = data.emotion;
                 });
             },
             getMediaBarChart: function () {
                 var self = this;
-                service.actions.getMediaBarChart(self.timeChange,self.Kv).then(function (option) {
+                service.actions.getMediaBarChart(self.timeChange,self.kv).then(function (option) {
                     self.mediaBarChart.option = option;
                 }, function (error) {
                     console.error('出错了', error);
@@ -191,7 +189,7 @@
             },
             getKeywordsChart: function () {
                 var self = this;
-                service.actions.getKeywordsChart(self.timeChange,self.Kv).then(function (renderData) {
+                service.actions.getKeywordsChart(self.timeChange,self.kv).then(function (renderData) {
                     self.keywordsChart.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);

@@ -137,9 +137,14 @@ const utils = {
     handleError: function (error, vue) {
         if (error.status == 500) {
             vue.$confirm(error.message, '错误', {type: 'error'});
-        } else if (error.status == "400") {
+        } else if (error.status == 400) {
             vue.$confirm('删除记录失败！', '错误', {type: 'error'});
+        } else if (error.status == 401) {
+            vue.$confirm('请登录重新登录！', '错误', {type: 'error'}).then(() => {
+                window.location.href = "../module/login.html";
+            });
         }
+
     },
 
     preSubjectValidateDate: function (subject) {

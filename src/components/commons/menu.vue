@@ -73,8 +73,8 @@
                         children: [
                             {path: '/module/index.html', name: '舆情分析', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/focusNews.html', name: '焦点报道', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/newSingle.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/bbsSingle.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/latestNews.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
+                            {path: '/module/latestBbs.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/latestWeibo.html', name: '最新微博', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/posNews.html', name: '正面新闻', leaf:true, isActive: false,　menuShow: true},
                             {path: '/module/negNews.html', name: '负面新闻', leaf:true, isActive: false,　menuShow: true}

@@ -1,35 +1,37 @@
 <template>
     <div id="login">
-        <div class="header">
-            <span style="margin-top: 5%; font-family: 隶书; font-size: 35px;">大数据分析舆情系统</span>
-        </div>
+        <!--<div class="header">-->
+            <!--<span style="margin-top: 5%; font-family: 隶书; font-size: 35px;">大数据分析舆情系统</span>-->
+        <!--</div>-->
         <div class="row cleaxfix">
-            <div class="col-sm-7 column  col-sm-offset-1" style="margin-top: 5%;font-family: 隶书;">
-                <span class="tit_span" size="5">欢迎登陆大数据分析舆情系统</span>
+            <div class="col-sm-7 column  col-sm-offset-1" style="margin-top: 5px;">
+                <span class="tit_span" size="5">安徽煤监局舆情系统</span>
             </div>
-            <div class="f_r">
+            <div class="f_r" style="margin-top:9%">
                 <div class="panel panel-primary" id="login-panel">
-                    <div class="panel-heading">
-                        <h4>用户登录</h4>
+                    <div class="login_font">
+                        登 录
                     </div>
                     <div class="panel-body">
-                        <el-form label-width="80px" :model="loginForm" :rules="rules" ref="loginForm"
-                                 class="demo-loginForm">
+                        <el-form  :model="loginForm" :rules="rules" ref="loginForm"
+                                 class="demo-loginForm form_p">
                             <div class="login-message">{{loginMessage}}</div>
-                            <el-form-item label="用户名" prop="username">
-                                <el-input v-model="loginForm.username"></el-input>
+                            <el-form-item prop="username">
+                                <span class="i_con"></span><span style="width:10%;">用户名:</span>
+                                <el-input v-model="loginForm.username" style="width:61%;"></el-input>
                             </el-form-item>
-                            <el-form-item label="密码" prop="password">
-                                <el-input type="password" v-model="loginForm.password"></el-input>
+                            <el-form-item prop="password">
+                                <span class="i_con2"></span><span style="width:10%;">密 码:</span>
+                                <el-input type="password" v-model="loginForm.password" style="width:61%;margin-left: 3%;"></el-input>
                             </el-form-item>
-                            <el-form-item label="验证码" class="wid" prop="captcha">
-                                <el-input v-model="loginForm.captcha"></el-input>
-                            </el-form-item>
-                            <img alt="验证码" style="cursor: pointer;float: right; margin-top: -50px;"
-                                 :src="captchaImage" class="imgSrc" v-on:click="replaceImg">
-                            <el-form-item>
-                                <el-button class="login_button" type="primary" @click="loginSubmit(loginForm)"
-                                           @keyup.enter.native="keyUpLogin($event)" id="submit">{{buttonText}}
+                            <!--<el-form-item label="验证码" class="wid" prop="captcha">-->
+                                <!--<el-input v-model="loginForm.captcha"></el-input>-->
+                            <!--</el-form-item>-->
+                            <!--<img alt="验证码" style="cursor: pointer;float: right; margin-top: -50px;"-->
+                                 <!--:src="captchaImage" class="imgSrc" v-on:click="replaceImg">-->
+                            <!--<el-form-item>-->
+                                <el-button class="login_button"  @click="loginSubmit(loginForm)"
+                                           @keyup.enter.native="keyUpLogin($event)" id="submit" style="width:98%;margin-left:-2%;background-color: #00A0EA;color:#ffffff">{{buttonText}}
                                 </el-button>
                             </el-form-item>
                         </el-form>
@@ -100,6 +102,7 @@
                         service.action.login(user.username, user.password, user.captcha).then(function (data) {
                             self.buttonText = '登录';
                             localStorage.setItem("token", data.token);
+                            localStorage.setItem("user", data.user);
                             var config = utils.utils.getUserBaseKeyword();
                             localStorage.setItem("baseKeywords", config);
                             if (typeof(Storage) !== "undefined") {

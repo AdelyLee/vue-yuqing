@@ -214,6 +214,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             that.conditions.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
                             that.conditions.type = ["news","weibo","bar","bbs"];
@@ -226,6 +227,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var name = typeUtil.typeUtil.encodeArticleType(param.name);
                             var type = [];
                             type.push(name);
@@ -240,6 +242,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "source", "value": value}];
                             that.conditions.type = ["news","weibo","bar","bbs"];
@@ -260,6 +263,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "title.raw", "value": value}];
                             that.conditions.type = ["news","weibo","bar","bbs"];
@@ -272,6 +276,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "author", "value": value}];
                             that.conditions.type = ["news","weibo","bar","bbs"];
@@ -286,6 +291,7 @@
                     },
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "area", "value": value}];
                             that.conditions.type = ["news","weibo","bar","bbs"];
@@ -302,10 +308,10 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "content.raw", "value": value}];
-                            that.conditions.type = ["comments"];
-                            that.getArticleList(that.conditions);
+                            that.getOptionsList(that.conditions);
                         }
                     }
                 }
@@ -346,10 +352,21 @@
                         self.articlePager = data.articleListPager;
                 }
                 self.getArticleList();
+                self.getOptionsList();
             },
             getArticleList: function () {
                 var self = this;
                 service.actions.getArticleList(self.conditions, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
+                    self.getArticles = renderData.content;
+                    self.articlePager.totalElements = renderData.totalElements;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
+            getOptionsList: function () {
+              debugger;
+                var self = this;
+                service.actions.getOptionsList(self.conditions, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
                     self.getArticles = renderData.content;
                     self.articlePager.totalElements = renderData.totalElements;
                 }, function (error) {

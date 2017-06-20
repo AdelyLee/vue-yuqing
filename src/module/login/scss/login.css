@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   background-color: #ffffff; }
 
@@ -38,8 +39,8 @@ body {
 body {
   padding: 0;
   margin: 0;
-  background: url(../../../../static/img/login-bj1.jpg) no-repeat center fixed;
-  background-size: 100% 100%; }
+  background: url(../../../../static/img/newLogin.jpg) no-repeat center top fixed;
+  background-size: 100% 90%; }
 
 .header {
   margin-left: 20px;
@@ -55,25 +56,32 @@ body {
   height: 300px;
   background-color: #fff;
   margin-right: 260px;
-  width: 300px;
+  width: 280px;
   filter: alpha(opacity=90);
-  box-shadow: 5px 5px 12px #8F8F90; }
+  box-shadow: 5px 5px 12px #8F8F90;
+  border-radius: 10px; }
 
 .panel-primary {
   border-color: #428bca; }
 
+.login_font {
+  color: #000 !important;
+  font-size: 18px;
+  text-align: center;
+  height: 40px;
+  line-height: 0;
+  margin-top: -1px;
+  width: 100%; }
+
 .panel-heading {
-  color: #fff;
+  color: #207DFE;
+  font-size: 18px;
+  text-align: center;
   height: 40px;
   line-height: 0;
   margin-left: -1px;
   margin-top: -1px;
-  width: 90%;
-  background-color: #428bca;
-  border-color: #428bca;
-  border-bottom: 1px solid transparent;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px; }
+  width: 90%; }
 
 .panel {
   margin-bottom: 20px;
@@ -168,8 +176,7 @@ background: linear-gradient(to bottom, #222222 0%, #45484d 100%);
   FONT-SIZE: 32pt;
   /*FILTER: shadow(color=#fff);*/
   COLOR: #fff;
-  LINE-HEIGHT: 100%;
-  margin-left: 50px; }
+  LINE-HEIGHT: 100%; }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
   color: #fff;
@@ -226,7 +233,7 @@ background: linear-gradient(to bottom, #222222 0%, #45484d 100%);
   border-color: #da2006 !important; }
 
 .login_button {
-  width: 100%; }
+  width: 90%; }
 
 .panel-body {
   padding-left: 0;
@@ -234,5 +241,35 @@ background: linear-gradient(to bottom, #222222 0%, #45484d 100%);
 
 .text-center {
   text-align: center !important; }
+
+.hello {
+  font-size: 12px;
+  color: #207DFE;
+  font-family: '微软雅黑';
+  margin-left: 15px;
+  margin-top: 10px; }
+
+.form_p {
+  padding-left: 20px;
+  line-height: 60px;
+  width: 260px; }
+
+.i_con {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: top;
+  margin-top: 7px;
+  background: url(../../../../static/img/user_1.png) no-repeat center;
+  background-size: cover; }
+
+.i_con2 {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: top;
+  margin-top: 7px;
+  background: url(../../../../static/img/psw.png) no-repeat center;
+  background-size: cover; }
 
 /*# sourceMappingURL=login.css.map */

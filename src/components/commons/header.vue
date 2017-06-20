@@ -13,9 +13,6 @@
                 </el-col>
                 <el-col :span="17">
                     <div class="icon">
-                        <!--<li class="keywordSetting"><i class="el-icon-setting"></i> 关键词设置</li>-->
-                        <!--<li class="contactSettings"><i class="el-icon-star-on"></i> 联系人设置</li>-->
-                        <!--<li class="reportSettings"><i class="el-icon-document"></i> 报告设置</li>-->
                         <el-col :span="12" class="signOut">
                             <!--<span class="demonstration">click 激活</span>-->
                             <img :src="userImg" class="userImg" alt="">
@@ -31,29 +28,25 @@
                                 </el-dropdown-menu>
                                 <!--更改密码-->
                                 <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-                                    <el-form :model="form" class="dialog_form">
-                                        <el-form-item label="用户名" :label-width="formLabelWidth">
-                                            <el-input v-model="username" auto-complete="off" class="dialog_input"></el-input>
-                                        </el-form-item>
-                                        <el-form-item label="原密码" :label-width="formLabelWidth">
+                                    <el-form :model="form" :rules="rules" ref="form"class="dialog_form">
+                                        <el-form-item label="原密码" :label-width="formLabelWidth" prop="oldpassword">
                                             <el-input type="password" v-model="form.oldpassword" auto-complete="off" class="dialog_input"></el-input>
                                         </el-form-item>
-                                        <el-form-item label="密码" :label-width="formLabelWidth">
+                                        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
                                             <el-input type="password" v-model="form.password" auto-complete="off" class="dialog_input"></el-input>
                                         </el-form-item>
-                                        <el-form-item label="确认密码" :label-width="formLabelWidth">
+                                        <el-form-item label="确认密码" :label-width="formLabelWidth" prop="repassword">
                                             <el-input type="password" v-model="form.repassword" auto-complete="off" class="dialog_input"></el-input>
 
                                         </el-form-item>
                                     </el-form>
                                     <div slot="footer" class="dialog-footer">
                                         <el-button @click="dialogFormVisible = false">取 消</el-button>
-                                        <el-button type="primary" @click="turnPassword()">确 定</el-button>
+                                        <el-button type="primary" @click="confirm(form)">确 定</el-button>
                                     </div>
                                 </el-dialog>
                             </el-dropdown>
                         </el-col>
-                        <!--<li class="signOut"><i class="el-icon-upload2"></i> <a href="../module/login.html">退出</a></li>-->
                     </div>
                 </el-col>
             </el-col>
@@ -62,55 +55,55 @@
 </template>
 
 <script>
-    import queryParam from '../../vuex/utils.js'
-    import $  from 'jquery';
     import common from '../../vuex/common.js';
+    import service from '../../vuex/module/login.js'
     export default {
         name: 'header',
         data () {
             return {
                 headerText: '安徽煤监局與情系统',
-                username:queryParam.utils.getQueryVariable('user'),
+                username:localStorage.getItem("user"),
                 userImg:"../../../static/img/user.png",
                 dialogFormVisible: false,
                 form: {
-                    oldpassword:queryParam.utils.getQueryVariable('password'),
+                    oldpassword:'',
                     password:'',
                     repassword:"",
                 },
                 formLabelWidth: '80px',
+                rules: {
+                    oldpassword: [
+                        {required: true, message: '请输入原密码', trigger: 'blur'},
+                    ],
+                    password: [
+                        {required: true, message: '请输入新密码', trigger: 'blur'}
+                    ],
+                    repassword: [
+                        {required: true, message: '请确认密码', trigger: 'blur'}
+                    ],
+                }
             }
         },
         mounted () {
         },
         methods:{
-            turnPassword:function(){
-                debugger;
-                var self = this;
-                if(self.form.password==self.form.repassword){
-                    var param={
-                        oldPwd:self.form.oldpassword,
-                        newPwd:self.form.password
-                    }
-                    $.ajax({
-                        url: common.url.webserviceUrl + '/admin/user/modifyPassword',
-                        type: 'post',
-                        data: param,
-                        success: function (data) {
-                            console.log(data);
-                            self.dialogFormVisible=false;
-                        },
-                        error: function (error) {
-                            reject(error);
-                        }
-                    });
+         confirm(form){
+             this.$refs.form.validate((valid) => {
+                 if (valid && form.password === form.repassword) {
+                     var self = this;
+                     service.action.confirm(form).then(function (data) {
+                         self.dialogFormVisible = false;
+                         window.open("../../module/login.html");
+                         self.oldpassword="";
+                         self.password="";
+                         self.repassword="";
+                     }).catch(error => {
+                         alert(error.responseJSON.message);
+                     });
+                 }
+             });
 
-                }else{
-                    alert("输入密码不正确")
-                }
-
-
-            }
+         }
         }
     }
 </script>

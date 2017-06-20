@@ -78,7 +78,6 @@
                 });
             },
             getPager(pager) {
-                debugger;
                 this.pager = pager;
                 this.getReportList();
             },

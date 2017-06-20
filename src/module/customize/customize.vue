@@ -119,6 +119,7 @@
                     self.pager.totalElements = data.totalElements;
                     self.subjectList = data.content;
                 }).catch(error => {
+                    debugger;
                     error.message = "获取专题列表失败！";
                     utils.utils.handleError(error, self);
                 });

@@ -10,80 +10,17 @@ import utils from '../utils'
 
 const actions = {
     // 获取关键词
-    config: utils.utils.getfocusKeyword(),
+    config: utils.utils.getUserBaseKeyword(),
 
     // 获取高亮的词
-    heightLightWords: utils.utils.getFocusHeightLightKeywords(),
-    //getTimes: function (){
-    //    return new Promise(function (resolve) {
-    //        var setTimesData = [];
-    //        var timesData={};
-    //        var date = new Date();
-    //        timesData.startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-    //        timesData.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 0), 'yyyy-MM-dd');
-    //        setTimesData.push(timesData);
-    //        resolve(setTimesData);
-    //    });
-    //},
-    //焦点报道
-    getArticleTabList: function (startDate,endDate) {
-        debugger;
-        var self = this;
-        var param = {
-            "date": {
-                "startDate":startDate,
-                "endDate": endDate,
-            },
-            "keyword": {
-                "mustWord": this.config.mustWord,
-                "shouldWord": this.config.shouldWord,
-                "mustNotWord": this.config.mustNotWord,
-            },
-            "page": {
-                "limit": 10,
-                "page": 1,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
-                }],
-            },
-            "type": ["article"]
-        };
-        return new Promise(function (resolve) {
-            $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                success: function (data) {
-                   console.log(data);
-                    data.content.forEach(function (item) {
-                        //item.type = item.type.toLowerCase();
-                        if (item.type == 'weibo') {
-                            item.title = item.content;
-                        }
-                        if (item.type == 'bbs') {
-                            item.source = item.author;
-                        }
-                        if(item.title === ""){
-                            item.title = utils.utils.heightLightKeywords(item.content, 45, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
-                        }else{
-                            item.title = utils.utils.heightLightKeywords(item.title, 45, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
-                        }
+    heightLightWords: utils.utils.getBaseHeightLightKeywords(),
 
-                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
-
-                    });
-                    resolve(data);
-                }
-            });
-        });
-    },
-    //近30天舆情
+    //正负面舆情
     getSentimentTypeChart: function (startDate,endDate) {
-        //var date = new Date();
-        //var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-        //var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+        // var date = new Date();
+        // var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        // var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+
         var param = {
             groupName: 'nlp.sentiment.label',
             mustWord: this.config.mustWord,
@@ -91,7 +28,7 @@ const actions = {
             mustNotWord: this.config.mustNotWord,
             s_date: startDate,
             e_date: endDate,
-            // articleType: ''
+            articleType: 'bbs'
         };
         return new Promise(function (resolve) {
             $.ajax({
@@ -99,6 +36,7 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
+                    debugger;
                     var seriesData = [], legend = [];
                     data.forEach(function (item) {
                         var node = {};
@@ -156,12 +94,11 @@ const actions = {
     // 载体趋势图
     getCarrierAnalysisChart: function (startDate,endDate) {
         var date = new Date();
-        var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'news@weibo@bbs@bar';
-            //e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-            //s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
-            dateType = 'day';
-            gap = '1';
-
+        var s_date = '', e_date = '', dateType = '', gap = '', articleType = 'bbs';
+        // e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
+        // s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+        dateType = 'day';
+        gap = '1';
         var param = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
@@ -179,24 +116,25 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    var dataZoomStart = s_date;
+                    console.log(data);
+                    var dataZoomStart = startDate;
                     var xAxis = [];
-                    var seriesData = {news: [], weibo: [], bbs: [], bar: []};
-                    var articleTypeArray = articleType.split("@");
-                    articleTypeArray.forEach(function (type) {
-                        data[type].forEach(function (item) {
-                            if (type == 'news') {
-                                xAxis.push(item.key);
-                            }
-                            seriesData[type].push(item.value);
-                        });
+                    var seriesData = [];
+                    data.bbs.forEach(function (item) {
+                        var node = {};
+                        node.name = item.key;
+                        node.value = item.value;
+                        seriesData.push(node);
+                        xAxis.push(item.key);
                     });
+                    console.log(seriesData);
+                    // var articleTypeArray = articleType.split("@");
                     var myOption = {
                         tooltip: {
                             trigger: 'axis'
                         },
                         legend: {
-                            data: ["新闻", "微博", "论坛", "贴吧"]
+                            data: ["论坛"]
                         },
                         dataZoom: [{
                             startValue: dataZoomStart
@@ -236,43 +174,11 @@ const actions = {
                             }
                         },
                         series: [{
-                            name: '新闻',
-                            type: 'line',
-                            smooth: true,
-                            show: true,
-                            data: seriesData.news,
-                            itemStyle: {
-                                normal: {
-                                    color: '#21b6b9'
-                                }
-                            },
-                            lineStyle: {
-                                normal: {
-                                    width: 3
-                                }
-                            }
-                        }, {
-                            name: '微博',
-                            type: 'line',
-                            smooth: true,
-                            symbolSize: 6,
-                            data: seriesData.weibo,
-                            itemStyle: {
-                                normal: {
-                                    color: '#eba954'
-                                }
-                            },
-                            lineStyle: {
-                                normal: {
-                                    width: 3
-                                }
-                            }
-                        }, {
                             name: '论坛',
                             type: 'line',
                             smooth: true,
-                            symbolSize: 6,
-                            data: seriesData.bbs,
+                            show: true,
+                            data: seriesData,
                             itemStyle: {
                                 normal: {
                                     color: '#0092ff'
@@ -283,52 +189,191 @@ const actions = {
                                     width: 3
                                 }
                             }
-                        }, {
-                            name: '贴吧',
-                            type: 'line',
-                            smooth: true,
-                            symbolSize: 6,
-                            data: seriesData.bar,
-                            itemStyle: {
-                                normal: {
-                                    color: '#d74e67'
-                                }
-                            },
-                            lineStyle: {
-                                normal: {
-                                    width: 3
-                                }
-                            }
                         }]
                     };
-
                     resolve(myOption);
                 }
             });
         });
     },
-    ////关键词云
-    getHotWordCloudChart: function (startDate,endDate) {
-        //var date = new Date();
-        //var s_date = '', e_date = '';
-        //    e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
-        //    s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
+
+
+    //网民观点
+    getMediaBarChart: function (startDate,endDate) {
+        // var date = new Date();
+        // var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        // var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+        var param = {
+            groupName: 'author',
+            mustWord: this.config.mustWord,
+            shouldWord: this.config.shouldWord,
+            mustNotWord: this.config.mustNotWord,
+            s_date: startDate,
+            e_date: endDate,
+            articleType:"bbs"
+
+        };
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
+                data: param,
+                type: 'get',
+                success: function (data) {
+                    var seriesData = [];
+                    var xAxisData = [];
+                    data = data.sort(function (a, b) {
+                        return b.value - a.value;
+                    });
+                    $.each(data, function (i, item) {
+                        seriesData.push(item.value);
+                        xAxisData.push(item.key.slice(0, 10));
+                    });
+                    var option = {
+                        legend: {},
+                        grid: {
+                            bottom: 100,
+                            left: 120
+                        },
+                        xAxis: {
+                            data: xAxisData,
+                            name: '网民名称',
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#000000'
+                                }
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 30,
+                                textStyle: {
+                                    fontSize: 14
+                                }
+                            },
+                        },
+                        yAxis: [{
+                            name: '数量',
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#000000'
+                                }
+                            },
+                            axisLabel: {
+                                interval: 0,
+                                textStyle: {
+                                    fontSize: 14
+                                }
+                            }
+                        }],
+                        series: [
+                            {
+                                name: '网民名称',
+                                type: 'bar',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#21b6b9', '#eba954', '#0092ff', '#d74e67', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex % 15]
+                                        }
+                                    }
+                                }
+                            }, {
+                                name: '网民名称',
+                                type: 'line',
+                                data: seriesData,
+                                itemStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                },
+                                lineStyle: {
+                                    normal: {
+                                        color: '#C1232B'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    resolve(option);
+
+                }
+            });
+        });
+    },
+
+    //新闻列表
+    getArticleTabList: function (startDate,endDate,type) {
+        var self = this;
+        var param = {
+            "date": {
+                "endDate": endDate,
+                "startDate":startDate
+            },
+            "keyword": {
+                "mustWord": this.config.mustWord,
+                "shouldWord": this.config.shouldWord,
+                "mustNotWord": this.config.mustNotWord,
+            },
+            "page": {
+                "limit": 10,
+                "page": 1,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "dateCreated"
+                }],
+            },
+            "type": [type]
+        };
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    debugger;
+                    data.content.forEach(function (item) {
+                        item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
+                        if (item.type == 'bbs') {
+                            // item.source = item.author;
+                            item.title = item.content.slice(6,item.content.length);
+                        }
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
+                    });
+                    resolve(data);
+                }
+            });
+        });
+    },
+    //热点词云
+    getCommentHotKeywordsChart: function (startDate,endDate,type) {
+
+        // var mySearch = searchData.searchParam();
         var param = {
             mustWord: this.config.mustWord,
             shouldWord: this.config.shouldWord,
             mustNotWord: this.config.mustNotWord,
             s_date: startDate,
             e_date: endDate,
-            limit: 50
+            limit:50
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/hotWords.json',
+                url: common.url.webserviceUrl +'/bbs/hotWords.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
                     data.sort(function (a, b) {
-                        return b.value - a.value
+                        return b.score - a.score
                     });
                     var renderData = {};
                     var seriesData = [];
@@ -340,10 +385,11 @@ const actions = {
                     });
                     renderData.option = {"data": seriesData};
                     resolve(renderData);
-                }
+                },
             });
         });
     },
+
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {
         var self = this;
@@ -378,7 +424,7 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
-                        //item.type = item.type.toLowerCase();
+                        item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }

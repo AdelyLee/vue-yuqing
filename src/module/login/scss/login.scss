@@ -4,8 +4,8 @@
 body {
     padding: 0;
     margin: 0;
-    background: url(../../../../static/img/login-bj1.jpg) no-repeat center fixed;
-    background-size: 100% 100%
+    background: url(../../../../static/img/logo-bj.jpg) no-repeat center top fixed;
+    background-size: 100% 90%
 }
 
 .header {
@@ -22,30 +22,49 @@ body {
 }
 
 #login-panel {
-    height: 300px;
+    height: 280px;
     background-color: #fff;
     margin-right: 260px;
-    width: 300px;
+    width: 280px;
     filter: alpha(opacity=90);
     box-shadow: 5px 5px 12px #8F8F90;
+    border-radius: 10px;
 }
 
 .panel-primary {
     border-color: #428bca;
 }
+.login_font{
+    color: #000!important;
+    font-size: 24px;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    font-family: 微软简综艺;
+    width: 100%;
+    border-bottom: 1px solid #207fff;
+}
 
 .panel-heading {
-    color: #fff;
+    //color: #fff;
+    //height: 40px;
+    //line-height: 0;
+    //margin-left: -1px;
+    //margin-top: -1px;
+    //width: 90%;
+    //background-color: #428bca;
+    //border-color: #428bca;
+    //border-bottom: 1px solid transparent;
+    //border-top-left-radius: 3px;
+    //border-top-right-radius: 3px;
+    color: #207DFE;
+    font-size: 18px;
+    text-align: center;
     height: 40px;
     line-height: 0;
     margin-left: -1px;
     margin-top: -1px;
     width: 90%;
-    background-color: #428bca;
-    border-color: #428bca;
-    border-bottom: 1px solid transparent;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
 }
 
 .panel {
@@ -152,11 +171,17 @@ input {
 }
 
 .tit_span {
-    FONT-SIZE: 32pt;
+    //FONT-SIZE: 32pt;
+    font-size:34px;
+    padding-left: 16%;
+    padding-top: 20px;
+    font-weight: 600;
+    font-family: 黑体;
+    //text-shadow: 1px 1px rgba(197, 223, 248,0.8),2px 2px rgba(197, 223, 248,0.8),3px 3px rgba(197, 223, 248,0.8),4px 4px rgba(197, 223, 248,0.8),5px 5px rgba(197, 223, 248,0.8),6px 6px rgba(197, 223, 248,0.8);
     /*FILTER: shadow(color=#fff);*/
     COLOR: #fff;
-    LINE-HEIGHT: 100%;
-    margin-left: 50px;
+    //LINE-HEIGHT: 100%;
+
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary.focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
@@ -222,7 +247,7 @@ input {
 }
 
 .login_button {
-    width: 100%;
+    width: 90%;
 }
 
 .panel-body {
@@ -233,3 +258,35 @@ input {
 .text-center {
     text-align: center !important;
 }
+.hello{
+    font-size: 12px;
+    color: #207DFE;
+    font-family: '微软雅黑';
+    margin-left: 15px;
+    margin-top: 10px;
+}
+.form_p{
+    padding-left: 20px;
+    line-height: 60px;
+    width: 260px;
+}
+.i_con{
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: top;
+    margin-top: 7px;
+    background: url(../../../../static/img/user_1.png) no-repeat center;
+    background-size: cover;
+}
+.i_con2{
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: top;
+    margin-top: 7px;
+    background: url(../../../../static/img/psw.png) no-repeat center;
+    background-size: cover;
+
+}
+
