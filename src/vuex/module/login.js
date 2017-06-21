@@ -34,6 +34,7 @@ const action = {
             });
         });
     },
+    //更改密码
     confirm:function(form){
         debugger;
         var param = {

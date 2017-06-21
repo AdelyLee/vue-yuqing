@@ -65,7 +65,7 @@ app.use(hotMiddleware)
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 
-var uri = 'http://localhost:' + port + '/module/login.html' // 直接显示页面
+var uri = 'http://localhost:' + port + '/yuqing/module/login.html' // 直接显示页面
 
 var _resolve
 var readyPromise = new Promise(resolve => {

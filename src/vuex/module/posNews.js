@@ -349,7 +349,6 @@ const actions = {
     },
     // 点击显示article列表
     getArticleListByCondition: function (conditions,time,pageSize, currentPage) {
-        debugger;
         var self = this;
         var param = {
             "date": {
@@ -372,6 +371,7 @@ const actions = {
             "searchKv": conditions.searchKv,
             "type": conditions.type
         };
+        debugger;
         return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',

@@ -7,6 +7,15 @@ import common from './common'
 import dateUtil from './dateUtil'
 
 const utils = {
+    getBasePath: function () {
+        var href = window.location.href;
+        var pathname = window.location.pathname;
+        var index = href.indexOf(pathname);
+        var basePath = href.substring(0, index) + "/" + pathname.split('/')[1];
+
+        console.log("getBasePath", basePath);
+        return basePath;
+    },
     // 获取URL中的变量
     getQueryVariable: function (variable) {
         var query = window.location.search.substring(1);

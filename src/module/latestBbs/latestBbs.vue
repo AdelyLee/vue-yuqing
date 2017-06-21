@@ -97,10 +97,6 @@
             return {
                 activeTrendName: '近30天',
                 activeBarName: '近30天',
-//                articleTabData: {
-//                    type: '',
-//                    articles: []
-//                },
                 articleBbsTabData: {
                     type: '',
                     articles: []
@@ -146,8 +142,8 @@
                         }
                     }
                 },
-//                carrierAnalysisType: {
-//                    chartId: 'carrierAnalysisType',
+//                carrierAnalysisTypeYesterday: {
+//                    chartId: 'carrierAnalysisTypeYesterday',
 //                    option: {},
 //                    events: {
 //                        'click': function (param) {
@@ -156,36 +152,26 @@
 //                        }
 //                    }
 //                },
-                carrierAnalysisTypeYesterday: {
-                    chartId: 'carrierAnalysisTypeYesterday',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisTypeNearlyDays: {
-                    chartId: 'carrierAnalysisTypeNearlyDays',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
-                carrierAnalysisTypeMonth: {
-                    chartId: 'carrierAnalysisTypeMonth',
-                    option: {},
-                    events: {
-                        'click': function (param) {
-                            self.getMediaTypeBarChartCondition(param);
-                            self.getArticleListByCondition(self.articlesCondition);
-                        }
-                    }
-                },
+//                carrierAnalysisTypeNearlyDays: {
+//                    chartId: 'carrierAnalysisTypeNearlyDays',
+//                    option: {},
+//                    events: {
+//                        'click': function (param) {
+//                            self.getMediaTypeBarChartCondition(param);
+//                            self.getArticleListByCondition(self.articlesCondition);
+//                        }
+//                    }
+//                },
+//                carrierAnalysisTypeMonth: {
+//                    chartId: 'carrierAnalysisTypeMonth',
+//                    option: {},
+//                    events: {
+//                        'click': function (param) {
+//                            self.getMediaTypeBarChartCondition(param);
+//                            self.getArticleListByCondition(self.articlesCondition);
+//                        }
+//                    }
+//                },
                 mediaBarChart: {
                     chartId: 'media-bar-chart',
                     option: {},
@@ -233,10 +219,8 @@
             this.getTime();
             this.getSentimentTypeChart(this.addForm.startDate,this.addForm.endDate);
             this.getCarrierAnalysisChart(this.addForm.startDate,this.addForm.endDate);
-//            this.getCarrierAnalysisBarChart(this.barTimesType);
             this.getMediaBarChart(this.addForm.startDate,this.addForm.endDate);
             this.getCommentHotKeywordsChart(this.addForm.startDate,this.addForm.endDate)
-//            this.getArticleTabList(this.tabArticleType);
             this.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabBbsArticleType);
         },
         methods: {
@@ -254,7 +238,6 @@
                 self.getArticleTabList(subject.startDate,subject.endDate,self.tabBbsArticleType);
                 this.getSentimentTypeChart(subject.startDate,subject.endDate);
                 this.getCarrierAnalysisChart(subject.startDate,subject.endDate);
-////            this.getCarrierAnalysisBarChart(this.barTimesType);
                 this.getMediaBarChart(subject.startDate,subject.endDate);
                 this.getCommentHotKeywordsChart(subject.startDate,subject.endDate)
             },
@@ -360,12 +343,8 @@
             getMediaTypeTrendChartCondition: function (param) {
                 var self = this;
                 self.articlesCondition = {};
-                var dateStr = param.name;
-                var date = dateUtil.dateUtil.parseDate(dateStr);
-                var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
-                var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                self.articlesCondition.startDate = startDate;
-                self.articlesCondition.endDate = endDate;
+                self.articlesCondition.startDate =self.addForm.startDate;
+                self.articlesCondition.endDate = self.addForm.endDate;
                 var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
                 self.articlesCondition.type = [value];
             },

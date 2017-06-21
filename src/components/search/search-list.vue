@@ -3,14 +3,11 @@
         <div class="article" v-for="item in searchList" @click="showDetail(item)">
             <el-row :gutter="15">
                 <el-col :span="2">
-                    <img v-if="item.type=='news'" :src="newslogoSrc" width="80" height="67"
-                         style="margin-left: 23%;margin-top: 35%;">
-                    <img v-if="item.type=='weibo'" :src="weibologoSrc" width="80" height="67"
-                         style="margin-left: 23%;margin-top: 35%;">
-                    <img v-if="item.type=='bbs'" :src="bbslogoSrc" width="80" height="67"
-                         style="margin-left: 23%;margin-top: 35%;">
-                    <img v-if="item.type=='bar'" :src="barlogoSrc" width="80" height="67"
-                         style="margin-left: 23%;margin-top: 35%;">
+                    <div v-if="item.type=='news'" class="big-article-image newslogoSrc"></div>
+                    <div v-if="item.type=='weibo'" class="big-article-image weibologoSrc"></div>
+                    <div v-if="item.type=='bbs'" class="big-article-image bbslogoSrc"></div>
+                    <div v-if="item.type=='bar'" class="big-article-image barlogoSrc"></div>
+                    <div v-if="item.type=='comments'" class="big-article-image pllogoSrc"></div>
                 </el-col>
                 <el-col :span="20">
                     <li class="title" v-html="item.title">{{item.title}}</li>
@@ -30,12 +27,7 @@
     export default {
         props: ['searchList'],
         data () {
-            return {
-                weibologoSrc: '../../static/img/wb_new.svg',
-                newslogoSrc: '../../static/img/news_new.svg',
-                bbslogoSrc: '../../static/img/bbs_new.svg',
-                barlogoSrc: '../../static/img/bar_new.svg',
-            }
+            return {}
         },
         methods: {
             showDetail: function (article) {
@@ -48,3 +40,7 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    @import "../index/scss/articleList.scss";
+</style>

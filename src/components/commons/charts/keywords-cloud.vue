@@ -13,6 +13,9 @@
             return {
             }
         },
+        mounted () {
+            Chart.drawKeyWordsCloud(this.chartConfig.chartId, this.chartConfig.option, this.chartConfig.events);
+        },
         watch: {
             chartConfig: {
                 handler: function (val, oldVal) {

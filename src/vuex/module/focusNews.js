@@ -27,7 +27,6 @@ const actions = {
     //},
     //焦点报道
     getArticleTabList: function (startDate,endDate) {
-        debugger;
         var self = this;
         var param = {
             "date": {
@@ -39,12 +38,13 @@ const actions = {
                 "shouldWord": this.config.shouldWord,
                 "mustNotWord": this.config.mustNotWord,
             },
+            "filed": "title.cn",
             "page": {
                 "limit": 10,
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "type": ["article"]
@@ -56,9 +56,9 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                   console.log(data);
+                   data.content.sort(function (a,b) {return b.pubTime - a.pubTime});
                     data.content.forEach(function (item) {
-                        //item.type = item.type.toLowerCase();
+                        item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }
@@ -364,7 +364,7 @@ const actions = {
                 "page": currentPage,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "searchKv": condition.searchKv,
@@ -378,7 +378,7 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
-                        //item.type = item.type.toLowerCase();
+                        item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }

@@ -6,19 +6,14 @@
                     <el-row class="content" id="list">
                         <ul class="ul_p">
                             <li class="l_style" v-for="item in articles" :id="item.id">
-                                <div @click="showDetail(item.id,itme.type)">
+                                <div @click="showDetail(item.id,item.type)">
                                     <el-row :gutter="1">
                                         <el-col :span="2">
-                                            <!--<img v-if="item.type=='news'" :src="newslogoSrc">
-                                             <img v-if="item.type=='weibo'" :src="weibologoSrc">
-                                            <img v-if="item.type=='bbs'" :src="bbslogoSrc">
-                                            <img v-if="item.type=='bar'" :src="barlogoSrc">
-                                            -->
-                                            <img v-if="item.type=='news'" :src="newslogoSrc" width="60" height="60">
-                                            <img v-if="item.type=='weibo'" :src="weibologoSrc" width="60" height="60">
-                                            <img v-if="item.type=='bbs'" :src="bbslogoSrc" width="60" height="60">
-                                            <img v-if="item.type=='bar'" :src="barlogoSrc" width="60" height="60">
-                                            <img v-if="item.type=='comments'" :src="pllogoSrc" width="60" height="60">
+                                            <div v-if="item.type=='news'" class="big-article-image newslogoSrc"></div>
+                                            <div v-if="item.type=='weibo'" class="big-article-image weibologoSrc"></div>
+                                            <div v-if="item.type=='bbs'" class="big-article-image bbslogoSrc"></div>
+                                            <div v-if="item.type=='bar'" class="big-article-image barlogoSrc"></div>
+                                            <div v-if="item.type=='comments'" class="big-article-image pllogoSrc"></div>
                                         </el-col>
                                         <el-col :span="20">
                                             <a class="a_font"><span v-html="item.title">{{item.title}}</span></a>
@@ -35,7 +30,8 @@
                                 </div>
                                 <el-row :gutter="1" class="l_bottom">
                                     <el-col :span="8">
-                                        <span v-if="item.type=='weibo' || item.type=='bbs' || item.type=='bar'|| item.type == 'comments'">
+                                        <span
+                                            v-if="item.type=='weibo' || item.type=='bbs' || item.type=='bar'|| item.type == 'comments'">
                                             <span class="sours">作者</span>：{{item.author}}
                                         </span>
                                         <span v-else-if="item.type=='news'">
@@ -46,17 +42,10 @@
                                         <span><span class="time">发布时间</span>：{{item.pubTime}}</span>
                                     </el-col>
                                     <el-col :span="8">
-                                        <span v-if = "item.type!='comments'"><span class="number">评论数</span>：{{item.commentNum}}</span>
-                                        <span v-if = "item.type=='comments'"><span class="number">地区</span>：{{item.area}}</span>
+                                        <span v-if="item.type!='comments'"><span class="number">评论数</span>：{{item.commentNum}}</span>
+                                        <span v-if="item.type=='comments'"><span class="number">地区</span>：{{item.area}}</span>
                                     </el-col>
                                 </el-row>
-                                <!--<el-row class="key">-->
-                                    <!--<el-col :span="24">-->
-                                        <!--<span v-if="item.nlp.sentiment.label=='正面'" class="positive">{{item.nlp.sentiment.label}}</span>-->
-                                        <!--<span v-if="item.nlp.sentiment.label=='负面'" class="negative">{{item.nlp.sentiment.label}}</span>-->
-                                        <!--<span v-if="item.nlp.sentiment.label=='中性'" class="neutral">{{item.nlp.sentiment.label}}</span>-->
-                                    <!--</el-col>-->
-                                <!--</el-row>-->
                             </li>
                         </ul>
                     </el-row>
@@ -70,17 +59,12 @@
     import Header from '@/components/commons/header';
     import Paging from '@/components/commons/paging';
 
+    var basePath = localStorage.getItem('basePath');
     export default {
         name: 'articles',
         props: ['type', 'articles', 'pager'],
         data () {
-            return {
-                weibologoSrc: '../../static/img/wb_new.svg',
-                newslogoSrc: '../../static/img/news_new.svg',
-                bbslogoSrc: '../../static/img/bbs_new.svg',
-                barlogoSrc: '../../static/img/bar_new.svg',
-                pllogoSrc: '../../static/img/pl.svg',
-            }
+            return {}
         },
         components: {
             'common-header': Header,
@@ -96,12 +80,16 @@
 
                 this.$emit("data", data);
             },
-            showDetail: function (id,type) {
-              if(type != "comments") {
-                  window.open('../../module/detail.html?id=' + id)
-              }
+            showDetail: function (id, type) {
+                if (type != "comments") {
+                    window.open(basePath + '/module/detail.html?id=' + id);
+                }
             }
         }
     }
 
 </script>
+
+<style lang="scss" scoped>
+    @import "./scss/articleList.scss";
+</style>

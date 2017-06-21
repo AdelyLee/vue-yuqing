@@ -1,8 +1,8 @@
 <template>
     <div class="add-warning">
         <!--添加界面-->
-        <el-dialog title="预警编辑" v-model="warningDialog.addFormVisible" :close-on-click-modal="false">
-            <el-form :inline="true" :model="contactForm" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-dialog title="预警编辑" v-model="warningDialog.addFormVisible" size="big" :close-on-click-modal="false">
+            <el-form :inline="true" ref="contactForm" :model="contactForm" :rules="rules" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="联系人" prop="name">
                     <el-input v-model="contactForm.name" placeholder="请输入联系人"></el-input>
                 </el-form-item>
@@ -133,6 +133,7 @@
         },
         methods: {
             addContactSubmit: function (contact) {
+                debugger;
                 this.$refs.contactForm.validate((valid) => {
                     if (valid) {
                         console.log("addContactSubmit", contact);

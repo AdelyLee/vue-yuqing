@@ -448,7 +448,7 @@ const actions = {
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "type": [type]
@@ -467,6 +467,9 @@ const actions = {
                         }
                         if (item.type == 'bbs') {
                             item.source = item.author;
+                        }
+                        if(item.source.length > 8){
+                            item.source = item.source.substring(0,4);
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -497,7 +500,7 @@ const actions = {
                 "page": currentPage,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "searchKv": condition.searchKv,

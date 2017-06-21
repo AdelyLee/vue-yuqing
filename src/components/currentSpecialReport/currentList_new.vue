@@ -47,7 +47,7 @@
                 <el-tag  v-if="scope.row.emotion=='中性'" type="warning" >
                     {{scope.row.emotion}}
                 </el-tag>
-                <el-tag  v-if="scope.row.emotion=='正面'" type="success" >
+                <el-tag  v-if="scope.row.emotion=='正面'" type="primary" >
                     {{scope.row.emotion}}
                 </el-tag>
                 <el-tag v-if="scope.row.emotion=='负面'" type="danger" >

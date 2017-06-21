@@ -42,7 +42,9 @@
     <!--</el-row>-->
 </template>
 <script>
-    import common from '../../vuex/common';
+    import common from '@/vuex/common';
+
+    var basePath = localStorage.getItem("basePath");
     export default {
         props: ['reportList'],
         data () {
@@ -53,7 +55,7 @@
         },
         methods: {
             previewReport: function (index, id) {
-                window.open('../module/report.html?id=' + id);
+                window.open(basePath + '/module/report.html?id=' + id);
             },
             downloadFile: function (index, attachment) {
                 if (attachment.length > 1) {

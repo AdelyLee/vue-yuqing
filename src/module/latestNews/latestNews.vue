@@ -96,21 +96,21 @@
     import $ from 'jquery';
 
     export default {
-        name: 'newSingle',
+        name: 'latestNews',
         data () {
             var self = this;
             return {
-                activeTrendName: '近30天',
-                activeBarName: '近30天',
+//                activeTrendName: '近30天',
+//                activeBarName: '近30天',
                 activeArticleTabName: 'news',
                 articleTabData: {
                     type: '',
                     articles: []
                 },
-                articleBbsTabData: {
-                    type: '',
-                    articles: []
-                },
+//                articleBbsTabData: {
+//                    type: '',
+//                    articles: []
+//                },
                 addForm: {
                     startDate: '',
                     endDate: ''
@@ -146,6 +146,7 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            debugger;
                             self.getMediaTypeTrendChartCondition(param);
                             self.getArticleListByCondition(self.articlesCondition);
                         }
@@ -297,12 +298,9 @@
             getMediaTypeTrendChartCondition: function (param) {
                 var self = this;
                 self.articlesCondition = {};
-                var dateStr = param.name;
-                var date = dateUtil.dateUtil.parseDate(dateStr);
-                var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
-                var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                self.articlesCondition.startDate = startDate;
-                self.articlesCondition.endDate = endDate;
+                self.articlesCondition.startDate =self.addForm.startDate;
+                self.articlesCondition.endDate = self.addForm.endDate;
+
                 var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
                 self.articlesCondition.type = [value];
             },

@@ -13,9 +13,8 @@
                 </el-col>
                 <el-col :span="17">
                     <div class="icon">
-                        <el-col :span="12" class="signOut">
-                            <!--<span class="demonstration">click 激活</span>-->
-                            <img :src="userImg" class="userImg" alt="">
+                        <el-col :span="24" class="signOut">
+                            <div class="userImg"></div>
                             <el-dropdown trigger="click" class="drop">
                             <span class="el-dropdown-link">
                               <span v-if="username" class="userName">{{username}}</span>
@@ -37,7 +36,6 @@
                                         </el-form-item>
                                         <el-form-item label="确认密码" :label-width="formLabelWidth" prop="repassword">
                                             <el-input type="password" v-model="form.repassword" auto-complete="off" class="dialog_input"></el-input>
-
                                         </el-form-item>
                                     </el-form>
                                     <div slot="footer" class="dialog-footer">
@@ -63,7 +61,6 @@
             return {
                 headerText: '安徽煤监局與情系统',
                 username:localStorage.getItem("user"),
-                userImg:"../../../static/img/user.png",
                 dialogFormVisible: false,
                 form: {
                     oldpassword:'',
@@ -112,6 +109,7 @@
         width:100%;
         height: 55px;
         background-color: #4d637b;
+        border-bottom: 0.15em solid #6c7481;
         position: fixed;
         z-index: 99999;
     }
@@ -140,6 +138,7 @@
     .icon{
         float: right;
         margin-right: 10px;
+        min-width: 11%!important;
     }
     .icon li{
         float: left;
@@ -157,19 +156,19 @@
         position: relative;
         vertical-align: middle;
         margin-top: 10px;
+        min-width: 90%!important;
     }
     .userImg{
-        position: absolute;
-        right: 40px;
-        top: 0;
-        display: inline-block;
+        background: url('../../../static/img/user.png') center no-repeat;
         width: 30px;
+        height: 30px;
+        float: left;
     }
     .drop{
         /* margin-left: -10px; */
         position: absolute;
-        right: 11px;
-        width: 60px;
+        /*right: 11px;*/
+        min-width: 10%;
         margin-top: 6px;
     }
     .userName{

@@ -54,74 +54,85 @@
 </template>
 
 <script>
+    var basePath = localStorage.getItem("basePath");
     export default {
         name: 'menu',
         data () {
             return {
                 activeIndex: '1',
-                logoSrc: '../../static/img/yhm.png',
                 collapsed: false,
                 routes: [
                     {
-                        path: '/module/index.html',
+                        path: basePath + '/module/index.html',
                         name: '全景舆情',
-                        redirect: '/module/index.html',
+                        redirect:  basePath + '/module/index.html',
 //                        leaf: true, // 只有一个节点
                         menuShow: true,
                         isActive: false,
                         iconCls: 'el-icon-menu', // 图标样式class
                         children: [
-                            {path: '/module/index.html', name: '舆情分析', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/focusNews.html', name: '焦点报道', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/latestNews.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/latestBbs.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/latestWeibo.html', name: '最新微博', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/posNews.html', name: '正面新闻', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/negNews.html', name: '负面新闻', leaf:true, isActive: false,　menuShow: true}
+                            {path:  basePath + '/module/index.html', name: '舆情分析', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/focusNews.html', name: '焦点报道', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/latestNews.html', name: '最新新闻', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/latestBbs.html', name: '最新论坛', leaf:true, isActive: false,　menuShow: true},
+//                            {path: '/module/latestWeibo.html', name: '最新微博', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/posNews.html', name: '正面新闻', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/negNews.html', name: '负面新闻', leaf:true, isActive: false,　menuShow: true}
                         ]
                     },
                     {
-                        path: '/module/customize.html',
+                        path:  basePath + '/module/customize.html',
                         name: '专题分析',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-share', // 图标样式class
                         children: [
-                            {path: '/module/customize.html', name: '专题分析', menuShow: true}
+                            {path:  basePath + '/module/customize.html', name: '专题分析', menuShow: true}
                         ]
                     },
                     {
-                        path: '/module/publicSentimentWarning.html',
+                        path: basePath + '/module/accident.html',
+                        name: '事故分析',
+                        menuShow: true,
+                        leaf: true, // 只有一个节点
+                        isActive: false,
+                        iconCls: 'el-icon-star-on', // 图标样式class
+                        children: [
+                            {path: basePath + '/module/accident.html', name: '事故分析', menuShow: true}
+                        ]
+                    },
+                    {
+                        path:  basePath + '/module/publicSentimentWarning.html',
                         name: '舆情预警',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-edit', // 图标样式class
                         children: [
-                            {path: '/module/publicSentimentWarning.html', name: '舆情预警', menuShow: true}
+                            {path:  basePath + '/module/publicSentimentWarning.html', name: '舆情预警', menuShow: true}
                         ]
                     },
                     {
-                        path: '/module/presentationList.html',
+                        path:  basePath + '/module/presentationList.html',
                         name: '舆情报告',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-document',
                         children: [
-                            {path: '/module/presentationList.html', name: '舆情报告', menuShow: true}
+                            {path:  basePath + '/module/presentationList.html', name: '舆情报告', menuShow: true}
                         ]
                     },
                     {
-                        path: '/module/search.html',
+                        path:  basePath + '/module/search.html',
                         name: '舆情搜索',
                         menuShow: true,
                         leaf: true, // 只有一个节点
                         isActive: false,
                         iconCls: 'el-icon-search',
                         children: [
-                            {path: '/module/search.html', name: '舆情搜索', menuShow: true},
+                            {path:  basePath + '/module/search.html', name: '舆情搜索', menuShow: true},
                         ]
                     },
                     {
@@ -131,11 +142,11 @@
                         isActive: false,
                         iconCls: 'el-icon-setting',
                         children: [
-                            {path: '/module/baseKeywords.html', name: '关键词设置', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/focusKeywords.html', name: '焦点关键词设置', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/contacts.html', name: '联系人设置', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/monthlyReportConfig.html', name: '月报设置', leaf:true, isActive: false,　menuShow: true},
-                            {path: '/module/weeklyReportConfig.html', name: '周报设置', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/baseKeywords.html', name: '关键词设置', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/focusKeywords.html', name: '焦点关键词设置', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/contacts.html', name: '联系人设置', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/monthlyReportConfig.html', name: '月报设置', leaf:true, isActive: false,　menuShow: true},
+                            {path:  basePath + '/module/weeklyReportConfig.html', name: '周报设置', leaf:true, isActive: false,　menuShow: true},
                         ]
                     }
                 ]

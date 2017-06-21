@@ -7,7 +7,7 @@
             </el-col>
             <el-col :span="21" :offset="3">
                 <el-card class="box-card my-card-box">
-                    <el-row >
+                    <el-row>
                         <el-col :span="24">
                             <time-change :timeChange="timeChange" @data="getTimeParam"></time-change>
                         </el-col>
@@ -61,6 +61,8 @@
     import LineBarChart from '@/components/commons/charts/line-bar';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
     import timeChange from '@/components/index/timeChange';
+    import dateUtil from '../../vuex/dateUtil.js';
+    import typeUtil from '../../vuex/typeUtil.js';
     import service from '../../vuex/module/posNews.js';
     import $ from 'jquery';
     export default {
@@ -70,7 +72,7 @@
             return {
                 articleType: "",
                 articles: [],
-                kv:"nlp.sentiment.label,POS",
+                kv: "nlp.sentiment.label,POS",
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -89,15 +91,15 @@
                 articleTabData: {
                     type: '',
                     articles: [],
-                    emotion:''
+                    emotion: ''
                 },
                 keywordsChart: {
                     chartId: 'keywords-chart',
                     option: {}
                 },
                 conditions: {
-                    searchKv:[],
-                    type:[]
+                    searchKv: [],
+                    type: []
                 },
                 mediaBarChart: {
                     chartId: 'media-bar-chart',
@@ -106,9 +108,12 @@
                         'click': function (param) {
                             that.pager.currentPage = 1;
                             var value = param.name;
-                            that.conditions.searchKv = [{"key": "source", "value": value},{"key":"nlp.sentiment.label","value":"POS"}];
+                            that.conditions.searchKv = [{
+                                "key": "source",
+                                "value": value
+                            }, {"key": "nlp.sentiment.label", "value": "POS"}];
                             that.conditions.type = ["news"];
-                            that.getArticleListByCondition(that.conditions,that.timeChange,that.pager.pageSize, that.pager.currentPage);
+                            that.getArticleListByCondition(that.conditions, that.timeChange, that.pager.pageSize, that.pager.currentPage);
                         }
                     }
                 },
@@ -117,6 +122,18 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.pager.currentPage = 1;
+                            var dateStr = param.name;
+                            var type = [];
+                            type.push(typeUtil.typeUtil.encodeArticleType(param.seriesName));
+                            var date = new Date(dateStr);
+                            var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
+                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                            that.timeChange.startDate = startDate;
+                            that.timeChange.endDate = endDate;
+                            that.conditions.searchKv = [{"key": "nlp.sentiment.label", "value": "POS"}];
+                            that.conditions.type = type;
+                            that.getArticleListByCondition(that.conditions, that.timeChange, that.pager.pageSize, that.pager.currentPage);
                         }
                     }
                 }
@@ -155,8 +172,7 @@
             },
             getArticleListByCondition: function () {
                 var self = this;
-                service.actions.getArticleListByCondition(self.conditions,self.timeChange,self.pager.pageSize, self.pager.currentPage).then(function (data) {
-                  debugger;
+                service.actions.getArticleListByCondition(self.conditions, self.timeChange, self.pager.pageSize, self.pager.currentPage).then(function (data) {
                     self.articles = data.content;
                     self.pager.totalElements = data.totalElements;
                 })
@@ -164,7 +180,7 @@
 
             getMediaReportTrendBar: function () {
                 var self = this;
-                service.actions.getMediaReportTrendBar(self.timeChange,self.kv).then(function (renderData) {
+                service.actions.getMediaReportTrendBar(self.timeChange, self.kv).then(function (renderData) {
                     self.mediaReportTrendBar.option = renderData;
                 }, function (error) {
                     console.error('出错了', error);
@@ -180,7 +196,7 @@
             },
             getMediaBarChart: function () {
                 var self = this;
-                service.actions.getMediaBarChart(self.timeChange,self.kv).then(function (option) {
+                service.actions.getMediaBarChart(self.timeChange, self.kv).then(function (option) {
                     self.mediaBarChart.option = option;
                 }, function (error) {
                     console.error('出错了', error);
@@ -189,7 +205,7 @@
             },
             getKeywordsChart: function () {
                 var self = this;
-                service.actions.getKeywordsChart(self.timeChange,self.kv).then(function (renderData) {
+                service.actions.getKeywordsChart(self.timeChange, self.kv).then(function (renderData) {
                     self.keywordsChart.option = renderData.option;
                 }, function (error) {
                     console.error('出错了', error);

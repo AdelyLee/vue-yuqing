@@ -343,8 +343,11 @@ const actions = {
                             item.title = item.content;
                         }
                         if (item.type == 'bbs') {
+                            if(!item.source){
+                                item.source="未知"
+                            }
                             // item.source = item.author;
-                            item.title = item.content.slice(6,item.content.length);
+                            item.title = item.content.slice(4,item.content.length);
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -355,7 +358,7 @@ const actions = {
         });
     },
     //热点词云
-    getCommentHotKeywordsChart: function (startDate,endDate,type) {
+    getCommentHotKeywordsChart: function (startDate,endDate) {
 
         // var mySearch = searchData.searchParam();
         var param = {

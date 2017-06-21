@@ -217,6 +217,7 @@
                 service.actions.getArticleListByCondition(self.pager.pageSize, self.pager.currentPage, self.articlesCondition).then(function (data) {
                     self.articles = data.content;
                     self.pager.totalElements = data.totalElements;
+                    console.log(self.articles);
                 })
             },
             getMediaTypeTrendChartCondition: function (param) {

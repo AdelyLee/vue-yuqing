@@ -1,0 +1,26 @@
+.big-article-image {
+  height: 60px;
+  width: 60px;
+  background-size: 60px 60px !important; }
+
+.small-article-image {
+  height: 20px;
+  width: 20px;
+  background-size: 20px 20px !important; }
+
+.newslogoSrc {
+  background: url("../../../static/img/news_new.svg"); }
+
+.weibologoSrc {
+  background: url("../../../static/img/wb_new.svg"); }
+
+.bbslogoSrc {
+  background: url("../../../static/img/bbs_new.svg"); }
+
+.barlogoSrc {
+  background: url("../../../static/img/bar_new.svg"); }
+
+.pllogoSrc {
+  background: url("../../../static/img/pl.svg"); }
+
+/*# sourceMappingURL=articleList.css.map */

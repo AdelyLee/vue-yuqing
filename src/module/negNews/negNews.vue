@@ -61,6 +61,8 @@
     import LineBarChart from '@/components/commons/charts/line-bar';
     import KeywordsChart from '@/components/commons/charts/keywords-cloud';
     import timeChange from '@/components/index/timeChange';
+    import dateUtil from '../../vuex/dateUtil.js';
+    import typeUtil from '../../vuex/typeUtil.js';
     import service from '../../vuex/module/negNews.js';
     import $ from 'jquery';
     export default {
@@ -117,6 +119,18 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            that.pager.currentPage = 1;
+                            var dateStr = param.name;
+                            var type = [];
+                            type.push(typeUtil.typeUtil.encodeArticleType(param.seriesName));
+                            var date = new Date(dateStr);
+                            var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
+                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                            that.timeChange.startDate = startDate;
+                            that.timeChange.endDate = endDate;
+                            that.conditions.searchKv = [{"key": "nlp.sentiment.label", "value": "NEG"}];
+                            that.conditions.type = type;
+                            that.getArticleListByCondition(that.conditions, that.timeChange, that.pager.pageSize, that.pager.currentPage);
                         }
                     }
                 }

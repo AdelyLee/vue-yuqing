@@ -46,9 +46,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-    import service from '../../vuex/module/login.js'
-
-    import utils from '../../vuex/utils.js'
+    import service from '@/vuex/module/login.js'
+    import utils from '@/vuex/utils.js'
 
     export default {
         name: 'login',
@@ -105,8 +104,12 @@
                             localStorage.setItem("user", data.user);
                             var config = utils.utils.getUserBaseKeyword();
                             localStorage.setItem("baseKeywords", config);
+
+                            var basePath = utils.utils.getBasePath();
+                            localStorage.setItem("basePath", basePath);
+
                             if (typeof(Storage) !== "undefined") {
-                                window.location.href = "../module/index.html";
+                                window.location.href = basePath + "/module/index.html";
                             } else {
                                 alert("抱歉！您的浏览器不支持当前系统，请更换浏览器．");
                             }
