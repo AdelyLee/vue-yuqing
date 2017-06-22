@@ -119,6 +119,23 @@ const actions = {
         });
     },
 
+    deleteCustomBriefing: function (subject) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/briefing/' + subject.id,
+                contentType: "application/json; charset=utf-8",
+                type: 'delete',
+                success: function (data) {
+
+                    console.log("delete custom subject success");
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    },
     deleteCustomSubject: function (subject) {
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -126,6 +143,7 @@ const actions = {
                 contentType: "application/json; charset=utf-8",
                 type: 'delete',
                 success: function (data) {
+
                     console.log("delete custom subject success");
                     resolve(data);
                 },

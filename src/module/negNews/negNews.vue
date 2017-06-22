@@ -80,8 +80,8 @@
                 },
                 articleListId: 'article-list',
                 timeChange: {
-                    startDate: '2017-05-01',
-                    endDate: '2017-06-01'
+                    startDate: dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(new Date(), 'M', -1), 'yyyy-MM-dd'),
+                    endDate: dateUtil.dateUtil.formatDate(new Date(), 'yyyy-MM-dd')
                 },
                 tabArticleType: "news",
                 searchKv: [{

@@ -8,7 +8,7 @@
             border
             tooltip-effect="dark"
             style="width: 100%"
-            height="400">
+            height="450">
             <el-table-column
                 prop="subjectName"
                 label="专题名称"
@@ -38,12 +38,17 @@
                         size="small"
                         type="info"
                         @click="searchWarningId(scope.$index, scope.row)">查看预警</el-button>
+                    <el-button
+                        size="small"
+                        type="danger"
+                        @click="handleDelete(scope.$index, scope.row)">删除预警</el-button>
                 </template>
             </el-table-column>
         </el-table>
     </div>
 </template>
 <script>
+    var basePath = localStorage.getItem('basePath');
     export default {
         props: ['yujingList'],
         data () {
@@ -53,7 +58,14 @@
         },
         methods: {
             searchWarningId:function(a,b){
-               window.open('../module/warningList.html?id='+b.id)
+               window.open(basePath + '/module/warningList.html?id='+b.id)
+            },
+            handleDelete(index, row) {
+                var data = {};
+                data.action = "deleteWarning";
+                data.warning = row;
+
+                this.$emit('data', data);
             }
         }
     }

@@ -348,7 +348,7 @@ const actions = {
         });
     },
     // 点击显示article列表
-    getArticleListByCondition: function (conditions,time,pageSize, currentPage) {
+    getArticleListByCondition: function (conditions,collect,time,pageSize, currentPage) {
         var self = this;
         var param = {
             "date": {
@@ -371,19 +371,91 @@ const actions = {
             "searchKv": conditions.searchKv,
             "type": conditions.type
         };
-        debugger;
         return new Promise(function (resolve) {
+            if(collect.length>0 && collect[0].value == true) {
+                var paramTrue = {
+                    oId : collect[0].key
+                }
+                $.ajax({
+                    url: common.url.webserviceUrl + '/collect/saveCollect2ES.json',
+                    data: paramTrue,
+                    type: 'get',
+                    async:false,
+                    success:function(){
+                        console.log("收藏成功");
+                    },
+                    error:function(){
+                        console.log("收藏失败");
+                    }
+                });
+            }
+            if(collect.length>0 && collect[0].value == false){
+                var paramFalse = {
+                    oIds:collect[0].key
+                }
+                $.ajax({
+                    url: common.url.webserviceUrl + '/collect/deleteCollectedInOid',
+                    data: paramFalse,
+                    type: 'get',
+                    async:false,
+                    success:function(){
+                        console.log("删除成功");
+                    },
+                    error:function(){
+                        console.log("删除失败");
+                    }
+                });
+            }
+            var collectID = [];
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',
+                async: false,
+                success: function (data) {
+                    collectID = [];
+                    for(var i = 0,len = data.content.length;i<len;i++) {
+                        collectID.push(data.content[i].id);
+                    }
+                    console.log("拿到了页面的十个id");
+                },
+                error:function (error) {
+                    console.log("没有拿到了页面的十个id");
+                }
+            });
+            var collectArray = [];
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/hasCollected.json?oIds=' + collectID.join(','),
+                type: 'get',
+                async: false,
+                success: function (data) {
+                    collectArray = data;
+                    debugger;
+                    console.log("拿到了是否收藏的十个id");
+                },
+                error:function (error) {
+                    console.log("没有拿到了是否收藏的十个id");
+                }
+            });
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                async:false,
                 success: function (data) {
                     data.content.sort(function(a,b) {return b.pubTime-a.pubTime});
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
+                        }
+                        item.collect = false;
+                        for(var i =0;i<collectArray.length;i++) {
+                            if(item.id == collectArray[i].key) {
+                                item.collect = collectArray[i].value;
+                            }
                         }
                         item.nlp.sentiment.label = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');

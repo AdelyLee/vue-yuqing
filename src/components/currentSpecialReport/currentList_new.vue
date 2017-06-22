@@ -58,6 +58,7 @@
     </el-table>
 </template>
 <script>
+    var basePath = localStorage.getItem('basePath');
     export default {
         props: ['currentList'],
         data() {
@@ -80,7 +81,7 @@
                 this.multipleSelection = val;
             },
             getChange:function (id) {
-              window.open('../module/detail.html?id='+id);
+              window.open(basePath + '/module/detail.html?id='+id);
             }
         }
     }

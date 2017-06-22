@@ -69,6 +69,7 @@
     </div>
 </template>
 <script>
+    var basePath = localStorage.getItem('basePath');
     export default {
         props: ['yujingDetailsList'],
         data () {
@@ -76,7 +77,7 @@
         },
         methods: {
             getNewPage: function (id) {
-                window.open('../module/detail.html?id=' + id)
+                window.open(basePath + '/module/detail.html?id=' + id)
             }
         }
     }

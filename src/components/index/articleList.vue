@@ -19,9 +19,12 @@
                                             <a class="a_font"><span v-html="item.title">{{item.title}}</span></a>
                                         </el-col>
                                         <el-col :span="2">
-                                            <span v-if="item.nlp.sentiment.label=='正面'" class="positive">{{item.nlp.sentiment.label}}</span>
-                                            <span v-if="item.nlp.sentiment.label=='负面'" class="negative">{{item.nlp.sentiment.label}}</span>
-                                            <span v-if="item.nlp.sentiment.label=='中性'" class="neutral">{{item.nlp.sentiment.label}}</span>
+                                            <span v-if="item.nlp.sentiment.label=='正面'"
+                                                  class="positive">{{item.nlp.sentiment.label}}</span>
+                                            <span v-if="item.nlp.sentiment.label=='负面'"
+                                                  class="negative">{{item.nlp.sentiment.label}}</span>
+                                            <span v-if="item.nlp.sentiment.label=='中性'"
+                                                  class="neutral">{{item.nlp.sentiment.label}}</span>
                                         </el-col>
                                         <el-col :span="22" class="news_m">
                                             <span v-html="item.content">{{item.content}}</span>
@@ -38,12 +41,18 @@
                                             <span class="sours">来源</span>：{{item.site}}
                                         </span>
                                     </el-col>
-                                    <el-col :span="8">
+                                    <el-col :span="6">
                                         <span><span class="time">发布时间</span>：{{item.pubTime}}</span>
                                     </el-col>
-                                    <el-col :span="8">
-                                        <span v-if="item.type!='comments'"><span class="number">评论数</span>：{{item.commentNum}}</span>
+                                    <el-col :span="5">
+                                        <span v-if="item.type!='comments'"><span
+                                            class="number">评论数</span>：{{item.commentNum}}</span>
                                         <span v-if="item.type=='comments'"><span class="number">地区</span>：{{item.area}}</span>
+                                    </el-col>
+                                    <el-col :span="5">
+                                        <span v-if="item.collect" @click=getCollect(item.id,item.collect)><i class="el-icon-star-off" v-if="item.collect == false">收藏</i>
+                                            <i class="el-icon-star-on" style="color:red"
+                                            v-if="item.collect==true">收藏</i></span>
                                     </el-col>
                                 </el-row>
                             </li>
@@ -64,7 +73,9 @@
         name: 'articles',
         props: ['type', 'articles', 'pager'],
         data () {
-            return {}
+            return {
+
+            }
         },
         components: {
             'common-header': Header,
@@ -84,6 +95,20 @@
                 if (type != "comments") {
                     window.open(basePath + '/module/detail.html?id=' + id);
                 }
+            },
+            getCollect: function (id, collect) {
+
+                if (collect == false) {
+                    collect = true;
+                } else {
+                    collect = false;
+                }
+                var data = {};
+                data.action = "handleCollect";
+                data.id = id;
+                data.collect = collect;
+                debugger;
+                this.$emit('data', data);
             }
         }
     }

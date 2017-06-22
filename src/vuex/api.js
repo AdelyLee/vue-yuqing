@@ -5,13 +5,13 @@ import jQuery from 'jquery';
 
 jQuery.ajaxSetup({
     beforeSend: function (request) {
-        // request.setRequestHeader("Authorization", localStorage.getItem("token"));
+        request.setRequestHeader("Authorization", localStorage.getItem("token"));
     },
     error: function (error) {
         console.log("ajaxSetup error", error);
-        // if (error.status != 500) {
-        //     window.location.href = "../module/login.html";
-        // }
+        if (error.status == 401) {
+            window.location.href = "../module/login.html";
+        }
     }
 });
 

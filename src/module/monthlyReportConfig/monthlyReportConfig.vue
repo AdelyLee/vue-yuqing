@@ -153,6 +153,7 @@
             getMonthlyReportInfo: function () {
                 var self = this;
                 service.actions.getReportInfo('MONTHLY').then(function (data) {
+                    debugger;
                     self.addForm = data;
                 })
             },

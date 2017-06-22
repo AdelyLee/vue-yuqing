@@ -286,6 +286,7 @@
             getMediaBarChart: function (startDate,endDate) {
                 var self = this;
                 service.actions.getMediaBarChart(startDate,endDate).then(function (option) {
+                    debugger;
                     self.mediaBarChart.option = option;
                 });
             },
@@ -314,8 +315,8 @@
 //                        var date = new Date();
 //                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
 //                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                        self.articlesCondition.startDate =this.addForm.startDate;
-                        self.articlesCondition.endDate = this.addForm.endDate;
+                        self.articlesCondition.startDate =self.addForm.startDate;
+                        self.articlesCondition.endDate = self.addForm.endDate;
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;

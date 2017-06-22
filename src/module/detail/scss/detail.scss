@@ -152,10 +152,24 @@ dd {
 .m_t20{
     margin-top:20px;
 }
-.imgStyle{
+.enootionImg{
     display: inline-block;
     width: 40px;
-    margin-top: 2px;
+    height: 25px;
+    margin-top: 12px;
+    margin-left: -2px;
+    background: url("../../../../static/img/xinxin.png") center no-repeat;
+    background-size: cover;
+
+}
+.hotImg{
+    display: inline-block;
+    width: 40px;
+    height: 25px;
+    margin-top: 12px;
+    margin-left: -2px;
+    background: url("../../../../static/img/huohuo.png") center no-repeat;
+    background-size: cover;
 }
 .emotionTitle{
     display: inline-block;
@@ -165,6 +179,7 @@ dd {
     font-family: "微软雅黑";
     font-weight: 700;
     color: #3295AC;
+
 }
 .keySpan{
     color: #999;

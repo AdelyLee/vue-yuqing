@@ -61,14 +61,15 @@ const actions = {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
+                            item.source = item.author;
                         }
                         if (item.type == 'bbs') {
                             item.source = item.author;
                         }
                         if(item.title === ""){
-                            item.title = utils.utils.heightLightKeywords(item.content, 45, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
+                            item.title = utils.utils.heightLightKeywords(item.content, 35, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
                         }else{
-                            item.title = utils.utils.heightLightKeywords(item.title, 45, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
+                            item.title = utils.utils.heightLightKeywords(item.title, 35, '...', self.heightLightWords).replace(/(^\s*)|(\s*$)/g, "");
                         }
 
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');

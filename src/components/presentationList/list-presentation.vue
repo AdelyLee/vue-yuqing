@@ -17,6 +17,13 @@
                     type="danger"
                     @click="downloadFile(scope.$index,scope.row.attachment)">下载
                 </el-button>
+                <el-button
+                    v-if="reportList[0].type=='SPECIAL'"
+                    size="small"
+                    prop="id"
+                    type="danger"
+                    @click="deleteSubject(scope.$index,scope.row.id)">删除
+                </el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -42,16 +49,18 @@
     <!--</el-row>-->
 </template>
 <script>
-    import common from '@/vuex/common';
-
+    import common from '@/vuex/common'
     var basePath = localStorage.getItem("basePath");
     export default {
         props: ['reportList'],
         data () {
             return {
                 preview: '预览',
-                download: '下载'
+                download: '下载',
             }
+        },
+        mounted () {
+            console.log(this.reportList)
         },
         methods: {
             previewReport: function (index, id) {
@@ -62,7 +71,13 @@
                     var file = attachment[0].substring(0, attachment[0].length - 4);
                     window.open(common.url.webserviceUrl + "/file/download/doc/" + file);
                 }
-            }
+            },
+            deleteSubject: function (index, id) {
+                var data = {};
+                data.action = "deleteBriefing";
+                data.id = id;
+                this.$emit('data', data);
+            },
         }
     }
 </script>

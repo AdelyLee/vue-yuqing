@@ -214,6 +214,9 @@ const actions = {
                         return b.value - a.value;
                     });
                     $.each(data, function (i, item) {
+                        if(item.key==""){
+                            item.key="其他";
+                        }
                         seriesData.push(item.value);
                         xAxisData.push(item.key.slice(0, 10));
                     });
@@ -317,7 +320,7 @@ const actions = {
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "type": [type]
@@ -402,7 +405,7 @@ const actions = {
                 "page": currentPage,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "searchKv": condition.searchKv,

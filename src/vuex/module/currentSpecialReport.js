@@ -138,7 +138,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     // 拼装 chart option
                     var seriesData = [];
                     var legendData = [];
@@ -454,7 +453,6 @@ const actions = {
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    debugger;
                     var renderData = {};
                     data.sort(function (a, b) {
                         return a.value - b.value;
@@ -947,6 +945,19 @@ const actions = {
             })
         })
     },
+    //舆情预警删除功能
+    deleteWarning :function (warning) {
+        return new Promise(function (resolve) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/warningLog/' + warning.id,
+                contentType: "application/json; charset=utf-8",
+                type: 'delete',
+                success: function (data) {
+                    resolve(data);
+                }
+            });
+        });
+    },
     //点击情感分析饼图,热议网民柱图,网民话题柱图,网站来源饼图,载体类型饼图,弹出列表
     getArticleList: function (conditions,pageSize,currentPage) {
         var self = this;
@@ -972,6 +983,54 @@ const actions = {
             "searchKv": conditions.searchKv,
              "type": conditions.type
         }
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                type: 'post',
+                success: function (data) {
+                    data.content.forEach(function (item) {
+                        item.type = item.type.toLowerCase();
+                        if (item.type == 'weibo') {
+                            item.title = item.content;
+                        }
+                        item.nlp.sentiment.label = typeParam.typeUtil.sentimentType(item.nlp.sentiment.label);
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+                        item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
+                        item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
+                    });
+                    resolve(data);
+                }
+            })
+        })
+    },
+    //点击趋势图弹出列表
+    getArticleTrendList: function (conditions,startDate,endDate,pageSize,currentPage) {
+        var self = this;
+        var param = {
+            "date": {
+                "endDate": endDate,
+                "startDate": startDate
+            },
+            "filed": "",
+            "keyword": {
+                "mustNotWord": self.getCustomSubjectConfig.mustNotWord,
+                "mustWord": self.getCustomSubjectConfig.mustWord,
+                "shouldWord": self.getCustomSubjectConfig.shouldWord
+            },
+            "page": {
+                "limit": pageSize,
+                "orders": [{
+                    "direction": "DESC",
+                    "orderBy": "pubTime"
+                }],
+                "page": currentPage
+            },
+            "searchKv": conditions.searchKv,
+            "type": conditions.type
+        }
+        debugger;
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',

@@ -57,6 +57,8 @@ const actions = {
 
                         item.title = '<span>' + item.title + '</span>';
                         item.content = '<span>' + item.content + '</span>';
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
+
                     });
                     resolve(data);
                 }

@@ -12,7 +12,6 @@ const utils = {
         var pathname = window.location.pathname;
         var index = href.indexOf(pathname);
         var basePath = href.substring(0, index) + "/" + pathname.split('/')[1];
-
         console.log("getBasePath", basePath);
         return basePath;
     },

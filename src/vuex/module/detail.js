@@ -43,6 +43,8 @@ const actions = {
                 type: 'get',
                 // async: false,
                 success: function (data) {
+                    console.log(data);
+                    data.content=queryParam.utils.heightLightKeywords(data.content, data.content.length,'...',"","");
                     if(data.nlp.nameEntity.org){
                         data.content=heightLightKeywords.heightLightKeywords(data.content, data.content.length, '...', data.nlp.nameEntity.org,"","org_name");
                     }
@@ -147,8 +149,8 @@ const actions = {
 }
 const heightLightKeywords={
     heightLightKeywords:function (content, length, append, keywords, divider,className) {
-        var script_Pattern = "<script[^>]*?>[\\s\\S]*?<\/script>";    // '匹配js标签
-        var style_Pattern = "<style[^>]*?>[\\s\\S]*?<\/style>";      //'匹配style标签
+        // var script_Pattern = "<script[^>]*?>[\\s\\S]*?<\/script>";    // '匹配js标签
+        // var style_Pattern = "<style[^>]*?>[\\s\\S]*?<\/style>";      //'匹配style标签
         // var tag_Pattern = "<[^>].*?>";// '匹配html标签
 
         if (!content) {
@@ -159,8 +161,8 @@ const heightLightKeywords={
         content = content.replace(new RegExp("&#62;", "gm"), '>');
         content = content.replace(new RegExp("<!--;", "gm"), '<style>');
         content = content.replace(new RegExp("-->;", "gm"), '</style>');
-        content = content.replace(new RegExp(script_Pattern, 'gi'), '');
-        content = content.replace(new RegExp(style_Pattern, 'gi'), '');
+        // content = content.replace(new RegExp(script_Pattern, 'gi'), '');
+        // content = content.replace(new RegExp(style_Pattern, 'gi'), '');
         // content = content.replace(new RegExp(tag_Pattern, 'gi'), '');
         if (divider == undefined) {
             divider = '@';

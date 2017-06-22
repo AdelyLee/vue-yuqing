@@ -23,7 +23,7 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item ><span @click="dialogFormVisible = true">更改密码</span>
                                     </el-dropdown-item>
-                                    <el-dropdown-item><a href="../module/login.html" class="exit_a">退出</a></el-dropdown-item>
+                                    <el-dropdown-item><span @click="logout" class="exit_a">退出</span></el-dropdown-item>
                                 </el-dropdown-menu>
                                 <!--更改密码-->
                                 <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
@@ -100,7 +100,14 @@
                  }
              });
 
-         }
+         },
+            logout(){
+                service.action.logout().then(function () {
+                    window.open("../../yuqing/module/login.html");
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
         }
     }
 </script>

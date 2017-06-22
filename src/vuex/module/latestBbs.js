@@ -200,9 +200,6 @@ const actions = {
 
     //网民观点
     getMediaBarChart: function (startDate,endDate) {
-        // var date = new Date();
-        // var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-        // var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var param = {
             groupName: 'author',
             mustWord: this.config.mustWord,
@@ -211,7 +208,6 @@ const actions = {
             s_date: startDate,
             e_date: endDate,
             articleType:"bbs"
-
         };
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -324,7 +320,7 @@ const actions = {
                 "page": 1,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "type": [type]
@@ -336,7 +332,6 @@ const actions = {
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    debugger;
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
@@ -347,7 +342,7 @@ const actions = {
                                 item.source="未知"
                             }
                             // item.source = item.author;
-                            item.title = item.content.slice(4,item.content.length);
+                            item.title = item.content;
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -413,7 +408,7 @@ const actions = {
                 "page": currentPage,
                 "orders": [{
                     "direction": "DESC",
-                    "orderBy": "dateCreated"
+                    "orderBy": "pubTime"
                 }],
             },
             "searchKv": condition.searchKv,

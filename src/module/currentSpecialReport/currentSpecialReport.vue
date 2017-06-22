@@ -8,18 +8,22 @@
             <el-col :span="21" :offset="3">
                 <el-card class="box-card my-card-box">
                     <div slot="header" class="clearfix subject-title">
-                        <el-tag type="primary" style ="font-size:20px;margin-top:10px;margin-left:15px;"><i class="el-icon-star-off"></i>专题名称：{{subjectName}}</el-tag>
-                        <el-tag type="primary" style ="font-size:20px;"><i class = "el-icon-time"></i>专题时间 ：{{timeRange}}</el-tag>
+                        <el-tag type="primary" style="font-size:20px;margin-top:10px;margin-left:15px;"><i
+                            class="el-icon-star-off"></i>专题名称：{{subjectName}}
+                        </el-tag>
+                        <el-tag type="primary" style="font-size:20px;"><i class="el-icon-time"></i>专题时间 ：{{timeRange}}
+                        </el-tag>
                     </div>
                     <el-row :gutter="15" class="list">
                         <el-col :span="24">
                             <div style="height:5px;"></div>
-                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-                                <el-menu-item index="1" ><i class="el-icon-message"></i>信息列表
+                            <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal"
+                                     @select="handleSelect">
+                                <el-menu-item index="1"><i class="el-icon-message"></i>信息列表
                                 </el-menu-item>
                                 <el-menu-item index="2"><i class="el-icon-menu"></i>舆论分析
                                 </el-menu-item>
-                                <el-menu-item index="3" ><i class="el-icon-setting"></i>网民分析
+                                <el-menu-item index="3"><i class="el-icon-setting"></i>网民分析
                                 </el-menu-item>
                                 <el-menu-item index="4"><i class="el-icon-information"></i>历史预警
                                 </el-menu-item>
@@ -113,8 +117,8 @@
                                         </el-card>
                                     </el-col>
                                 </el-row>
-                                <el-row :gutter = "15">
-                                    <el-col :span = "12">
+                                <el-row :gutter="15">
+                                    <el-col :span="12">
                                         <el-card class="box-card my-card" style="margin-top:5px;">
                                             <div slot="header" class="clearfix">
                                                 <span class="my-title">网民观点</span>
@@ -125,11 +129,12 @@
                                 </el-row>
                             </div>
                             <div v-if="myIndex == 4">
-                                <warning-list :yujingList="warningList"></warning-list>
+                                <warning-list :yujingList="warningList" @data="getData"></warning-list>
                                 <yujing-pager :pager="yujignPager" @data="getyujingPager"></yujing-pager>
                             </div>
-                            <div style = "height:15px;"></div>
-                            <article-list v-if="getArticles.length > 0" :id="articleListId" :articles ="getArticles" :pager = "articlePager" @data = "getArticleData"></article-list>
+                            <div style="height:15px;"></div>
+                            <article-list v-if="getArticles.length > 0" :id="articleListId" :articles="getArticles"
+                                          :pager="articlePager" @data="getArticleData"></article-list>
                         </el-col>
                     </el-row>
                 </el-card>
@@ -152,6 +157,7 @@
     import warningListData from '@/components/currentSpecialReport/warningList';
     import yujingPagerData from '@/components/commons/paging';
     import service from '../../vuex/module/currentSpecialReport.js';
+    import dateUtil from '../../vuex/dateUtil.js';
     import typeUtil from '../../vuex/typeUtil';
     import $ from 'jquery';
     export default {
@@ -159,7 +165,9 @@
         data () {
             var that = this;
             return {
-                articleListId:'article-list',
+                startDate: '2017-05-01',
+                endDate: '2017-05-02',
+                articleListId: 'article-list',
                 activeIndex2: '1',
                 currentListNew: [],
                 myListPagination: {
@@ -167,7 +175,7 @@
                     currentPage4: 1,
                     total: 0
                 },
-                articlePager:{
+                articlePager: {
                     pageSize: 10,
                     currentPage: 1,
                     totalElements: 10
@@ -203,8 +211,8 @@
                 bbsUrl: 'bbs',
                 checkedItems: [],
                 conditions: {
-                    searchKv:[],
-                    type:[]
+                    searchKv: [],
+                    type: []
                 },
                 getArticles: [],
                 getListTypeData: [],
@@ -217,7 +225,7 @@
                             that.articlePager.currentPage = 1;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             that.conditions.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
-                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.conditions.type = ["news", "weibo", "bar", "bbs"];
                             that.getArticleList(that.conditions);
                         }
                     }
@@ -245,7 +253,7 @@
                             that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "source", "value": value}];
-                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.conditions.type = ["news", "weibo", "bar", "bbs"];
                             that.getArticleList(that.conditions);
                         }
                     }
@@ -255,6 +263,18 @@
                     option: {},
                     events: {
                         'click': function (param) {
+                            var dateStr = param.name;
+                            var type = [];
+                            type.push(typeUtil.typeUtil.encodeArticleType(param.seriesName));
+                            var date = new Date(dateStr);
+                            var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
+                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                            that.startDate = startDate;
+                            that.endDate = endDate;
+                            that.conditions.searchKv = [];
+                            that.conditions.type = type;
+                            that.getArticleTrendList(that.conditions, that.startDate, that.endDate);
+
                         }
                     }
                 },
@@ -266,7 +286,7 @@
                             that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "title.raw", "value": value}];
-                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.conditions.type = ["news", "weibo", "bar", "bbs"];
                             that.getArticleList(that.conditions);
                         }
                     }
@@ -279,7 +299,7 @@
                             that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "author", "value": value}];
-                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.conditions.type = ["news", "weibo", "bar", "bbs"];
                             that.getArticleList(that.conditions);
                         }
                     }
@@ -294,7 +314,7 @@
                             that.articlePager.currentPage = 1;
                             var value = param.name;
                             that.conditions.searchKv = [{"key": "area", "value": value}];
-                            that.conditions.type = ["news","weibo","bar","bbs"];
+                            that.conditions.type = ["news", "weibo", "bar", "bbs"];
                             that.getArticleList(that.conditions);
                         }
                     }
@@ -353,6 +373,29 @@
                 }
                 self.getArticleList();
                 self.getOptionsList();
+                self.getArticleTrendList();
+            },
+            deleteWarning: function (warning) {
+                var self = this;
+                service.actions.deleteWarning(warning).then(function (data) {
+                    self.getWarningListData();
+                });
+            },
+            getData (data) {
+                var self = this;
+                self.warning = data.warning;
+                switch (data.action) {
+                    case 'deleteWarning':
+                        this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
+                            self.deleteWarning(self.warning);
+                        }).catch(() => {
+                            console.log("delete warning error");
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
             },
             getArticleList: function () {
                 var self = this;
@@ -363,8 +406,17 @@
                     console.error('出错了', error);
                 })
             },
+            getArticleTrendList: function () {
+                var self = this;
+                service.actions.getArticleTrendList(self.conditions, self.startDate, self.endDate, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
+                  debugger;
+                    self.getArticles = renderData.content;
+                    self.articlePager.totalElements = renderData.totalElements;
+                }, function (error) {
+                    console.error('出错了', error);
+                })
+            },
             getOptionsList: function () {
-              debugger;
                 var self = this;
                 service.actions.getOptionsList(self.conditions, self.articlePager.pageSize, self.articlePager.currentPage).then(function (renderData) {
                     self.getArticles = renderData.content;
@@ -373,9 +425,9 @@
                     console.error('出错了', error);
                 })
             },
-            handleSelect:function (key, keyPath) {
+            handleSelect: function (key, keyPath) {
                 var self = this;
-                self.myIndex = key-0;
+                self.myIndex = key - 0;
                 switch (self.myIndex) {
                     case 1:
                         self.getArticles = [];
@@ -515,13 +567,13 @@
         watch: {
             getArticles: function (val, oldVal) {
                 var self = this;
-                if (val && val.length>0) {
+                if (val && val.length > 0) {
                     self.$nextTick(function () {
                         // DOM 现在更新了
                         // `this` 绑定到当前实例
                         // 页面滚动到指定位置
                         $('html, body').animate({
-                            scrollTop: $("#article-list").offset().top-60
+                            scrollTop: $("#article-list").offset().top - 60
                         }, 500);
                     })
                 }

@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,gBAAgB;EACZ,KAAK,EAAE,IAAI;EACX,eAAe,EAAE,IAAI;EACrB,WAAW,EAAE,IAAI;EACjB,uBAAM;IACF,cAAc,EAAE,IAAI;IACpB,KAAK,EAAE,IAAI;IACX,WAAW,EAAE,GAAG;EAEpB,sBAAK;IACD,WAAW,EAAC,GAAG",
+"sources": ["accidentList.scss"],
+"names": [],
+"file": "accidentList.css"
+}

@@ -159,5 +159,22 @@ body {
       font-size: 18px;
       background: url("../../../../static/img/more_button.png") no-repeat;
       cursor: pointer; }
+    #search .content .l_bottom {
+      line-height: 40px;
+      background-color: aliceblue;
+      height: 40px;
+      list-style-type: none;
+      color: #444342;
+      padding-left: 20px;
+      margin-left: -0.5px !important;
+      margin-right: -0.5px !important; }
+    #search .content .sours, #search .content .time, #search .content .number {
+      color: #6b7eeb; }
+
+.search_icon {
+  width: 25px;
+  height: 37px;
+  background: url("../../../../static/img/header_ssan.png") center no-repeat;
+  background-size: cover; }
 
 /*# sourceMappingURL=search.css.map */

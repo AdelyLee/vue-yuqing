@@ -39,7 +39,8 @@ const actions = {
                 }
             });
         });
-    }
+    },
+
 };
 
 export default {

@@ -55,6 +55,22 @@ const action = {
             });
         });
 
+    },
+    //退出
+    logout:function(){
+        return new Promise(function (resolve,reject) {
+            $.ajax({
+                url: common.url.webserviceUrl + '/login/logout',
+                type: 'get',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+
     }
 };
 

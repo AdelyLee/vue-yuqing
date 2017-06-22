@@ -46,14 +46,14 @@
                             <el-row :gutter="2" class="list border_1">
                                 <el-col :span="12">
                                     <el-col :span="1">
-                                        <img :src="emotionSrc" class="imgStyle">
+                                        <div class="enootionImg"></div>
                                     </el-col>
                                     <div class="emotionTitle">情感分析</div>
                                     <gauge-chart :chartConfig="mediaEmotionGauge" class="p_t"></gauge-chart>
                                 </el-col>
                                 <el-col :span="12">
                                     <el-col :span="1">
-                                        <img :src="hotSrc" class="imgStyle">
+                                        <div class="hotImg"></div>
                                     </el-col>
                                     <div class="emotionTitle">热点词云</div>
                                         <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
@@ -119,8 +119,6 @@
                     },
                     url:"",
                 },
-                emotionSrc: '../../static/img/xinxin.png',
-                hotSrc:'../../static/img/huohuo.png',
            }
         },
         components: {

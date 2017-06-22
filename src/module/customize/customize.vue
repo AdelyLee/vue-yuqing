@@ -23,7 +23,8 @@
                                     <div class="title">{{reportListHeader}}</div>
                                 </div>
                                 <el-row type="flex" class="row-bg" justify="space-around">
-                                    <list-presentation :id="specialReport" :reportList="reportList"></list-presentation>
+                                    <list-presentation :id="specialReport" :reportList="reportList"
+                                                       @data="getData"></list-presentation>
                                 </el-row>
                                 <list-page :pager="specialReportPager" @data="getSpecialReportPager"></list-page>
                             </el-tab-pane>
@@ -176,6 +177,17 @@
                     utils.utils.handleError(error, self);
                 });
             },
+            deleteCustomBriefing: function (subject) {
+                var self = this;
+                service.actions.deleteCustomBriefing(subject).then(function () {
+                    // 重新渲染专题列表，展示第一页数据
+                    self.pager.currentPage = 1;
+                    self.getSpecialReportList();
+                }).catch(error => {
+                    error.message = "删除专题失败！";
+                    utils.utils.handleError(error, self);
+                });
+            },
             editSubject: function (subject) {
                 var self = this;
                 service.actions.editCustomSubject(subject).then(function () {
@@ -267,6 +279,13 @@
                             self.deleteSubject(data.subject);
                         });
                         break;
+                    case 'deleteBriefing':
+                        this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
+                            // delete the subject and get the new subject list
+                            self.deleteCustomBriefing(data);
+                            ;
+                        });
+                        break;
                     case 'addSubjectSubmit':
                         self.addDialog.addFormVisible = false;
                         self.addDialog.addForm = {};
@@ -334,6 +353,7 @@
                         break;
                 }
             }
+
         }
     }
 

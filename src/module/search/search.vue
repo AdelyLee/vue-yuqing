@@ -11,8 +11,9 @@
                         <el-row :gutter="15">
                             <div class="card-body">
                                 <div class="search">
+                                    <!--<i class="el-icon-search"></i>-->
                                     <el-input placeholder="请输入内容" v-model="condition.mustWord">
-                                        <template slot="prepend"><i class="el-icon-view"></i></template>
+                                        <template slot="prepend"><div class="search_icon"></div></template>
                                         <el-button slot="append" @click="clickSearch"><span
                                             class="search-icon">搜索</span>
                                         </el-button>
@@ -42,7 +43,7 @@
                                         </el-col>
                                         <hr size=1 style="color: #ccc;border-style:dashed;width:100%;">
                                         <el-col :span="20" style="margin-bottom: 15px;">
-                                            <span class="text">监测时间: </span>
+                                            <span class="text">发布时间: </span>
                                             <el-date-picker v-model="condition.startDate" type="date"
                                                             placeholder="选择开始日期">
                                             </el-date-picker>

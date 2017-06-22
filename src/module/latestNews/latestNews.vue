@@ -197,11 +197,11 @@
         },
         mounted () {
             this.getTime();
+            this.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType);
             this.getSentimentTypeChart(this.addForm.startDate,this.addForm.endDate);
             this.getCarrierAnalysisChart(this.addForm.startDate,this.addForm.endDate);
             this.getMediaBarChart(this.addForm.startDate,this.addForm.endDate);
             this.getCommentHotKeywordsChart(this.addForm.startDate,this.addForm.endDate)
-            this.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType);
 
         },
         methods: {
@@ -266,11 +266,13 @@
                         break;
                     case 'showMoreArticle':
                         self.pager.currentPage = 1;
-                        var date = new Date();
-                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                        self.articlesCondition.startDate = startDate;
-                        self.articlesCondition.endDate = endDate;
+//                        var date = new Date();
+//                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+//                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+//                        self.articlesCondition.startDate = startDate;
+//                        self.articlesCondition.endDate = endDate;
+                        self.articlesCondition.startDate =self.addForm.startDate;
+                        self.articlesCondition.endDate = self.addForm.endDate;
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;

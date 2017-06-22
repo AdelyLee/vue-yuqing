@@ -73,6 +73,9 @@
                 articleType: "",
                 articles: [],
                 kv: "nlp.sentiment.label,POS",
+                handleCollect:[
+
+                ],
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -80,8 +83,8 @@
                 },
                 articleListId: 'article-list',
                 timeChange: {
-                    startDate: '2017-05-01',
-                    endDate: '2017-06-01'
+                    startDate: dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(new Date(), 'M', -1), 'yyyy-MM-dd'),
+                    endDate: dateUtil.dateUtil.formatDate(new Date(), 'yyyy-MM-dd')
                 },
                 tabArticleType: "news",
                 searchKv: [{
@@ -168,11 +171,16 @@
                         self.conditions.type = ["news"];
                         self.getArticleListByCondition(self.conditions);
                         break;
+                    case 'handleCollect':
+                        self.handleCollect = [];
+                        self.handleCollect.push({"key":data.id,"value":data.collect});
+                        self.getArticleListByCondition();
+                      break;
                 }
             },
             getArticleListByCondition: function () {
                 var self = this;
-                service.actions.getArticleListByCondition(self.conditions, self.timeChange, self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                service.actions.getArticleListByCondition(self.conditions, self.handleCollect,self.timeChange, self.pager.pageSize, self.pager.currentPage).then(function (data) {
                     self.articles = data.content;
                     self.pager.totalElements = data.totalElements;
                 })

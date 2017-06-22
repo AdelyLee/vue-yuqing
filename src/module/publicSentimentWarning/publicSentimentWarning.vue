@@ -8,8 +8,8 @@
             <el-col :span = "21" :offset = "3">
                 <el-card class="box-card my-card">
                     <div>
-                        <warning-list :yujingList="warningList"></warning-list>
-                        <yujing-pager :pager="yujignPager" @data="getPager"></yujing-pager>
+                        <warning-list :yujingList="warningList" @data="getData"></warning-list>
+                        <pager :pager="pager" @data="getPager"></pager>
                     </div>
                 </el-card>
             </el-col>
@@ -19,7 +19,7 @@
 <script>
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
-    import yujingPagerData from '@/components/commons/paging';
+    import pagerData from '@/components/commons/paging';
     import warningListData from '@/components/currentSpecialReport/warningList';
     import service from '../../vuex/module/currentSpecialReport.js';
     export default {
@@ -30,18 +30,19 @@
                     loading3: false,
                     tableData3: []
                 },
-                yujignPager: {
+                pager: {
                     pageSize: 10,
                     currentPage: 1,
                     totalElements: 10
-                }
+                },
+                warning: {}
             }
         },
         components: {
             'common-menu': CommonMenu,
             'common-header': Header,
             'warning-list': warningListData,
-            'yujing-pager': yujingPagerData
+            'pager': pagerData
         },
         mounted () {
             this.getpublicSentimentListData();
@@ -49,16 +50,38 @@
         methods: {
             getpublicSentimentListData: function () {
                 var self = this;
-                service.actions.getpublicSentimentListData(self.yujignPager.pageSize, self.yujignPager.currentPage).then(function (renderData) {
+                service.actions.getpublicSentimentListData(self.pager.pageSize, self.pager.currentPage).then(function (renderData) {
                     self.warningList.tableData3 = renderData.seriesData;
-                    self.yujignPager.totalElements = renderData.total;
+                    self.pager.totalElements = renderData.total;
                 }, function (error) {
                     console.error('出错了', error);
                 })
             },
+            deleteWarning: function (warning) {
+                var self = this;
+                service.actions.deleteWarning(warning).then(function (data) {
+                    self.getpublicSentimentListData();
+                });
+            },
+            getData (data) {
+                var self = this;
+                self.warning = data.warning;
+                switch (data.action) {
+                    case 'deleteWarning':
+                        this.$confirm('确认删除该记录吗?', '提示', {type: 'warning'}).then(() => {
+                            self.deleteWarning(self.warning);
+                        }).catch(() => {
+                            console.log("delete warning error");
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
+            },
             getPager(pager) {
                 var self = this;
-                self.yujignPager = pager;
+                self.pager = pager;
                 self.getpublicSentimentListData();
             }
         }

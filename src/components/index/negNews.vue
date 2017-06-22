@@ -33,6 +33,7 @@
 
 <script>
     import typeUtil from '../../vuex/typeUtil'
+    var basePath = localStorage.getItem('basePath');
     export default {
         props: ['articleData'],
         data () {
@@ -45,7 +46,7 @@
         },
         methods: {
             changes: function (id) {
-                window.open('../module/detail.html?id=' + id);
+                window.open(basePath + '/module/detail.html?id=' + id);
             },
             moreList: function (type) {
                 var data = {};

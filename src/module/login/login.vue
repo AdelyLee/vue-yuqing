@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="foot">
-            <h4 class="text-center">主办单位：北京卓越讯通科技有限公司</h4>
+            <h6 class="text-center">技术支持：北京卓越讯通科技有限公司</h6>
         </div>
     </div>
 </template>

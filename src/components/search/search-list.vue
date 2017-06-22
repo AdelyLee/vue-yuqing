@@ -13,11 +13,28 @@
                     <li class="title" v-html="item.title">{{item.title}}</li>
                     <li v-html="item.content">{{item.content}}</li>
                 </el-col>
-                <el-col :span="2">
+                <el-col :span="2" style="margin-top: 10px;">
                     <span v-if="item.nlp.sentiment.label=='正面'" class="positive">{{item.nlp.sentiment.label}}</span>
                     <span v-if="item.nlp.sentiment.label=='负面'" class="negative">{{item.nlp.sentiment.label}}</span>
                     <span v-if="item.nlp.sentiment.label=='中性'" class="neutral">{{item.nlp.sentiment.label}}</span>
                 </el-col>
+            </el-row>
+            <el-row :gutter="15" class="l_bottom">
+                <el-col :span="8">
+                                        <span v-if="item.type=='weibo' || item.type=='bbs' || item.type=='bar'|| item.type == 'comments'">
+                                            <span class="sours">作者</span>：{{item.author}}
+                                        </span>
+                    <span v-else-if="item.type=='news'">
+                                            <span class="sours">来源</span>：{{item.site}}
+                                        </span>
+                </el-col>
+                <el-col :span="8">
+                    <span><span class="time">发布时间</span>：{{item.pubTime}}</span>
+                </el-col>
+                <!--<el-col :span="8">-->
+                    <!--<span v-if = "item.type!='comments'"><span class="number">评论数</span>：{{item.commentNum}}</span>-->
+                    <!--<span v-if = "item.type=='comments'"><span class="number">地区</span>：{{item.area}}</span>-->
+                <!--</el-col>-->
             </el-row>
         </div>
     </div>
