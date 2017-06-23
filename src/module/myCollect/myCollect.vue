@@ -7,6 +7,12 @@
             </el-col>
             <el-col :span="21" :offset="3">
                 <el-card class="box-card my-card-box">
+                    <el-button type="info">全选</el-button>
+                    <el-button type="info">批量删除</el-button>
+                    <el-button type="info">时间升序</el-button>
+                    <el-button type="info">时间降序</el-button>
+                    <el-button type="info">正面置顶</el-button>
+                    <el-button type="info">负面置顶</el-button>
                     <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
                                   :articles="articles" :pager="pager" @data="getData"></article-list>
                 </el-card>
@@ -15,6 +21,9 @@
         </el-row>
     </div>
 </template>
+<style>
+    .my-card-box {margin-top:70px;}
+</style>
 <script>
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';

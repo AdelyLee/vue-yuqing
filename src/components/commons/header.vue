@@ -85,24 +85,28 @@
         },
         methods:{
          confirm(form){
-             this.$refs.form.validate((valid) => {
-                 if (valid && form.password === form.repassword) {
-                     var self = this;
-                     service.action.confirm(form).then(function (data) {
-                         self.dialogFormVisible = false;
-                         window.open("../../module/login.html");
-                         self.oldpassword="";
-                         self.password="";
-                         self.repassword="";
-                     }).catch(error => {
-                         alert(error.responseJSON.message);
-                     });
-                 }
-             });
-
+             if(form.password === form.repassword) {
+                 this.$refs.form.validate((valid) => {
+                     if (valid) {
+                         var self = this;
+                         service.action.confirm(form).then(function (data) {
+                             self.dialogFormVisible = false;
+                             self.logout();
+                             self.oldpassword = "";
+                             self.password = "";
+                             self.repassword = "";
+                         }).catch(error => {
+                             alert(error.responseJSON.message);
+                         });
+                     }
+                 })
+             }else{
+                 alert('密码和确认密码不一致');
+             };
          },
             logout(){
-                service.action.logout().then(function () {
+                service.action.logout().then(function (data) {
+                    localStorage.clear();
                     window.open("../../yuqing/module/login.html");
                 }).catch(error => {
                     console.log(error);

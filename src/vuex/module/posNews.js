@@ -1,6 +1,5 @@
-
-import jquery from '../api';
-const $ = jquery.jQuery;
+import jquery from '../api'
+const $ = jquery.jQuery
 import common from '../common'
 import dateUtil from '../dateUtil'
 import queryParam from '../utils'
@@ -13,43 +12,43 @@ const actions = {
     // 获取高亮的词
     heightLightWords: utils.utils.getBaseHeightLightKeywords(),
     //趋势图
-    getMediaReportTrendBar: function (time,kv) {
-        var self = this;
-        var articleType = 'news';
+    getMediaReportTrendBar: function (time, kv) {
+        var self = this
+        var articleType = 'news'
         var param = {
             mustWord: self.config.mustWord,
             shouldWord: self.config.shouldWord,
             mustNotWord: self.config.mustNotWord,
             s_date: time.startDate,
             e_date: time.endDate,
-            dateType: "day",
+            dateType: 'day',
             articleType: articleType,
-            kv:kv
-        };
+            kv: kv
+        }
         return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupByTime.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    var xAxis = [];
-                    var seriesData = {news: []};
-                    var articleTypeArray = [];
-                    articleTypeArray.push(articleType);
+                    var xAxis = []
+                    var seriesData = {news: []}
+                    var articleTypeArray = []
+                    articleTypeArray.push(articleType)
                     articleTypeArray.forEach(function (type) {
                         data[type].forEach(function (item) {
                             if (type == 'news') {
-                                xAxis.push(item.key);
+                                xAxis.push(item.key)
                             }
-                            seriesData[type].push(item.value);
-                        });
-                    });
+                            seriesData[type].push(item.value)
+                        })
+                    })
                     var myOption = {
                         tooltip: {
                             trigger: 'axis'
                         },
                         legend: {
-                            data: ["新闻"]
+                            data: ['新闻']
                         },
                         dataZoom: [{
                             startValue: time.startDate
@@ -157,15 +156,15 @@ const actions = {
                                 }
                             }
                         }]
-                    };
-                    resolve(myOption);
+                    }
+                    resolve(myOption)
                 }
-            });
-        });
+            })
+        })
     },
     //主流媒体柱图
-    getMediaBarChart: function (time,kv) {
-        var self = this;
+    getMediaBarChart: function (time, kv) {
+        var self = this
         var param = {
             groupName: 'source',
             mustWord: self.config.mustWord,
@@ -173,27 +172,27 @@ const actions = {
             mustNotWord: self.config.mustNotWord,
             s_date: time.startDate,
             e_date: time.endDate,
-            articleType:"news",
-            kv:kv
-        };
+            articleType: 'news',
+            kv: kv
+        }
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/filterAndGroupBy.json',
                 data: param,
                 type: 'get',
                 success: function (data) {
-                    var renderData = {};
-                    var seriesData = [];
-                    var xAxisData = [];
+                    var renderData = {}
+                    var seriesData = []
+                    var xAxisData = []
                     data = data.sort(function (a, b) {
-                        return b.value - a.value;
-                    });
+                        return b.value - a.value
+                    })
                     $.each(data, function (i, item) {
-                        if(item.key != "") {
-                            seriesData.push(item.value);
-                            xAxisData.push(item.key.slice(0, 10));
+                        if (item.key != '') {
+                            seriesData.push(item.value)
+                            xAxisData.push(item.key.slice(0, 10))
                         }
-                    });
+                    })
                     var option = {
                         legend: {},
                         grid: {
@@ -210,7 +209,7 @@ const actions = {
                             }
 
                         },
-                        barMaxWidth:30,
+                        barMaxWidth: 30,
                         xAxis: {
                             data: xAxisData,
                             axisLabel: {
@@ -235,7 +234,7 @@ const actions = {
                                                 '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
                                                 '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
                                                 '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
-                                            ];
+                                            ]
                                             return colorList[params.dataIndex % 15]
                                         }
                                     }
@@ -257,15 +256,15 @@ const actions = {
                             }
                         ]
                     }
-                    resolve(option);
+                    resolve(option)
                 }
-            });
-        });
+            })
+        })
 
     },
     //关键词云
-    getKeywordsChart: function (time,kv) {
-        var self = this;
+    getKeywordsChart: function (time, kv) {
+        var self = this
         var param = {
             mustWord: self.config.mustWord,
             shouldWord: self.config.shouldWord,
@@ -273,7 +272,7 @@ const actions = {
             s_date: time.startDate,
             e_date: time.endDate,
             limit: 50
-        };
+        }
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/hotWords.json',
@@ -282,190 +281,178 @@ const actions = {
                 success: function (data) {
                     data.sort(function (a, b) {
                         return b.value - a.value
-                    });
-                    var renderData = {};
-                    var seriesData = [];
+                    })
+                    var renderData = {}
+                    var seriesData = []
                     $.each(data, function (i, item) {
-                        var node = {};
-                        node.keyword = item.key;
-                        node.score = item.value;
-                        seriesData.push(node);
-                    });
-                    renderData.option = {"data": seriesData};
-                    resolve(renderData);
+                        var node = {}
+                        node.keyword = item.key
+                        node.score = item.value
+                        seriesData.push(node)
+                    })
+                    renderData.option = {'data': seriesData}
+                    resolve(renderData)
                 }
-            });
-        });
+            })
+        })
     },
     //新闻列表
-    getArticleTabList: function (type,searchKv,time) {
-        var self = this;
+    getArticleTabList: function (type, searchKv, time) {
+        var self = this
         var param = {
-            "date": {
-                "endDate": time.endDate,
-                "startDate": time.startDate
+            'date': {
+                'endDate': time.endDate,
+                'startDate': time.startDate
             },
-            "keyword": {
-                "mustWord": self.config.mustWord,
-                "shouldWord": self.config.shouldWord,
-                "mustNotWord": self.config.mustNotWord,
+            'keyword': {
+                'mustWord': self.config.mustWord,
+                'shouldWord': self.config.shouldWord,
+                'mustNotWord': self.config.mustNotWord,
             },
-            "page": {
-                "limit": 10,
-                "page": 1,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
+            'page': {
+                'limit': 10,
+                'page': 1,
+                'orders': [{
+                    'direction': 'DESC',
+                    'orderBy': 'dateCreated'
                 }],
             },
-            "searchKv": searchKv,
-            "type": [type]
-        };
+            'searchKv': searchKv,
+            'type': [type]
+        }
         return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(param),
                 type: 'post',
                 success: function (data) {
-                    data.emotion = '';
-                    data.content.sort(function(a,b) {return b.pubTime-a.pubTime});
+                    data.emotion = ''
+                    data.content.sort(function (a, b) {return b.pubTime - a.pubTime})
                     data.content.forEach(function (item) {
-                        item.type = item.type.toLowerCase();
+                        item.type = item.type.toLowerCase()
                         if (item.type == 'weibo') {
-                            item.title = item.content;
+                            item.title = item.content
                         }
                         if (item.type == 'bbs') {
-                            item.source = item.author;
+                            item.source = item.author
                         }
-                        data.emotion = item.emotion = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
-                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
-                        item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
-                    });
-                    resolve(data);
+                        data.emotion = item.emotion = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label)
+                        item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd')
+                        item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords)
+                    })
+                    resolve(data)
                 }
-            });
-        });
+            })
+        })
     },
-    // 点击显示article列表
-    getArticleListByCondition: function (conditions,collect,time,pageSize, currentPage) {
-        var self = this;
-        var param = {
-            "date": {
-                "startDate": time.startDate,
-                "endDate": time.endDate
-            },
-            "keyword": {
-                "mustWord": self.config.mustWord,
-                "shouldWord": self.config.shouldWord,
-                "mustNotWord": self.config.mustNotWord
-            },
-            "page": {
-                "limit": pageSize,
-                "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
-                }]
-            },
-            "searchKv": conditions.searchKv,
-            "type": conditions.type
-        };
+    //保存收藏
+    saveCollect: function (collect) {
         return new Promise(function (resolve) {
-            if(collect.length>0 && collect[0].value == true) {
-                var paramTrue = {
-                    oId : collect[0].key
-                }
-                $.ajax({
-                    url: common.url.webserviceUrl + '/collect/saveCollect2ES.json',
-                    data: paramTrue,
-                    type: 'get',
-                    async:false,
-                    success:function(){
-                        console.log("收藏成功");
-                    },
-                    error:function(){
-                        console.log("收藏失败");
-                    }
-                });
+            var paramTrue = {
+                oId: collect[0].key
             }
-            if(collect.length>0 && collect[0].value == false){
-                var paramFalse = {
-                    oIds:collect[0].key
-                }
-                $.ajax({
-                    url: common.url.webserviceUrl + '/collect/deleteCollectedInOid',
-                    data: paramFalse,
-                    type: 'get',
-                    async:false,
-                    success:function(){
-                        console.log("删除成功");
-                    },
-                    error:function(){
-                        console.log("删除失败");
-                    }
-                });
-            }
-            var collectID = [];
+            debugger;
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                type: 'post',
-                async: false,
-                success: function (data) {
-                    collectID = [];
-                    for(var i = 0,len = data.content.length;i<len;i++) {
-                        collectID.push(data.content[i].id);
-                    }
-                    console.log("拿到了页面的十个id");
+                url: common.url.webserviceUrl + '/collect/saveCollect2ES.json',
+                data: paramTrue,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('收藏成功')
                 },
-                error:function (error) {
-                    console.log("没有拿到了页面的十个id");
+                error: function () {
+                    console.log('收藏失败')
                 }
-            });
-            var collectArray = [];
+            })
+        })
+    },
+    //删除收藏
+    deleteCollect: function (collect) {
+        return new Promise(function (resolve) {
+            var paramFalse = {
+                oIds: collect[0].key
+            }
+            debugger;
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/deleteCollectedInOid',
+                data: paramFalse,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('删除成功')
+                },
+                error: function () {
+                    console.log('删除失败')
+                }
+            })
+        })
+    },
+    //获取是否收藏id
+    getCollectOrID: function (collectID) {
+        return new Promise(function (resolve) {
+            var collectArray = []
             $.ajax({
                 url: common.url.webserviceUrl + '/collect/hasCollected.json?oIds=' + collectID.join(','),
                 type: 'get',
-                async: false,
                 success: function (data) {
-                    collectArray = data;
-                    debugger;
-                    console.log("拿到了是否收藏的十个id");
+                    collectArray = data
+                    console.log('拿到了是否收藏的十个id')
+                    resolve(collectArray)
                 },
-                error:function (error) {
-                    console.log("没有拿到了是否收藏的十个id");
+                error: function (error) {
+                    console.log('没有拿到了是否收藏的十个id')
                 }
-            });
+            })
+        })
+    },
+    // 点击显示article列表
+    getArticleListByCondition: function (conditions,time, pageSize, currentPage) {
+        var self = this
+        var param = {
+            'date': {
+                'startDate': time.startDate,
+                'endDate': time.endDate
+            },
+            'keyword': {
+                'mustWord': self.config.mustWord,
+                'shouldWord': self.config.shouldWord,
+                'mustNotWord': self.config.mustNotWord
+            },
+            'page': {
+                'limit': pageSize,
+                'page': currentPage,
+                'orders': [{
+                    'direction': 'DESC',
+                    'orderBy': 'dateCreated'
+                }]
+            },
+            'searchKv': conditions.searchKv,
+            'type': conditions.type
+        }
+        return new Promise(function (resolve) {
             $.ajax({
                 url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
-                contentType: "application/json; charset=utf-8",
+                contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(param),
                 type: 'post',
-                async:false,
                 success: function (data) {
-                    data.content.sort(function(a,b) {return b.pubTime-a.pubTime});
+                    data.content.sort(function (a, b) {return b.pubTime - a.pubTime});
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }
                         item.collect = false;
-                        for(var i =0;i<collectArray.length;i++) {
-                            if(item.id == collectArray[i].key) {
-                                item.collect = collectArray[i].value;
-                            }
-                        }
                         item.nlp.sentiment.label = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);
                         item.content = utils.utils.heightLightKeywords(item.content, 200, '...', self.heightLightWords);
-                    });
+                    })
                     resolve(data);
                 }
-            });
-        });
+            })
+        })
     }
 }
 export default {

@@ -300,7 +300,7 @@ const actions = {
     },
 
     //新闻列表
-    getArticleTabList: function (startDate,endDate,type) {
+    getArticleTabList: function (startDate,endDate,type,orders) {
         // var date = new Date();
         var self = this;
         // var e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
@@ -315,14 +315,15 @@ const actions = {
                 "shouldWord": this.config.shouldWord,
                 "mustNotWord": this.config.mustNotWord,
             },
-            "page": {
-                "limit": 10,
-                "page": 1,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-            },
+            "page":orders,
+            //"page": {
+            //    "limit": 10,
+            //    "page": 1,
+            //    "orders": [{
+            //        "direction": "DESC",
+            //        "orderBy": "pubTime"
+            //    }],
+            //},
             "type": [type]
         };
         return new Promise(function (resolve) {
@@ -384,7 +385,66 @@ const actions = {
             });
         });
     },
-
+    //保存收藏
+    saveCollect: function (collect) {
+        return new Promise(function (resolve) {
+            var paramTrue = {
+                oId: collect[0].key
+            }
+            debugger;
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/saveCollect2ES.json',
+                data: paramTrue,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('收藏成功')
+                },
+                error: function () {
+                    console.log('收藏失败')
+                }
+            })
+        })
+    },
+    //删除收藏
+    deleteCollect: function (collect) {
+        return new Promise(function (resolve) {
+            var paramFalse = {
+                oIds: collect[0].key
+            }
+            debugger;
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/deleteCollectedInOid',
+                data: paramFalse,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('删除成功')
+                },
+                error: function () {
+                    console.log('删除失败')
+                }
+            })
+        })
+    },
+    //获取是否收藏id
+    getCollectOrID: function (collectID) {
+        return new Promise(function (resolve) {
+            var collectArray = []
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/hasCollected.json?oIds=' + collectID.join(','),
+                type: 'get',
+                success: function (data) {
+                    collectArray = data
+                    console.log('拿到了是否收藏的十个id')
+                    resolve(collectArray)
+                },
+                error: function (error) {
+                    console.log('没有拿到了是否收藏的十个id')
+                }
+            })
+        })
+    },
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {
         var self = this;
@@ -423,6 +483,7 @@ const actions = {
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }
+                        item.collect = false;
                         item.nlp.sentiment.label = typeUtil.typeUtil.sentimentType(item.nlp.sentiment.label);
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 50, '...', self.heightLightWords);

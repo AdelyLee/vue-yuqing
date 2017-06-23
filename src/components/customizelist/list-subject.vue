@@ -22,9 +22,9 @@
                 </td>
                 <td class="operation-none">
                     <span @click="showSubject(subject)" class="ssjc">实时监测</span>
-                    <span @click="editSubject(subject)">修改</span>
-                    <span @click="updateReport(subject)">更新</span>
-                    <span @click="deleteSubject(subject)">删除</span>
+                    <span @click="updateReport(subject)" class="up">更新报告</span>
+                    <span @click="editSubject(subject)" class="edit">修改</span>
+                    <span @click="deleteSubject(subject)" class="del">删除</span>
                 </td>
                 <td class="number-none">
                     <el-switch v-model="subject.enableWarning" on-color="#13ce66" off-color="#ff4949"

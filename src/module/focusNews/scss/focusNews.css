@@ -72,6 +72,12 @@ body {
   color: #fff;
   background: url("../../../../static/img/button-news.png") no-repeat; }
 
+.sort {
+  margin-left: 2%; }
+
+.rel {
+  background: #cccccc; }
+
 .table-bottom {
   height: 30px; }
   .table-bottom .news-more {

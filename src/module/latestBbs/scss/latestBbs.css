@@ -279,4 +279,10 @@ body {
     .list .content .sours, .list .content .time, .list .content .number {
       color: #6b7eeb; }
 
+.sort {
+  margin-left: 2%; }
+
+.rel {
+  background: #cccccc; }
+
 /*# sourceMappingURL=latestBbs.css.map */

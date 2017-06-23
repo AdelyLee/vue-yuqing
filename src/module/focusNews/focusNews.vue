@@ -28,8 +28,13 @@
                             </el-form>
                         </el-row>
                         <el-row :gutter="15">
+                            <span class="sort">排序方式:</span>
+                            <el-button class="rel" @click.native="relevant()">相关度</el-button>
+                            <el-button class="dataTims"  @click.native="dataTimes()">时间</el-button>
+                        </el-row>
+                        <el-row :gutter="15">
                             <el-col :span="24">
-                                <focus-list :articleData="articleTabData" @data="getData"></focus-list>
+                                <focus-list :articleData="articleTabData" @data="getData" v-loading="loading"></focus-list>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
@@ -38,13 +43,13 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">情感分析</span>
                                     </div>
-                                    <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
+                                    <pie-chart :chartConfig="sentimentAnalysis" v-loading="loading"></pie-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="12">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">热点词云</span>
+                                        <span class="chart-text" v-loading="loading">热点词云</span>
                                     </div>
                                     <keywords-chart :chartConfig="hotWordCloud"></keywords-chart>
                                 </el-card>
@@ -54,14 +59,14 @@
                             <el-col :span="24" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">趋势图</span>
+                                        <span class="chart-text" v-loading="loading">趋势图</span>
                                     </div>
                                     <bar-chart :chartConfig="allcarrierAnalysisMonth"></bar-chart>
                                 </el-card>
                             </el-col>
                         </el-row>
                         <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
-                                      :articles="articles" :pager="pager" @data="getData"></article-list>
+                                      :articles="articles" :pager="pager" @data="getData" v-loading="loading"></article-list>
                     </div>
                 </el-card>
             </el-col>
@@ -87,17 +92,15 @@
         data () {
             var self = this;
             return {
+                loading: true,
                 sentimentAnalysis: {
                     chartId: 'sentimentAnalysis',
                     option: {},
                     events: {
                         'click': function (param) {
                             self.articlesCondition = {};
-                            var date = new Date();
-                            var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-                            var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                            self.articlesCondition.startDate = startDate;
-                            self.articlesCondition.endDate = endDate;
+                            self.articlesCondition.startDate =self.addForm.startDate;
+                            self.articlesCondition.endDate = self.addForm.endDate;
                             var value = typeUtil.typeUtil.encodeSentimentType(param.name);
                             self.articlesCondition.searchKv = [{"key": "nlp.sentiment.label", "value": value}];
                             self.getArticleListByCondition(self.articlesCondition);
@@ -135,9 +138,14 @@
                 articleTabData:{
                     articles:[]
                 },
+                handleCollect:[],
                 addForm: {
                     startDate: '',
-                    endDate: ''
+                    endDate: '',
+                    orders: {
+                        "limit": 10,
+                         "page": 1
+                    },
                 },
                 rules: {
                     startDate: [
@@ -146,7 +154,7 @@
                     endDate: [
                         {type: "date", required: true, message: '选择专题结束时间', trigger: 'change' }
                     ]
-                }
+                },
             }
         },
         components: {
@@ -167,6 +175,10 @@
         },
         methods: {
             getTime: function () {
+                setTimeout(() => {
+                    var self = this;
+                self.loading = false;
+               }, 2000);
                 var self = this;
                 var date = new Date();
                 self.addForm.startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
@@ -176,14 +188,14 @@
                 var self = this;
                 subject.startDate =dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(subject.startDate, 'M', 0), 'yyyy-MM-dd');
                 subject.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate( subject.endDate, 'd', 0), 'yyyy-MM-dd');
-                self.getArticleTabList(subject.startDate,subject.endDate);
+                self.getArticleTabList(subject.startDate,subject.endDate,self.addForm.orders);
                 self.getSentimentTypeChart(subject.startDate,subject.endDate);
                 self.getCarrierAnalysisChart(subject.startDate,subject.endDate);
                 self.getHotWordCloudChart(subject.startDate,subject.endDate);
             },
             getArticleTabList: function () {
                 var self = this;
-                service.actions.getArticleTabList(self.addForm.startDate,self.addForm.endDate).then(function (data) {
+                service.actions.getArticleTabList(self.addForm.startDate,self.addForm.endDate,self.addForm.orders).then(function (data) {
                         self.articleTabData.articles = data.content;
                 });
             },
@@ -215,9 +227,69 @@
             getArticleListByCondition: function () {
                 var self = this;
                 service.actions.getArticleListByCondition(self.pager.pageSize, self.pager.currentPage, self.articlesCondition).then(function (data) {
-                    self.articles = data.content;
-                    self.pager.totalElements = data.totalElements;
-                    console.log(self.articles);
+                    if (self.handleCollect.length > 0 && self.handleCollect[0].value == true) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.saveCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else if (self.handleCollect.length > 0 && self.handleCollect[0].value == false) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.deleteCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            self.articles = data.content;
+                            self.pager.totalElements = data.totalElements;
+                        })
+                    }
                 })
             },
             getMediaTypeTrendChartCondition: function (param) {
@@ -241,18 +313,37 @@
                         break;
                     case 'showMoreArticle':
                         self.pager.currentPage = 1;
-                        var date = new Date();
-                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
-                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
-                        self.articlesCondition.startDate = startDate;
-                        self.articlesCondition.endDate = endDate;
+                        self.articlesCondition.startDate =self.addForm.startDate;
+                        self.articlesCondition.endDate = self.addForm.endDate;
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
                         break;
+                    case 'handleCollect':
+                        self.handleCollect = [];
+                        self.handleCollect.push({"key": data.id, "value": data.collect});
+                        break;
                 }
                 self.getArticleListByCondition();
             },
+            relevant: function () {
+                if ($('.el-button').hasClass('dataTims')) {
+                    $('.dataTims').css('background','#ffffff');
+                }
+                $('.rel').css('background','#cccccc');
+                var self = this;
+                self.addForm.orders = {"limit": 10, "page": 1};
+                self.getArticleTabList();
+            },
+            dataTimes: function() {
+                if ($('.el-button').hasClass('rel')) {
+                    $('.rel').css('background','#ffffff');
+                }
+                $('.dataTims').css('background','#cccccc');
+                var self = this;
+                self.addForm.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
+                self.getArticleTabList();
+            }
         },
         watch: {
             articles: function (val, oldVal) {

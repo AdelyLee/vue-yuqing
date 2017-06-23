@@ -86,6 +86,20 @@ $font-family: 微软雅黑;
     color: #ffffff;
     padding: 2px;
 }
+.edit,.up{
+    border:1px solid #6eb4fc;
+    background: #6eb4fc;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: 2px;
+}
+.del{
+    border:1px solid #ff4949;
+    background: #ff4949;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: 2px;
+}
 .list-subject {
     margin: 0 auto;
     height: auto;
@@ -155,6 +169,9 @@ $font-family: 微软雅黑;
             padding: 2px 10px;
             color: #ffffff;
         }
+        span{
+            cursor: pointer;
+        }
     }
     .name-none {
         margin-right: 10px;
@@ -175,6 +192,7 @@ $font-family: 微软雅黑;
         font-family: $font-family;
         span {
             cursor: pointer;
+            font-size: 16px;
         }
     }
     .estimate-content {

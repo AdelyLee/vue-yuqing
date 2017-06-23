@@ -479,6 +479,66 @@ const actions = {
             });
         });
     },
+    //保存收藏
+    saveCollect: function (collect) {
+        return new Promise(function (resolve) {
+            var paramTrue = {
+                oId: collect[0].key
+            }
+            debugger;
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/saveCollect2ES.json',
+                data: paramTrue,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('收藏成功')
+                },
+                error: function () {
+                    console.log('收藏失败')
+                }
+            })
+        })
+    },
+    //删除收藏
+    deleteCollect: function (collect) {
+        return new Promise(function (resolve) {
+            var paramFalse = {
+                oIds: collect[0].key
+            }
+            debugger;
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/deleteCollectedInOid',
+                data: paramFalse,
+                type: 'get',
+                success: function () {
+                    resolve()
+                    console.log('删除成功')
+                },
+                error: function () {
+                    console.log('删除失败')
+                }
+            })
+        })
+    },
+    //获取是否收藏id
+    getCollectOrID: function (collectID) {
+        return new Promise(function (resolve) {
+            var collectArray = []
+            $.ajax({
+                url: common.url.webserviceUrl + '/collect/hasCollected.json?oIds=' + collectID.join(','),
+                type: 'get',
+                success: function (data) {
+                    collectArray = data
+                    console.log('拿到了是否收藏的十个id')
+                    resolve(collectArray)
+                },
+                error: function (error) {
+                    console.log('没有拿到了是否收藏的十个id')
+                }
+            })
+        })
+    },
 
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {

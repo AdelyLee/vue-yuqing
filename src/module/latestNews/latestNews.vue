@@ -28,8 +28,13 @@
                             </el-form>
                         </el-row>
                         <el-row :gutter="15">
+                            <span class="sort">排序方式:</span>
+                            <el-button class="rel" @click.native="relevant()">相关度</el-button>
+                            <el-button class="dataTims"  @click.native="dataTimes()">时间</el-button>
+                        </el-row>
+                        <el-row :gutter="15">
                             <el-col :span="24">
-                                <news-list :articleData="articleTabData" @data="getData"></news-list>
+                                <news-list :articleData="articleTabData" @data="getData" v-loading="loading"></news-list>
                             </el-col>
                             <!--<el-col :span="12">-->
                                 <!--<news-list :articleData="articleBbsTabData" @data="getData"></news-list>-->
@@ -41,15 +46,15 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">舆情信息</span>
                                     </div>
-                                    <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
+                                    <pie-chart :chartConfig="sentimentAnalysis"v-loading="loading"></pie-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="16">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
-                                        <span class="chart-text">新闻趋势分析</span>
+                                        <span class="chart-text" >新闻趋势分析</span>
                                     </div>
-                                    <bar-chart :chartConfig="carrierAnalysisMonth"></bar-chart>
+                                    <bar-chart :chartConfig="carrierAnalysisMonth" v-loading="loading"></bar-chart>
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -59,15 +64,15 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">热点词云</span>
                                     </div>
-                                    <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists"></keywords-chart>
+                                    <keywords-chart v-if="hotList" :hotList="hotList" :chartConfig="hotLists" v-loading="loading" ></keywords-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="16" class="lists">
-                                <el-card class="box-card" :body-style="{ padding: '0px' }">
+                                <el-card  class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">主流媒体分布</span>
                                     </div>
-                                    <bar-chart :chartConfig="mediaBarChart"></bar-chart>
+                                    <bar-chart :chartConfig="mediaBarChart" v-loading="loading"></bar-chart>
                                 </el-card>
                             </el-col>
 
@@ -80,8 +85,7 @@
         </el-row>
     </div>
 </template>
-
-<script>
+<script type="text/ecmascript-6">
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
     import News from '@/components/index/news';
@@ -100,8 +104,7 @@
         data () {
             var self = this;
             return {
-//                activeTrendName: '近30天',
-//                activeBarName: '近30天',
+                loading: true,
                 activeArticleTabName: 'news',
                 articleTabData: {
                     type: '',
@@ -113,7 +116,11 @@
 //                },
                 addForm: {
                     startDate: '',
-                    endDate: ''
+                    endDate: '',
+                    orders: {
+                        "limit": 10,
+                         "page": 1
+                    },
                 },
                 tabArticleType: "news",
                 sentimentAnalysis: {
@@ -168,6 +175,7 @@
                         }
                     }
                 },
+                handleCollect:[],
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -197,7 +205,7 @@
         },
         mounted () {
             this.getTime();
-            this.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType);
+            this.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType,this.addForm.orders);
             this.getSentimentTypeChart(this.addForm.startDate,this.addForm.endDate);
             this.getCarrierAnalysisChart(this.addForm.startDate,this.addForm.endDate);
             this.getMediaBarChart(this.addForm.startDate,this.addForm.endDate);
@@ -206,6 +214,10 @@
         },
         methods: {
             getTime: function () {
+                setTimeout(() => {
+                    var self = this;
+                self.loading = false;
+            }, 2000);
                 var self = this;
                 var date = new Date();
                 self.addForm.startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
@@ -245,9 +257,9 @@
                     self.mediaBarChart.option = option;
                 });
             },
-            getArticleTabList: function (startDate,endDate,type) {
+            getArticleTabList: function (startDate,endDate,type,orders) {
                 var self = this;
-                service.actions.getArticleTabList(startDate,endDate,type).then(function (data) {
+                service.actions.getArticleTabList(startDate,endDate,type,orders).then(function (data) {
                     if (type == 'news') {
                         self.articleTabData.type = type;
                         self.articleTabData.articles = data.content;
@@ -277,15 +289,80 @@
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
                         break;
+                    case 'handleCollect':
+                        self.handleCollect = [];
+                        self.handleCollect.push({"key":data.id,"value":data.collect});
+                        break;
                 }
                 self.getArticleListByCondition();
             },
-
             getArticleListByCondition: function () {
                 var self = this;
-                service.actions.getArticleListByCondition(self.pager.pageSize, self.pager.currentPage, self.articlesCondition).then(function (data) {
-                    self.articles = data.content;
-                    self.pager.totalElements = data.totalElements;
+                service.actions.getArticleListByCondition(self.pager.pageSize, self.pager.currentPage,self.articlesCondition).then(function (data) {
+                    if (self.handleCollect.length > 0 && self.handleCollect[0].value == true) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.saveCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else if (self.handleCollect.length > 0 && self.handleCollect[0].value == false) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.deleteCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            self.articles = data.content;
+                            self.pager.totalElements = data.totalElements;
+                        })
+                    }
+
                 })
             },
             getCommentHotKeywordsChart: function (startDate,endDate) {
@@ -300,8 +377,12 @@
             getMediaTypeTrendChartCondition: function (param) {
                 var self = this;
                 self.articlesCondition = {};
-                self.articlesCondition.startDate =self.addForm.startDate;
-                self.articlesCondition.endDate = self.addForm.endDate;
+                var dateStr = param.name;
+                var date = dateUtil.dateUtil.parseDate(dateStr);
+                var startDate = dateUtil.dateUtil.formatDate(date, 'yyyy-MM-dd');
+                var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                self.articlesCondition.startDate = startDate;
+                self.articlesCondition.endDate = endDate;
 
                 var value = typeUtil.typeUtil.encodeArticleType(param.seriesName);
                 self.articlesCondition.type = [value];
@@ -343,6 +424,24 @@
                 conditionDate.endDate = e_date;
 
                 return conditionDate;
+            },
+            relevant: function () {
+                if ($('.el-button').hasClass('dataTims')) {
+                    $('.dataTims').css('background','#ffffff');
+                }
+                $('.rel').css('background','#cccccc');
+                var self = this;
+                self.addForm.orders = {"limit": 10, "page": 1};
+                self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType,this.addForm.orders);
+            },
+            dataTimes: function() {
+                if ($('.el-button').hasClass('rel')) {
+                    $('.rel').css('background','#ffffff');
+                }
+                $('.dataTims').css('background','#cccccc');
+                var self = this;
+                self.addForm.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
+                self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType,this.addForm.orders);
             }
         },
         watch: {

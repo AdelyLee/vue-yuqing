@@ -73,9 +73,7 @@
                 articleType: "",
                 articles: [],
                 kv: "nlp.sentiment.label,POS",
-                handleCollect:[
-
-                ],
+                handleCollect: [],
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -173,16 +171,77 @@
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
-                        self.handleCollect.push({"key":data.id,"value":data.collect});
+                        self.handleCollect.push({"key": data.id, "value": data.collect});
                         self.getArticleListByCondition();
-                      break;
+                        break;
                 }
             },
             getArticleListByCondition: function () {
                 var self = this;
-                service.actions.getArticleListByCondition(self.conditions, self.handleCollect,self.timeChange, self.pager.pageSize, self.pager.currentPage).then(function (data) {
-                    self.articles = data.content;
-                    self.pager.totalElements = data.totalElements;
+                service.actions.getArticleListByCondition(self.conditions, self.timeChange, self.pager.pageSize, self.pager.currentPage).then(function (data) {
+                    if (self.handleCollect.length > 0 && self.handleCollect[0].value == true) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.saveCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                  if(item.id == self.handleCollect[0].key) {
+                                    item.collect = self.handleCollect[0].value;
+                                  }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else if (self.handleCollect.length > 0 && self.handleCollect[0].value == false) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.deleteCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            self.articles = data.content;
+                            self.pager.totalElements = data.totalElements;
+                        })
+                    }
                 })
             },
 

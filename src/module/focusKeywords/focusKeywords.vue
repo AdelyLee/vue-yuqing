@@ -10,15 +10,15 @@
                 <el-card class=" box_card box-card" :body-style="{ padding: '10px' }">
                     <div class="card-body" id="content">
                         <div class="model">
-                            <p class="pTitle">关键词设置</p>
+                            <p class="pTitle">焦点关键词设置</p>
                             <div class="message" :class="result.type">{{result.message}}</div>
                             <el-form :model="editForm" :rules="rules" ref="editForm" label-width="100px">
-                                <el-form-item class="m_b50" label="关键词" prop="mustWord">
-                                    <el-input type="textarea" v-model="editForm.mustWord"
+                                <el-form-item class="m_b50" label="关键词" prop="shouldWord">
+                                    <el-input type="textarea" v-model="editForm.shouldWord"
                                               placeholder="关键词之间用@隔开"></el-input>
                                 </el-form-item>
-                                <el-form-item class="m_b50" label="同现词" required prop="shouldWord">
-                                    <el-input type="textarea" v-model="editForm.shouldWord"
+                                <el-form-item class="m_b50" label="同现词" prop="mustWord">
+                                    <el-input type="textarea" v-model="editForm.mustWord"
                                               placeholder="同现词之间用@隔开"></el-input>
                                 </el-form-item>
                                 <el-form-item class="m_b50" label="排除词">
@@ -55,11 +55,11 @@
                 },
                 editForm: {},
                 rules: {
-                    mustWord: [
-                        {required: true, message: '请输入关键词', trigger: 'blur'}
-                    ],
+//                    mustWord: [
+//                        {required: true, message: '请输入同现词', trigger: 'blur'}
+//                    ],
                     shouldWord: [
-                        {required: true, message: '请输入同现词', trigger: 'blur'}
+                        {required: true, message: '请输入关键词', trigger: 'blur'}
                     ]
                 }
             };

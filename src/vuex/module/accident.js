@@ -78,8 +78,8 @@ const actions = {
             var option = {
                 legend: {},
                 grid: {
-                    bottom: 100,
-                    left: 120
+                    //bottom: 100,
+                    //left: 120
                 },
                 xAxis: {
                     data: xAxisData,

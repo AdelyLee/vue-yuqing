@@ -2,23 +2,27 @@
     <div id="report">
         <common-header></common-header>
         <el-row :gutter="5">
-            <el-col :span="24">
-                <el-card class="box-card" :body-style="{ padding: '10px' }">
-                    <div slot="header" class="panel-height">
-                        <span style="line-height: 40px;">與情{{briefingJson.type}}</span>
-                    </div>
-                    <div class="card-body">
-                        <report-header :briefingJson="briefingJson"></report-header>
-                        <report-content :briefingJson="briefingJson" :briefingCells="briefingCells"></report-content>
-                        <report-summary :briefingJson="briefingJson"></report-summary>
-                    </div>
-                </el-card>
+            <el-col :span="3">
+                <common-menu></common-menu>
+            </el-col>
+            <el-col :span="21">
+                <div class="card-body" id="content">
+                    <el-card class="box-card" :body-style="{ padding: '10px' }">
+                        <div class="card-body">
+                            <report-header :briefingJson="briefingJson"></report-header>
+                            <report-content :briefingJson="briefingJson"
+                                            :briefingCells="briefingCells"></report-content>
+                            <report-summary :briefingJson="briefingJson"></report-summary>
+                        </div>
+                    </el-card>
+                </div>
             </el-col>
         </el-row>
     </div>
 </template>
 <script>
     import Header from '@/components/commons/header';
+    import Menu from '@/components/commons/menu';
     import ReportHeader from '@/components/report/report-header';
     import ReportContent from '@/components/report/report-content';
     import ReportSummary from '@/components/report/report-summary';
@@ -36,6 +40,7 @@
         },
         components: {
             'common-header': Header,
+            'common-menu': Menu,
             'report-header': ReportHeader,
             'report-content': ReportContent,
             'report-summary': ReportSummary

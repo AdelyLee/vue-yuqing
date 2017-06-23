@@ -44,20 +44,20 @@
                         </el-form>
                         </el-row>
                         <el-row :gutter="15">
-                            <el-col :span="10" class="lists">
-                                <el-card class="box-card" :body-style="{ padding: '0px' }">
-                                    <div slot="header" class="clearfix">
-                                        <span class="chart-text">高发事故图</span>
-                                    </div>
-                                    <bar-chart :chartConfig="highAccident"></bar-chart>
-                                </el-card>
-                            </el-col>
                             <el-col :span="14" class="lists">
                                 <el-card class="box-card" :body-style="{ padding: '0px' }">
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">高发事故图</span>
                                     </div>
-                                    <bar-chart :chartConfig="weeklyhighAccident"></bar-chart>
+                                    <bar-chart :chartConfig="highAccident" v-loading="loading"></bar-chart>
+                                </el-card>
+                            </el-col>
+                            <el-col :span="10" class="lists">
+                                <el-card class="box-card" :body-style="{ padding: '0px' }">
+                                    <div slot="header" class="clearfix">
+                                        <span class="chart-text">高发事故图</span>
+                                    </div>
+                                    <bar-chart :chartConfig="weeklyhighAccident" v-loading="loading"></bar-chart>
                                 </el-card>
                             </el-col>
                         </el-row>
@@ -67,7 +67,7 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">行业领域事故图</span>
                                     </div>
-                                    <pie-chart :chartConfig="industryHighAccident"></pie-chart>
+                                    <pie-chart :chartConfig="industryHighAccident" v-loading="loading"></pie-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="14" class="lists">
@@ -75,20 +75,21 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">地区事故分析图</span>
                                     </div>
-                                    <bar-chart :chartConfig="areaHighAccident"></bar-chart>
+                                    <bar-chart :chartConfig="areaHighAccident" v-loading="loading"></bar-chart>
                                 </el-card>
                             </el-col>
                         </el-row>
-                        <el-row :gutter="15">
-                            <el-col :span="24" class="lists">
-                                <el-card class="box-card" :body-style="{ padding: '0px' }">
-                                    <div slot="header" class="clearfix">
-                                        <span class="chart-text">重特大事故排行</span>
-                                    </div>
-                                    <accident-list :accidentData="accidentData"></accident-list>
-                                </el-card>
-                            </el-col>
-                        </el-row>
+                        <accident-list :accidentData="accidentData" v-loading="loading"></accident-list>
+                        <!--<el-row :gutter="15">-->
+                            <!--<el-col :span="24" class="lists">-->
+                                <!--<el-card class="box-card" :body-style="{ padding: '0px' }">-->
+                                    <!--<div slot="header" class="clearfix">-->
+                                        <!--<span class="chart-text">重特大事故排行</span>-->
+                                    <!--</div>-->
+                                   <!---->
+                                <!--</el-card>-->
+                            <!--</el-col>-->
+                        <!--</el-row>-->
                     </div>
                 </el-card>
             </el-col>
@@ -112,6 +113,7 @@
         name: 'accident',
         data () {
             return {
+                loading: true,
                 pickerOptions0: {
                     disabledDate(time) {
                         return time.getTime() > Date.now() ;
@@ -183,11 +185,22 @@
         },
         methods: {
             getTimes: function () {
+                setTimeout(() => {
+                    var self = this;
+                self.loading = false;
+                }, 2000);
                 var self = this;
                 var date = new Date();
                 self.formInline.date =dateUtil.dateUtil.addDate(date, 'y', 0);
                 self.province= ['北京', '天津', '上海', '重庆', '河北', '河南', '云南', '辽宁', '黑龙江', '湖南', '安徽', '山东', '新疆', '江苏', '浙江', '江西', '湖北', '广西', '甘肃', '山西', '内蒙古', '陕西', '吉林', '福建', '贵州', '广东', '青海', '西藏', '四川', '宁夏', '海南'];
                 self.times= ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+//                var nowTime=date.getMonth()+1;
+//                for(var i=1;i<self.times.length;i++){
+//                    if(self.times[i] > nowTime) {
+////                        $(self.times).attr("disabled","disabled");
+//                    }
+//                }
+
             },
             getYearReport: function () {
                 var self = this;
@@ -221,13 +234,20 @@
             },
             onSubmit(formInline) {
                 var self = this;
-                self.formInline.area = formInline.area;
-                self.formInline.date = formInline.date;
-                self.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                self.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                self.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                self.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                self.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                var date = new Date();
+                var nowTime=date.getMonth()+1;
+                if(formInline.month <= nowTime){
+                    self.formInline.area = formInline.area;
+                    self.formInline.date = formInline.date;
+                    self.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                    self.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                    self.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                    self.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                    self.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                }else{
+                    alert("选择月份错误！");
+                }
+
             }
         },
         watch: {

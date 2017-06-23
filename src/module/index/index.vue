@@ -10,10 +10,10 @@
                     <div class="card-body" id="content">
                         <el-row :gutter="15">
                             <el-col :span="12">
-                                <news-list :articleData="articleTabData" @data="getData"></news-list>
+                                <news-list :articleData="articleTabData" @data="getData" v-loading="loading"></news-list>
                             </el-col>
                             <el-col :span="12">
-                                <news-list :articleData="articleBbsTabData" @data="getData"></news-list>
+                                <news-list :articleData="articleBbsTabData" @data="getData" v-loading="loading"></news-list>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
@@ -22,7 +22,7 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">近30天舆情信息</span>
                                     </div>
-                                    <pie-chart :chartConfig="sentimentAnalysis"></pie-chart>
+                                    <pie-chart :chartConfig="sentimentAnalysis" v-loading="loading"></pie-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="16">
@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="chart">
-                                        <bar-chart :chartConfig="mediaTypeTrendAnalysis"></bar-chart>
+                                        <bar-chart :chartConfig="mediaTypeTrendAnalysis" v-loading="loading"></bar-chart>
                                     </div>
                                 </el-card>
                             </el-col>
@@ -64,7 +64,7 @@
                                     <div slot="header" class="clearfix">
                                         <span class="chart-text">近30天主流媒体分布</span>
                                     </div>
-                                    <bar-chart :chartConfig="mediaBarChart"></bar-chart>
+                                    <bar-chart :chartConfig="mediaBarChart" v-loading="loading"></bar-chart>
                                 </el-card>
                             </el-col>
                             <el-col :span="8">
@@ -95,13 +95,13 @@
                                         </div>
                                     </div>
                                     <div class="chart">
-                                        <bar-chart :chartConfig="mediaTypeBarAnalysis"></bar-chart>
+                                        <bar-chart :chartConfig="mediaTypeBarAnalysis" v-loading="loading"></bar-chart>
                                     </div>
                                 </el-card>
                             </el-col>
                         </el-row>
                         <article-list v-if="articles.length > 0" :id="articleListId" :type="articleType"
-                                      :articles="articles" :pager="pager" @data="getData"></article-list>
+                                      :articles="articles" :pager="pager" @data="getData" v-loading="loading"></article-list>
                     </div>
                 </el-card>
             </el-col>
@@ -127,6 +127,7 @@
         data () {
             var self = this;
             return {
+                loading: true,
                 activeBarName: '近30天',
                 activeArticleTabName: 'news',
                 articleTabData: {
@@ -193,6 +194,7 @@
                         }
                     }
                 },
+                handleCollect:[],
                 pager: {
                     pageSize: 10,
                     currentPage: 1,
@@ -220,6 +222,7 @@
             'article-list': ArticleList
         },
         mounted () {
+            this.Loading();
             this.getSentimentTypeChart();
             this.getMediaTypeTrendChart(this.trendTimesType);
             this.getMediaTypeBarChart(this.barTimesType);
@@ -228,6 +231,12 @@
             this.getArticleTabList(this.tabBbsArticleType);
         },
         methods: {
+            Loading: function () {
+                setTimeout(() => {
+                    var self = this;
+                self.loading = false;
+              }, 2000);
+            },
             getSentimentTypeChart: function () {
                 var self = this;
                 service.actions.getSentimentTypeChart().then(function (option) {
@@ -288,6 +297,10 @@
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
                         break;
+                    case 'handleCollect':
+                        self.handleCollect = [];
+                        self.handleCollect.push({"key": data.id, "value": data.collect});
+                        break;
                 }
                 self.getArticleListByCondition();
             },
@@ -295,8 +308,69 @@
             getArticleListByCondition: function () {
                 var self = this;
                 service.actions.getArticleListByCondition(self.pager.pageSize, self.pager.currentPage, self.articlesCondition).then(function (data) {
-                    self.articles = data.content;
-                    self.pager.totalElements = data.totalElements;
+                    if (self.handleCollect.length > 0 && self.handleCollect[0].value == true) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.saveCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else if (self.handleCollect.length > 0 && self.handleCollect[0].value == false) {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            service.actions.deleteCollect(self.handleCollect).then(function () {
+                                data.content.forEach(function (item) {
+                                    if(item.id == self.handleCollect[0].key) {
+                                        item.collect = self.handleCollect[0].value;
+                                    }
+                                })
+                                self.articles = data.content;
+                                self.pager.totalElements = data.totalElements;
+                            })
+                        })
+                    } else {
+                        var collectID = [];
+                        for (var i = 0; i < data.content.length; i++) {
+                            collectID.push(data.content[i].id);
+                        }
+                        service.actions.getCollectOrID(collectID).then(function (collectCompare) {
+                            data.content.forEach(function (item) {
+                                for (var i = 0; i < collectCompare.length; i++) {
+                                    if (collectCompare[i].key == item.id) {
+                                        item.collect = collectCompare[i].value;
+                                    }
+                                }
+                            })
+                            self.articles = data.content;
+                            self.pager.totalElements = data.totalElements;
+                        })
+                    }
                 })
             },
 

@@ -50,9 +50,10 @@
                                         <span v-if="item.type=='comments'"><span class="number">地区</span>：{{item.area}}</span>
                                     </el-col>
                                     <el-col :span="5">
-                                        <span v-if="item.collect" @click=getCollect(item.id,item.collect)><i class="el-icon-star-off" v-if="item.collect == false">收藏</i>
-                                            <i class="el-icon-star-on" style="color:red"
-                                            v-if="item.collect==true">收藏</i></span>
+                                        <span @click=getCollect(item.id,item.collect)>
+                                            <span v-if="item.collect == false"><i class="el-icon-star-off" ></i>收藏</span>
+                                            <span v-if="item.collect==true"><i class="el-icon-star-on" style="color:red"></i>收藏</span>
+                                        </span>
                                     </el-col>
                                 </el-row>
                             </li>
