@@ -34,7 +34,7 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="24">
-                                <news-list :articleData="articleTabData" @data="getData" v-loading="loading"></news-list>
+                                <news-list :articleData="articleTabData" :rel="rel"  @data="getData" v-loading="loading"></news-list>
                             </el-col>
                             <!--<el-col :span="12">-->
                                 <!--<news-list :articleData="articleBbsTabData" @data="getData"></news-list>-->
@@ -88,6 +88,7 @@
 <script type="text/ecmascript-6">
     import Header from '@/components/commons/header';
     import CommonMenu from '@/components/commons/menu';
+//    import News from '@/components/focus/news';
     import News from '@/components/index/news';
     import LineBarChart from '@/components/commons/charts/line-bar';
     import PieChart from '@/components/commons/charts/pie';
@@ -114,6 +115,7 @@
 //                    type: '',
 //                    articles: []
 //                },
+                rel:'rel',
                 addForm: {
                     startDate: '',
                     endDate: '',
@@ -122,6 +124,7 @@
                          "page": 1
                     },
                 },
+
                 tabArticleType: "news",
                 sentimentAnalysis: {
                     chartId: 'sentimentAnalysis',
@@ -228,11 +231,11 @@
                 var self = this;
                 subject.startDate =dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(subject.startDate, 'M', 0), 'yyyy-MM-dd');
                 subject.endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate( subject.endDate, 'd', 0), 'yyyy-MM-dd');
-                self.getArticleTabList(subject.startDate,subject.endDate,self.tabArticleType);
-                this.getSentimentTypeChart(subject.startDate,subject.endDate);
-                this.getCarrierAnalysisChart(subject.startDate,subject.endDate);
-                this.getMediaBarChart(subject.startDate,subject.endDate);
-                this.getCommentHotKeywordsChart(subject.startDate,subject.endDate)
+                self.getArticleTabList(subject.startDate,subject.endDate,self.tabArticleType, self.addForm.orders);
+                self.getSentimentTypeChart(subject.startDate,subject.endDate);
+                self.getCarrierAnalysisChart(subject.startDate,subject.endDate);
+                self.getMediaBarChart(subject.startDate,subject.endDate);
+                self.getCommentHotKeywordsChart(subject.startDate,subject.endDate)
             },
             getSentimentTypeChart: function (startDate,endDate) {
                 var self = this;
@@ -288,6 +291,11 @@
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
+                        if(data.rel == 'datatime'){
+                            self.articlesCondition.orders =[{"direction": "DESC", "orderBy": "pubTime"}];
+                        }else{
+                            self.articlesCondition.orders =[];
+                        }
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
@@ -431,8 +439,9 @@
                 }
                 $('.rel').css('background','#cccccc');
                 var self = this;
+                self.rel = "rel";
                 self.addForm.orders = {"limit": 10, "page": 1};
-                self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType,this.addForm.orders);
+                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate,self.tabArticleType,self.addForm.orders);
             },
             dataTimes: function() {
                 if ($('.el-button').hasClass('rel')) {
@@ -440,8 +449,9 @@
                 }
                 $('.dataTims').css('background','#cccccc');
                 var self = this;
+                self.rel = "datatime";
                 self.addForm.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
-                self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabArticleType,this.addForm.orders);
+                self.getArticleTabList(self.addForm.startDate,self.addForm.endDate,self.tabArticleType,self.addForm.orders);
             }
         },
         watch: {

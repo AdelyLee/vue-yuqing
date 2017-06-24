@@ -8,12 +8,19 @@
             <el-col :span="21">
                 <el-card class="box-card" :body-style="{ padding: '10px' }">
                     <div class="card-body" id="content">
+                        <el-row>
+                            <el-col :span="24">
+                                <span class="sort">排序方式:</span>
+                                <el-button class="rel" @click.native="relevant()">相关度</el-button>
+                                <el-button class="dataTims"  @click.native="dataTimes()">时间</el-button>
+                            </el-col>
+                        </el-row>
                         <el-row :gutter="15">
                             <el-col :span="12">
-                                <news-list :articleData="articleTabData" @data="getData" v-loading="loading"></news-list>
+                                <news-list :articleData="articleTabData" :rel="rel" @data="getData" v-loading="loading"></news-list>
                             </el-col>
                             <el-col :span="12">
-                                <news-list :articleData="articleBbsTabData" @data="getData" v-loading="loading"></news-list>
+                                <news-list :articleData="articleBbsTabData" :rel="rel" @data="getData" v-loading="loading"></news-list>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
@@ -138,6 +145,11 @@
                     type: '',
                     articles: []
                 },
+                rel:"rel",
+                orders: {
+                    "limit": 5,
+                    "page": 1
+                },
                 tabArticleType: "news",
                 tabBbsArticleType: "bbs",
                 sentimentAnalysis: {
@@ -227,8 +239,8 @@
             this.getMediaTypeTrendChart(this.trendTimesType);
             this.getMediaTypeBarChart(this.barTimesType);
             this.getMediaBarChart();
-            this.getArticleTabList(this.tabArticleType);
-            this.getArticleTabList(this.tabBbsArticleType);
+            this.getArticleTabList(this.tabArticleType,this.orders);
+            this.getArticleTabList(this.tabBbsArticleType,this.orders);
         },
         methods: {
             Loading: function () {
@@ -267,13 +279,18 @@
                     self.mediaBarChart.option = option;
                 });
             },
-            getArticleTabList: function (type) {
+            getArticleTabList: function (type,orders) {
                 var self = this;
-                service.actions.getArticleTabList(type).then(function (data) {
+                service.actions.getArticleTabList(type,orders).then(function (data) {
                     if (type == 'news') {
                         self.articleTabData.type = type;
                         self.articleTabData.articles = data.content;
                     } else if (type == 'bbs') {
+                        var date = new Date();
+                        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+                        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
+                        self.articlesCondition.startDate = startDate;
+                        self.articlesCondition.endDate = endDate;
                         self.articleBbsTabData.type = type;
                         self.articleBbsTabData.articles = data.content;
                     }
@@ -296,6 +313,11 @@
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
+                        if(data.rel == 'datatime'){
+                            self.articlesCondition.orders =[{"direction": "DESC", "orderBy": "pubTime"}];
+                        }else{
+                            self.articlesCondition.orders =[];
+                        }
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
@@ -439,6 +461,28 @@
                 conditionDate.endDate = e_date;
 
                 return conditionDate;
+            },
+            relevant: function () {
+                if ($('.el-button').hasClass('dataTims')) {
+                    $('.dataTims').css('background','#ffffff');
+                }
+                $('.rel').css('background','#cccccc');
+                var self = this;
+                self.rel = "rel";
+                self.orders = {"limit": 5, "page": 1};
+                self.getArticleTabList(self.tabArticleType,self.orders);
+                self.getArticleTabList(self.tabBbsArticleType,self.orders);
+            },
+            dataTimes: function() {
+                if ($('.el-button').hasClass('rel')) {
+                    $('.rel').css('background','#ffffff');
+                }
+                $('.dataTims').css('background','#cccccc');
+                var self = this;
+                self.rel = "datatime";
+                self.orders = {"limit": 5, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
+                self.getArticleTabList(self.tabArticleType,self.orders);
+                self.getArticleTabList(self.tabBbsArticleType,self.orders);
             }
         },
         watch: {

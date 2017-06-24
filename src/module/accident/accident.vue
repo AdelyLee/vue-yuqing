@@ -18,6 +18,14 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
+                            <el-form-item label="煤矿类型:">
+                                <el-select v-model="formInline.atype2" placeholder="煤矿类型">
+                                    <el-option label="全部" value="all"></el-option>
+                                    <el-option v-for="option in atype2" :label="option" :value="option">
+                                        {{ option}}
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
                             <el-form-item label="报告类型:">
                                 <el-select v-model="formInline.Presentation" placeholder="报告类型">
                                     <el-option label="年报" value="year"></el-option>
@@ -79,17 +87,7 @@
                                 </el-card>
                             </el-col>
                         </el-row>
-                        <accident-list :accidentData="accidentData" v-loading="loading"></accident-list>
-                        <!--<el-row :gutter="15">-->
-                            <!--<el-col :span="24" class="lists">-->
-                                <!--<el-card class="box-card" :body-style="{ padding: '0px' }">-->
-                                    <!--<div slot="header" class="clearfix">-->
-                                        <!--<span class="chart-text">重特大事故排行</span>-->
-                                    <!--</div>-->
-                                   <!---->
-                                <!--</el-card>-->
-                            <!--</el-col>-->
-                        <!--</el-row>-->
+                        <accident-list :accidentData="accidentData" :sgjb="sgjb" v-loading="loading"></accident-list>
                     </div>
                 </el-card>
             </el-col>
@@ -121,6 +119,7 @@
                 },
                 formInline: {
                     area: 'all',
+                    atype2: 'all',
                     Presentation: 'year',
                     date: '',
                     startTime:'',
@@ -165,7 +164,9 @@
                 },
                 accidentData:[],
                 province:[],
-                times:[]
+                atype2:[],
+                times:[],
+                sgjb:''
             }
         },
         components: {
@@ -193,6 +194,7 @@
                 var date = new Date();
                 self.formInline.date =dateUtil.dateUtil.addDate(date, 'y', 0);
                 self.province= ['北京', '天津', '上海', '重庆', '河北', '河南', '云南', '辽宁', '黑龙江', '湖南', '安徽', '山东', '新疆', '江苏', '浙江', '江西', '湖北', '广西', '甘肃', '山西', '内蒙古', '陕西', '吉林', '福建', '贵州', '广东', '青海', '西藏', '四川', '宁夏', '海南'];
+                self.atype2= ['瓦斯爆炸', '冒顶片帮', '机械伤害', '车辆伤害', '触电', '中毒和窒息', '淹溺', '火灾', '其他伤害'];
                 self.times= ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 //                var nowTime=date.getMonth()+1;
 //                for(var i=1;i<self.times.length;i++){
@@ -204,46 +206,48 @@
             },
             getYearReport: function () {
                 var self = this;
-                service.actions.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month).then(function (option) {
+                service.actions.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2).then(function (option) {
                     self.highAccident.option = option;
                 });
             },
             getWeekReport: function () {
                 var self = this;
-                service.actions.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month).then(function (option) {
+                service.actions.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2).then(function (option) {
                     self.weeklyhighAccident.option = option;
                 });
             },
             getTypeAccident: function () {
                 var self = this;
-                service.actions.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month).then(function (option) {
+                service.actions.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2).then(function (option) {
                     self.industryHighAccident.option = option;
                 });
             },
             getProvinceAccident: function () {
                 var self = this;
-                service.actions.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month).then(function (option) {
+                service.actions.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2).then(function (option) {
                     self.areaHighAccident.option = option;
                 });
             },
             getAccidentList: function () {
                 var self = this;
-                service.actions.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month).then(function (data) {
+                service.actions.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2).then(function (data) {
                     self.accidentData = data;
+                    self.sgjb=data[0].sgjb;
                 });
             },
             onSubmit(formInline) {
+                debugger;
                 var self = this;
                 var date = new Date();
                 var nowTime=date.getMonth()+1;
                 if(formInline.month <= nowTime){
                     self.formInline.area = formInline.area;
                     self.formInline.date = formInline.date;
-                    self.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                    self.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                    self.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                    self.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
-                    self.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month);
+                    self.getYearReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2);
+                    self.getWeekReport(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2);
+                    self.getTypeAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2);
+                    self.getProvinceAccident(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2);
+                    self.getAccidentList(self.formInline.area,self.formInline.Presentation,self.formInline.date,self.formInline.month,self.formInline.atype2);
                 }else{
                     alert("选择月份错误！");
                 }

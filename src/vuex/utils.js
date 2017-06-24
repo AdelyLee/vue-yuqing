@@ -79,6 +79,20 @@ const utils = {
 
         return focusConfig;
     },
+    //查询报道权重关键词
+    getfocusWeightKeyword: function () {
+        var focusWeightConfig = {};
+        $.ajax({
+            url: common.url.webserviceUrl + '/keywordsWeight/findByType/?type=BASIC',
+            type: 'get',
+            async: false,
+            success: function (data) {
+                focusWeightConfig = data;
+            }
+        });
+
+        return focusWeightConfig;
+    },
     getBaseHeightLightKeywords: function () {
         var config = this.getUserBaseKeyword();
 
@@ -93,6 +107,18 @@ const utils = {
         var config = this.getCustomSubjectConfig();
 
         return config.mustWord + "@" + config.shouldWord;
+    },
+    getFocusWeightHeightLightKeywords: function () {
+        var focusWeightConfig = this.getfocusWeightKeyword();
+        var mustWord = [];
+        var shouldWord = [];
+        for (var i = 0; i < focusWeightConfig.mustWord.length; i++) {
+            mustWord.push(focusWeightConfig.mustWord[i].word) ;
+        }
+        for(var i = 0; i < focusWeightConfig.shouldWord.length; i++){
+            shouldWord.push(focusWeightConfig.shouldWord[i].word);
+        }
+        return mustWord.join('@') + "@" + shouldWord.join('@');
     },
 
     // 高亮显示关键词

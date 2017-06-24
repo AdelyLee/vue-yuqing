@@ -300,7 +300,7 @@ const actions = {
         });
     },
     //新闻列表
-    getArticleTabList: function (type,searchKv,time) {
+    getArticleTabList: function (type,searchKv,time,orders) {
         var self = this;
         var param = {
             "date": {
@@ -312,14 +312,15 @@ const actions = {
                 "shouldWord": self.config.shouldWord,
                 "mustNotWord": self.config.mustNotWord,
             },
-            "page": {
-                "limit": 10,
-                "page": 1,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
-                }],
-            },
+            "page":orders,
+            // "page": {
+            //     "limit": 10,
+            //     "page": 1,
+            //     "orders": [{
+            //         "direction": "DESC",
+            //         "orderBy": "dateCreated"
+            //     }],
+            // },
             "searchKv": searchKv,
             "type": [type]
         };
@@ -425,10 +426,11 @@ const actions = {
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "dateCreated"
-                }]
+                "orders":conditions.orders
+                // "orders": [{
+                //     "direction": "DESC",
+                //     "orderBy": "dateCreated"
+                // }]
             },
             "searchKv": conditions.searchKv,
             "type": conditions.type

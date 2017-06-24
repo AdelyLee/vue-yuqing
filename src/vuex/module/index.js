@@ -435,22 +435,22 @@ const actions = {
     },
 
     //新闻列表
-    getArticleTabList: function (type) {
+    getArticleTabList: function (type, orders) {
+        var date = new Date();
+        var startDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), 'yyyy-MM-dd');
+        var endDate = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), 'yyyy-MM-dd');
         var self = this;
         var param = {
+            "date": {
+                "startDate": startDate,
+                "endDate": endDate,
+            },
             "keyword": {
                 "mustWord": this.config.mustWord,
                 "shouldWord": this.config.shouldWord,
                 "mustNotWord": this.config.mustNotWord,
             },
-            "page": {
-                "limit": 5,
-                "page": 1,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
-            },
+            "page": orders,
             "type": [type]
         };
         return new Promise(function (resolve) {
@@ -461,16 +461,18 @@ const actions = {
                 type: 'post',
                 success: function (data) {
                     data.content.forEach(function (item) {
+                        debugger;
                         item.type = item.type.toLowerCase();
                         if (item.type == 'weibo') {
                             item.title = item.content;
                         }
                         if (item.type == 'bbs') {
-                            item.source = item.author;
+                            item.source = item.author != undefined ? item.author : item.source != undefined ? item.source : "未知";
                         }
-                        if(item.source.length > 8){
-                            item.source = item.source.substring(0,4);
+                        if (item.source.length > 8) {
+                            item.source = item.source.substring(0, 4);
                         }
+
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
                     });
@@ -542,6 +544,7 @@ const actions = {
 
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {
+        debugger;
         var self = this;
         pageSize = pageSize == undefined ? 10 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
@@ -558,10 +561,11 @@ const actions = {
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
+                "orders": condition.orders
+                // "orders": [{
+                //     "direction": "DESC",
+                //     "orderBy": "pubTime"
+                // }],
             },
             "searchKv": condition.searchKv,
             "type": condition.type

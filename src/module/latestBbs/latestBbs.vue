@@ -34,7 +34,7 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="24">
-                                <news-list :articleData="articleBbsTabData" @data="getData"  v-loading="loading"></news-list>
+                                <news-list :articleData="articleBbsTabData" :rel="rel" @data="getData"  v-loading="loading"></news-list>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
@@ -105,10 +105,14 @@
                     type: '',
                     articles: []
                 },
+                rel:'rel',
                 addForm: {
                     startDate: '',
                     endDate: '',
-                    orders: {},
+                    orders: {
+                        "limit": 10,
+                        "page": 1
+                    },
                 },
                 tabBbsArticleType: "bbs",
                 sentimentAnalysis: {
@@ -330,6 +334,11 @@
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
+                        if(data.rel == 'datatime'){
+                            self.articlesCondition.orders =[{"direction": "DESC", "orderBy": "pubTime"}];
+                        }else{
+                            self.articlesCondition.orders =[];
+                        }
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
@@ -471,8 +480,9 @@
                 if ($('.el-button').hasClass('dataTims')) {
                     $('.dataTims').css('background','#ffffff');
                 }
-                $('.rel').css('background','red');
+                $('.rel').css('background','#cccccc');
                 var self = this;
+                self.rel = "rel";
                 self.addForm.orders = {"limit": 10, "page": 1};
                 self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabBbsArticleType,this.addForm.orders);
             },
@@ -480,8 +490,9 @@
                 if ($('.el-button').hasClass('rel')) {
                     $('.rel').css('background','#ffffff');
                 }
-                $('.dataTims').css('background','red');
+                $('.dataTims').css('background','#cccccc');
                 var self = this;
+                self.rel = "datatime";
                 self.addForm.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
                 self.getArticleTabList(this.addForm.startDate,this.addForm.endDate,this.tabBbsArticleType,this.addForm.orders);
             },

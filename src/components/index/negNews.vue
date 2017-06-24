@@ -4,7 +4,6 @@
         <ul class="article-list" v-for="item in articleData.articles">
             <li :id="item.id" @click="changes(item.id)">
                 <el-row :gutter="15">
-
                     <el-col :span="10">
                         <el-col :span="2">
                             <div v-if="item.type=='news'" class="small-article-image newslogoSrc"></div>
@@ -35,7 +34,7 @@
     import typeUtil from '../../vuex/typeUtil'
     var basePath = localStorage.getItem('basePath');
     export default {
-        props: ['articleData'],
+        props: ['articleData','rel'],
         data () {
             return {}
         },
@@ -52,6 +51,7 @@
                 var data = {};
                 data.action = "showMoreArticle";
                 data.data = type;
+                data.rel=this.rel;
                 this.$emit('data', data);
             }
         }

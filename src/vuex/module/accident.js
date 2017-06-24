@@ -11,7 +11,7 @@ import Mquery from '../MQuery'
 
 const actions = {
     //月份统计
-    getYearReport: function (area, Presentation,date,month) {
+    getYearReport: function (area, Presentation,date,month,atype2) {
         var now = new Date();
         var startTime="",endTime="";
         var dataTimes = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', 0), 'yyyy');
@@ -50,7 +50,13 @@ const actions = {
               k:'province',
               v:area
            });
-        }
+        };
+        if(atype2 != 'all'){
+          param.where.push({
+             k:'atype2',
+             v:atype2
+          });
+        };
         param.groupBy = [{
             k: 'adate',
             v: 'adate',
@@ -76,7 +82,10 @@ const actions = {
 
             });
             var option = {
-                legend: {},
+                legend: {
+                    data:['事故起数','死亡人数'],
+                    align: 'left'
+                },
                 grid: {
                     //bottom: 100,
                     //left: 120
@@ -131,7 +140,7 @@ const actions = {
         new Mquery.Mquery.MQuery(param, successCallBack, failedCallBack,false).query();
         });
     },
-    getWeekReport: function (area, Presentation,date,month) {
+    getWeekReport: function (area, Presentation,date,month,atype2) {
         var startTime="",endTime="";
         var dataTimes = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', 0), 'yyyy');
         if(Presentation === 'year'){
@@ -168,7 +177,13 @@ const actions = {
                     k:'province',
                     v:area
                 });
-            }
+            };
+            if(atype2 != 'all'){
+                param.where.push({
+                    k:'atype2',
+                    v:atype2
+                });
+            };
             param.groupBy = [{
                 k: 'adate',
                 v: 'adate',
@@ -218,9 +233,9 @@ const actions = {
 
                 });
                 var option = {
-                    legend: {},
-                    grid: {
-
+                    legend: {
+                        data:['事故起数','死亡人数'],
+                        align: 'left'
                     },
                     xAxis: {
                         data: weeks,
@@ -272,7 +287,7 @@ const actions = {
             new Mquery.Mquery.MQuery(param, successCallBack, failedCallBack,false).query();
         });
     },
-    getTypeAccident: function (area, Presentation,date,month) {
+    getTypeAccident: function (area, Presentation,date,month,atype2) {
         var startTime="",endTime="";
         var dataTimes = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', 0), 'yyyy');
         if(Presentation === 'year'){
@@ -310,6 +325,12 @@ const actions = {
                     v:area
                 });
             };
+            if(atype2 != 'all'){
+                param.where.push({
+                    k:'atype2',
+                    v:atype2
+                });
+            };
             param.groupBy = [{
                 k: 'atype2',
                 v: 'atype2'
@@ -341,11 +362,11 @@ const actions = {
                         trigger: 'item',
                         formatter: "{a} <br/>{b}: {c} ({d}%)"
                     },
-                    //legend: {
-                    //    orient: 'vertical',
-                    //    x: 'left',
-                    //    data:legend
-                    //},
+                    legend: {
+                        orient: 'vertical',
+                        x: 'left',
+                        data:legend
+                    },
                         color : ['#0092ff', '#eba954', '#21b6b9', '#d74e67','#27727B',
                         '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
                         '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'],
@@ -382,7 +403,7 @@ const actions = {
             new Mquery.Mquery.MQuery(param, successCallBack, failedCallBack,false).query();
         });
     },
-    getProvinceAccident: function (area, Presentation,date,month) {
+    getProvinceAccident: function (area, Presentation,date,month,atype2) {
         var startTime="",endTime="";
         var dataTimes = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', 0), 'yyyy');
         if(Presentation === 'year'){
@@ -420,6 +441,12 @@ const actions = {
                     v:area
                 });
             };
+            if(atype2 != 'all'){
+                param.where.push({
+                    k:'atype2',
+                    v:atype2
+                });
+            };
             param.groupBy = [{
                 k: 'province',
                 v: 'province'
@@ -443,7 +470,10 @@ const actions = {
 
                 });
                 var option = {
-                    legend: {},
+                    legend: {
+                        data:['事故起数','死亡人数'],
+                        align: 'left'
+                    },
                     grid: {
                         bottom: 100,
                         left: 120
@@ -500,7 +530,7 @@ const actions = {
             new Mquery.Mquery.MQuery(param, successCallBack, failedCallBack,false).query();
         });
     },
-    getAccidentList: function (area, Presentation,date,month) {
+    getAccidentList: function (area, Presentation,date,month,atype2) {
         var startTime="",endTime="";
         var dataTimes = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', 0), 'yyyy');
         if(Presentation === 'year'){
@@ -535,7 +565,13 @@ const actions = {
                     k:'province',
                     v:area
                 });
-            }
+            };
+            if(atype2 != 'all'){
+                param.where.push({
+                    k:'atype2',
+                    v:atype2
+                });
+            };
             param.sortBy = [{
                 k: 'times',
                 v: '-1',

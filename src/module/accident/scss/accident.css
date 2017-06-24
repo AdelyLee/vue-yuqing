@@ -50,4 +50,7 @@ body {
   line-height: 20px;
   color: #666; }
 
+.el-form-item {
+  margin-right: 0px !important; }
+
 /*# sourceMappingURL=accident.css.map */

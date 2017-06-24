@@ -302,6 +302,7 @@ const actions = {
     //新闻列表
     getArticleTabList: function (startDate,endDate,type,orders) {
         // var date = new Date();
+        debugger;
         var self = this;
         // var e_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'd', 1), "yyyy-MM-dd");
         // var s_date = dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(date, 'M', -1), "yyyy-MM-dd");
@@ -335,11 +336,14 @@ const actions = {
                 success: function (data) {
                     data.content.forEach(function (item) {
                         item.type = item.type.toLowerCase();
-                        if (item.type == 'weibo') {
-                            item.title = item.content;
-                        }
-                        if (item.type == 'bbs') {
-                            item.source = item.author;
+                        // if (item.type == 'weibo') {
+                        //     item.title = item.content;
+                        // }
+                        // if (item.type == 'bbs') {
+                        //     item.source = item.author;
+                        // }
+                        if(item.source==""&&item.source==undefined){
+                            item.source="未知"
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -463,10 +467,11 @@ const actions = {
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
+                "orders":condition.orders
+                // "orders": [{
+                //     "direction": "DESC",
+                //     "orderBy": "pubTime"
+                // }],
             },
             "searchKv": condition.searchKv,
             "type": condition.type

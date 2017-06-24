@@ -27,7 +27,7 @@
 <script>
     import typeUtil from '../../vuex/typeUtil'
     export default {
-        props: ['articleData'],
+        props: ['articleData','rel'],
         data () {
             return {}
         },
@@ -40,6 +40,7 @@
                 var data = {};
                 data.action = "showMoreArticle";
                 data.data = "article";
+                data.rel = this.rel,
                 this.$emit('data', data);
             }
         }

@@ -162,7 +162,6 @@
                     self.pager.currentPage = 1;
                     self.getSubjectList();
                 }).catch(error => {
-                    debugger;
                     error.message = "添加专题失败！";
                     utils.utils.handleError(error, self);
                 });

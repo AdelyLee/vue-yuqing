@@ -14,7 +14,14 @@
                     </el-row>
                     <el-row>
                         <el-col :span="24">
-                            <news-list :articleData="articleTabData" @data="getData"></news-list>
+                            <span class="sort">排序方式:</span>
+                            <el-button class="rel" @click.native="relevant()">相关度</el-button>
+                            <el-button class="dataTims"  @click.native="dataTimes()">时间</el-button>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
+                            <news-list :articleData="articleTabData" :rel="rel" @data="getData"></news-list>
                         </el-col>
                     </el-row>
                     <el-row>
@@ -82,9 +89,14 @@
                     totalElements: 1
                 },
                 articleListId: 'article-list',
+               rel:"rel",
+                orders: {
+                    "limit": 10,
+                    "page": 1
+                },
                 timeChange: {
                     startDate: dateUtil.dateUtil.formatDate(dateUtil.dateUtil.addDate(new Date(), 'M', -1), 'yyyy-MM-dd'),
-                    endDate: dateUtil.dateUtil.formatDate(new Date(), 'yyyy-MM-dd')
+                    endDate: dateUtil.dateUtil.formatDate(new Date(), 'yyyy-MM-dd'),
                 },
                 tabArticleType: "news",
                 searchKv: [{
@@ -166,7 +178,13 @@
                     case 'showMoreArticle':
                         self.conditions.searchKv = self.searchKv;
                         self.conditions.type = ["news"];
+                        if(data.rel == 'datatime'){
+                            self.conditions.orders =[{"direction": "DESC", "orderBy": "pubTime"}];
+                        }else{
+                            self.conditions.orders =[];
+                        }
                         self.getArticleListByCondition(self.conditions);
+
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
@@ -255,7 +273,7 @@
             },
             getArticleTabList: function () {
                 var self = this;
-                service.actions.getArticleTabList(self.tabArticleType, self.searchKv, self.timeChange).then(function (data) {
+                service.actions.getArticleTabList(self.tabArticleType, self.searchKv, self.timeChange,self.orders).then(function (data) {
                     self.articleTabData.type = self.tabArticleType;
                     self.articleTabData.articles = data.content;
                     self.articleTabData.emotion = data.emotion;
@@ -286,6 +304,26 @@
                 this.getMediaBarChart();
                 this.getKeywordsChart();
                 this.getArticleTabList();
+            },
+            relevant: function () {
+                if ($('.el-button').hasClass('dataTims')) {
+                    $('.dataTims').css('background','#ffffff');
+                }
+                $('.rel').css('background','#cccccc');
+                var self = this;
+                self.rel = "rel";
+                self.orders = {"limit": 10, "page": 1};
+                self.getArticleTabList(self.tabArticleType, self.searchKv, self.timeChange,self.orders);
+            },
+            dataTimes: function() {
+                if ($('.el-button').hasClass('rel')) {
+                    $('.rel').css('background','#ffffff');
+                }
+                $('.dataTims').css('background','#cccccc');
+                var self = this;
+                self.rel = "datatime";
+                self.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
+                self.getArticleTabList(self.tabArticleType, self.searchKv, self.timeChange,self.orders);
             }
 
         },

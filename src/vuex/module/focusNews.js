@@ -10,48 +10,46 @@ import utils from '../utils'
 
 const actions = {
     // 获取关键词
-    config: utils.utils.getfocusKeyword(),
+    config: utils.utils.getfocusWeightKeyword(),
 
     // 获取高亮的词
-    heightLightWords: utils.utils.getFocusHeightLightKeywords(),
+    heightLightWords: utils.utils.getFocusWeightHeightLightKeywords(),
     //焦点报道
     getArticleTabList: function (startDate,endDate,orders) {
+        var mustWord = [];
+        var shouldWord = [];
+        for (var i = 0; i < this.config.mustWord.length; i++) {
+            var node = {};
+            node.key = this.config.mustWord[i].word;
+            node.value = this.config.mustWord[i].weight;
+            mustWord.push(node) ;
+        }
+        for(var i = 0; i < this.config.shouldWord.length; i++){
+            var nodes = {};
+            nodes.key = this.config.shouldWord[i].word;
+            nodes.value = this.config.shouldWord[i].weight;
+            shouldWord.push(nodes);
+        }
         var self = this;
         var param = {
             "date": {
                 "startDate":startDate,
                 "endDate": endDate,
             },
-            "keyword": {
-                "mustWord": this.config.mustWord,
-                "shouldWord": this.config.shouldWord,
-                "mustNotWord": this.config.mustNotWord,
-            },
+            "mustWord":mustWord ,
+            "shouldWord":shouldWord ,
+            //"keyword": {
+            //    "mustWord": this.config.mustWord,
+            //    "shouldWord": this.config.shouldWord,
+            //    "mustNotWord": this.config.mustNotWord,
+            //},
             "filed": "title.cn",
             "page":orders,
-            // "page": {
-            //     "limit": 10,
-            //     "page": 1,
-            //     "orders":orders,
-            //     //"orders": [{
-            //     //    "direction": "DESC",
-            //     //    "orderBy": "pubTime"
-            //     //}],
-            // },
-            //"page": {
-            //    "limit": 10,
-            //    "page": 1,
-            //    "orders":orders,
-            //    //"orders": [{
-            //    //    "direction": "DESC",
-            //    //    "orderBy": "pubTime"
-            //    //}],
-            //},
             "type": ["article"]
         };
         return new Promise(function (resolve) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                url: common.url.webserviceUrl + '/es/smartSearch',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',
@@ -407,6 +405,20 @@ const actions = {
     },
     // 点击显示article列表
     getArticleListByCondition: function (pageSize, currentPage, condition) {
+        var mustWord = [];
+        var shouldWord = [];
+        for (var i = 0; i < this.config.mustWord.length; i++) {
+            var node = {};
+            node.key = this.config.mustWord[i].word;
+            node.value = this.config.mustWord[i].weight;
+            mustWord.push(node) ;
+        }
+        for(var i = 0; i < this.config.shouldWord.length; i++){
+            var nodes = {};
+            nodes.key = this.config.shouldWord[i].word;
+            nodes.value = this.config.shouldWord[i].weight;
+            shouldWord.push(nodes);
+        }
         var self = this;
         pageSize = pageSize == undefined ? 10 : pageSize;
         currentPage = currentPage == undefined ? 1 : currentPage;
@@ -415,25 +427,28 @@ const actions = {
                 "startDate": condition.startDate,
                 "endDate": condition.endDate,
             },
-            "keyword": {
-                "mustWord": this.config.mustWord,
-                "shouldWord": this.config.shouldWord,
-                "mustNotWord": this.config.mustNotWord,
-            },
+            "mustWord":mustWord ,
+            "shouldWord":shouldWord ,
+            //"keyword": {
+            //    "mustWord": this.config.mustWord,
+            //    "shouldWord": this.config.shouldWord,
+            //    "mustNotWord": this.config.mustNotWord,
+            //},
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
+                "orders":condition.orders
+                //"orders": [{
+                //    "direction": "DESC",
+                //    "orderBy": "pubTime"
+                //}],
             },
             "searchKv": condition.searchKv,
             "type": condition.type
         };
         return new Promise(function (resolve) {
             $.ajax({
-                url: common.url.webserviceUrl + '/es/findPageByMustShouldDateInType',
+                url: common.url.webserviceUrl + '/es/smartSearch',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 type: 'post',

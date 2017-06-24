@@ -71,5 +71,9 @@ body {
     height: 60px;
     font-size: 20px;
     color: #000; }
+  #posNews .my-card-box .sort {
+    margin-left: 9%; }
+  #posNews .my-card-box .rel {
+    background: #cccccc; }
 
 /*# sourceMappingURL=posNews.css.map */

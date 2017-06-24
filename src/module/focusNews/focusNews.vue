@@ -34,7 +34,7 @@
                         </el-row>
                         <el-row :gutter="15">
                             <el-col :span="24">
-                                <focus-list :articleData="articleTabData" @data="getData" v-loading="loading"></focus-list>
+                                <focus-list :articleData="articleTabData" :rel="rel" @data="getData" v-loading="loading"></focus-list>
                             </el-col>
                         </el-row>
                         <el-row :gutter="15">
@@ -130,6 +130,7 @@
                     startDate: "",
                     endDate: "",
                     searchKv: [],
+                    orders:[],
                     type: []
                 },
                 articleType: "",
@@ -138,6 +139,7 @@
                 articleTabData:{
                     articles:[]
                 },
+                rel:'rel',
                 handleCollect:[],
                 addForm: {
                     startDate: '',
@@ -305,6 +307,7 @@
                 self.articlesCondition.type = [value];
             },
             getData (data) {
+                debugger;
                 var self = this;
                 self.articlesCondition = {};
                 switch (data.action) {
@@ -318,6 +321,11 @@
                         self.articlesCondition.type = [data.data];
                         self.articlesCondition.searchKv = [];
                         self.articleType = data.data;
+                        if(data.rel == 'datatime'){
+                            self.articlesCondition.orders =[{"direction": "DESC", "orderBy": "pubTime"}];
+                        }else{
+                            self.articlesCondition.orders =[];
+                        }
                         break;
                     case 'handleCollect':
                         self.handleCollect = [];
@@ -332,6 +340,7 @@
                 }
                 $('.rel').css('background','#cccccc');
                 var self = this;
+                self.rel = "rel";
                 self.addForm.orders = {"limit": 10, "page": 1};
                 self.getArticleTabList();
             },
@@ -341,6 +350,7 @@
                 }
                 $('.dataTims').css('background','#cccccc');
                 var self = this;
+                self.rel = "datatime";
                 self.addForm.orders = {"limit": 10, "page": 1,"orders": [{"direction": "DESC", "orderBy": "pubTime"}]};
                 self.getArticleTabList();
             }

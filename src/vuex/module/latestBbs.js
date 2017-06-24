@@ -335,7 +335,7 @@ const actions = {
                                 item.source="未知"
                             }
                             // item.source = item.author;
-                            item.title = item.content;
+                            item.title = item.content.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
                         }
                         item.pubTime = dateUtil.dateUtil.formatDate(new Date(item.pubTime), 'yyyy/MM/dd');
                         item.title = utils.utils.heightLightKeywords(item.title, 20, '...', self.heightLightWords);
@@ -458,10 +458,11 @@ const actions = {
             "page": {
                 "limit": pageSize,
                 "page": currentPage,
-                "orders": [{
-                    "direction": "DESC",
-                    "orderBy": "pubTime"
-                }],
+                "orders":condition.orders
+                // "orders": [{
+                //     "direction": "DESC",
+                //     "orderBy": "pubTime"
+                // }],
             },
             "searchKv": condition.searchKv,
             "type": condition.type

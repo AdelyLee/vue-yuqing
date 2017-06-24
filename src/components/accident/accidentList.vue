@@ -1,6 +1,6 @@
 <template>
     <div class="list-box">
-        <div class="title-bj">重特大事故</div>
+        <div class="title-bj" v-if="accidentData.length>0">{{sgjb}}</div>
         <ul class="article-list" v-for="(item, index) in accidentData" v-if="index<3">
             <li>
                 <el-row :gutter="15">
@@ -17,7 +17,7 @@
 
 <script>
     export default {
-        props: ['accidentData'],
+        props: ['accidentData','sgjb'],
         data () {
             return {}
         },
